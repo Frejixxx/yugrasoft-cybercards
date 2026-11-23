@@ -1198,8 +1198,10 @@ function getYugorkaSvg(mood = 'idle', stars = 0) {
     `;
     mouth = `
       <rect x="42" y="39" width="12" height="4" fill="#9c6a4d"/>
-      <rect x="36" y="44" width="24" height="4" fill="#ffffff"/>
-      <rect x="38" y="48" width="20" height="4" fill="#c62828"/>
+      <g class="steve-mouth-idle">
+        <rect x="36" y="44" width="24" height="4" fill="#ffffff"/>
+        <rect x="38" y="48" width="20" height="4" fill="#c62828"/>
+      </g>
     `;
     // Пиксельные золотые звёздочки вокруг
     extraProp = `
@@ -1219,7 +1221,9 @@ function getYugorkaSvg(mood = 'idle', stars = 0) {
     `;
     mouth = `
       <rect x="42" y="40" width="12" height="4" fill="#9c6a4d"/>
-      <rect x="43" y="46" width="10" height="6" fill="#5c331e"/>
+      <g class="steve-mouth-idle">
+        <rect x="43" y="46" width="10" height="6" fill="#5c331e"/>
+      </g>
     `;
     // Пиксельная капля удивления
     extraProp = `
