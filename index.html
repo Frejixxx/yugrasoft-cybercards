@@ -211,10 +211,17 @@
             </span>
           </div>
 
-          <button onclick="resetCardsSession()" class="text-xs font-bold text-cgy-muted hover:text-cgy-err flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-white/80 transition">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-            <span data-i18n="btn_restart_cards">Начать заново</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <button id="btn-card-read-aloud" onclick="toggleReadAloud()" type="button"
+              class="btn-3d inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#eaf1fb] border-2 border-[#93c5fd] border-b-[#1e5aa8] text-cgy-accent text-xs font-extrabold transition shadow-sm">
+              <i data-lucide="volume-2" class="w-4 h-4"></i>
+              <span id="btn-card-read-aloud-label" data-i18n="btn_read_aloud">Озвучить</span>
+            </button>
+            <button onclick="resetCardsSession()" class="text-xs font-bold text-cgy-muted hover:text-cgy-err flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-white/80 transition">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span data-i18n="btn_restart_cards">Начать заново</span>
+            </button>
+          </div>
         </div>
 
         <div class="p-4 sm:p-7 flex flex-col gap-5">

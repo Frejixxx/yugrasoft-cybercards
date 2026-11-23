@@ -1081,6 +1081,7 @@ function renderCurrentCard(animateEntrance = false) {
 
   renderCardsStepper();
   renderLootHotbar();
+  updateReadAloudAvailability();
 
   const body = document.getElementById('card-interactive-body');
   body.innerHTML = '';
@@ -1486,22 +1487,27 @@ function inspectLootItem(cardId, unlocked, loot) {
 }
 
 function updateReadAloudAvailability() {
-  const btn = document.getElementById('btn-read-aloud');
-  if (!btn) return;
   const card = getCardById(state.currentCardId);
-  const isDefaultCard = Boolean(card && !String(card.id).startsWith('custom_'));
+  const isDefaultCard = !card || !String(card.id).startsWith('custom_');
   const langPref = state.lang === 'en' ? 'en' : 'ru';
   const hasGoodVoice = isDefaultCard || (SoundFX.hasNeuralVoice && SoundFX.hasNeuralVoice(langPref));
-  btn.classList.toggle('hidden', !hasGoodVoice);
+  ['btn-read-aloud', 'btn-card-read-aloud'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.classList.toggle('hidden', !hasGoodVoice);
+  });
 }
 
 function stopReadAloud() {
   isReadingAloud = false;
   SoundFX.stopSpeech();
-  const btn = document.getElementById('btn-read-aloud');
-  const lbl = document.getElementById('btn-read-aloud-label');
-  if (btn) btn.classList.remove('btn-speaking');
-  if (lbl) lbl.textContent = t('btn_read_aloud');
+  ['btn-read-aloud', 'btn-card-read-aloud'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.classList.remove('btn-speaking');
+  });
+  ['btn-read-aloud-label', 'btn-card-read-aloud-label'].forEach(id => {
+    const lbl = document.getElementById(id);
+    if (lbl) lbl.textContent = t('btn_read_aloud');
+  });
 }
 
 function toggleReadAloud() {
@@ -1521,10 +1527,14 @@ function toggleReadAloud() {
   const isEvaluated = Boolean(res && res.answered && !state.cardDraft.retrying);
   const setSpeakingUI = (active) => {
     isReadingAloud = active;
-    const btn = document.getElementById('btn-read-aloud');
-    const lbl = document.getElementById('btn-read-aloud-label');
-    if (btn) btn.classList.toggle('btn-speaking', active);
-    if (lbl) lbl.textContent = active ? t('btn_stop_aloud') : t('btn_read_aloud');
+    ['btn-read-aloud', 'btn-card-read-aloud'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.classList.toggle('btn-speaking', active);
+    });
+    ['btn-read-aloud-label', 'btn-card-read-aloud-label'].forEach(id => {
+      const lbl = document.getElementById(id);
+      if (lbl) lbl.textContent = active ? t('btn_stop_aloud') : t('btn_read_aloud');
+    });
   };
 
   const playTtsFallback = () => {
