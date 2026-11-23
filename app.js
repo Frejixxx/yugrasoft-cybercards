@@ -1062,6 +1062,7 @@ function saveStudentProfile(e) {
   closeStudentProfileModal();
 
   if (state.heroSkin !== prevSkin) {
+    stopReadAloud();
     SoundFX.playConnect();
     const isAlex = state.heroSkin === 'alex';
     const greet = state.lang === 'en'
@@ -1808,18 +1809,81 @@ function updateReadAloudAvailability() {
   });
 }
 
-function stopReadAloud() {
-  isReadingAloud = false;
-  setSteveTalking(false);
-  SoundFX.stopSpeech();
+let reactionVoiceTimer = null;
+let lastWinVoiceIdx = 0;
+
+function setHeroSpeakingUI(active) {
+  isReadingAloud = active;
+  setSteveTalking(active);
   ['btn-read-aloud', 'btn-card-read-aloud'].forEach(id => {
     const btn = document.getElementById(id);
-    if (btn) btn.classList.remove('btn-speaking');
+    if (btn) btn.classList.toggle('btn-speaking', active);
   });
   ['btn-read-aloud-label', 'btn-card-read-aloud-label'].forEach(id => {
     const lbl = document.getElementById(id);
-    if (lbl) lbl.textContent = t('btn_read_aloud');
+    if (lbl) lbl.textContent = active ? t('btn_stop_aloud') : t('btn_read_aloud');
   });
+}
+
+function stopReadAloud() {
+  if (reactionVoiceTimer) {
+    clearTimeout(reactionVoiceTimer);
+    reactionVoiceTimer = null;
+  }
+  setHeroSpeakingUI(false);
+  SoundFX.stopSpeech();
+}
+
+function getHeroCardAudioUrl(cardId, kind, audioLang) {
+  if (state.heroSkin === 'alex') {
+    return `audio/alex/${cardId}_${kind}_${audioLang}.mp3`;
+  }
+  return `audio/${cardId}_${kind}_${audioLang}.mp3`;
+}
+
+function getHeroReactionAudioUrl(card, isCorrect) {
+  const isAlex = state.heroSkin === 'alex';
+  const audioLang = state.lang === 'en' ? 'en' : 'ru';
+  const isDefaultCard = card && !String(card.id).startsWith('custom_');
+
+  if (isCorrect) {
+    const maxIdx = audioLang === 'en' ? 2 : 4;
+    let pick = Math.floor(Math.random() * maxIdx) + 1;
+    if (maxIdx > 1 && pick === lastWinVoiceIdx) {
+      pick = (pick % maxIdx) + 1;
+    }
+    lastWinVoiceIdx = pick;
+    return isAlex
+      ? `audio/alex/win_${pick}_${audioLang}.mp3`
+      : `audio/steve_win_${pick}_${audioLang}.mp3`;
+  }
+
+  // При ошибке в русском режиме — персональный поддерживающий разбор именно этой карточки!
+  if (audioLang === 'ru' && isDefaultCard) {
+    return isAlex
+      ? `audio/alex/fail_${card.id}_ru.mp3`
+      : `audio/steve_fail_${card.id}_ru.mp3`;
+  }
+
+  const failIdx = Math.floor(Math.random() * 2) + 1;
+  return isAlex
+    ? `audio/alex/fail_${failIdx}_en.mp3`
+    : `audio/steve_fail_${failIdx}_en.mp3`;
+}
+
+function playHeroReactionVoice(card, isCorrect) {
+  if (!SoundFX.isEnabled() || !SoundFX.playAudioFile) return;
+  stopReadAloud();
+  const targetCardId = card ? card.id : null;
+  const audioUrl = getHeroReactionAudioUrl(card, isCorrect);
+  reactionVoiceTimer = setTimeout(() => {
+    reactionVoiceTimer = null;
+    if (!SoundFX.isEnabled() || state.activeTab !== 'cards') return;
+    if (targetCardId && state.currentCardId !== targetCardId) return;
+    if (state.cardDraft && state.cardDraft.retrying) return;
+    setHeroSpeakingUI(true);
+    SoundFX.playAudioFile(audioUrl, () => stopReadAloud(), () => stopReadAloud());
+  }, 260);
 }
 
 function toggleReadAloud() {
@@ -1837,18 +1901,6 @@ function toggleReadAloud() {
 
   const res = state.cardResults[card.id];
   const isEvaluated = Boolean(res && res.answered && !state.cardDraft.retrying);
-  const setSpeakingUI = (active) => {
-    isReadingAloud = active;
-    setSteveTalking(active);
-    ['btn-read-aloud', 'btn-card-read-aloud'].forEach(id => {
-      const btn = document.getElementById(id);
-      if (btn) btn.classList.toggle('btn-speaking', active);
-    });
-    ['btn-read-aloud-label', 'btn-card-read-aloud-label'].forEach(id => {
-      const lbl = document.getElementById(id);
-      if (lbl) lbl.textContent = active ? t('btn_stop_aloud') : t('btn_read_aloud');
-    });
-  };
 
   const playTtsFallback = () => {
     let toRead = `${L(card.title)}. ${L(card.prompt)}`;
@@ -1857,18 +1909,18 @@ function toggleReadAloud() {
     }
     const speechLang = state.lang === 'en' ? 'en-US' : 'ru-RU';
     const started = SoundFX.speakVoice(toRead, { lang: speechLang, neuralOnly: true, rate: 1.0, pitch: 1.0 }, () => stopReadAloud());
-    if (started) setSpeakingUI(true);
+    if (started) setHeroSpeakingUI(true);
     else stopReadAloud();
   };
 
-  // Играем готовую естественную MP3-озвучку (работает в ЛЮБОМ браузере офлайн, без робота Ирины!)
+  // Играем готовую естественную MP3-озвучку под активного героя (Стив или Алекс)!
   const isDefaultCard = !String(card.id).startsWith('custom_');
   if (isDefaultCard && SoundFX.playAudioFile) {
     const audioLang = state.lang === 'en' ? 'en' : 'ru';
-    const audioUrl = `audio/${card.id}_${isEvaluated ? 'e' : 'q'}_${audioLang}.mp3`;
-    setSpeakingUI(true);
+    const audioUrl = getHeroCardAudioUrl(card.id, isEvaluated ? 'e' : 'q', audioLang);
+    setHeroSpeakingUI(true);
     SoundFX.playAudioFile(audioUrl, () => stopReadAloud(), () => {
-      setSpeakingUI(false);
+      setHeroSpeakingUI(false);
       playTtsFallback();
     });
     return;
@@ -2860,13 +2912,14 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
   updateAllProgressBadges();
   renderCurrentCard();
 
-  // Живая анимация Югорки на ответ ребёнка!
+  // Живая анимация и авто-озвучка героя на ответ ребёнка!
   const winList = t('yugorka_win');
   const oopsList = t('yugorka_oops');
   const msg = isCorrect
     ? winList[Math.floor(Math.random() * winList.length)]
     : oopsList[Math.floor(Math.random() * oopsList.length)];
   updateMascot(isCorrect ? 'happy' : 'oops', msg, true);
+  playHeroReactionVoice(card, isCorrect);
 
   emitPortalEvent('card_answered', {
     cardId: card.id,
@@ -2918,6 +2971,7 @@ function showCardFeedbackUI(card, isCorrect, adaptiveNote) {
 }
 
 function retryCurrentCard() {
+  stopReadAloud();
   const card = getCardById(state.currentCardId);
   if (!card) return;
   state.cardDraft = { retrying: true };
@@ -2927,6 +2981,7 @@ function retryCurrentCard() {
 }
 
 function goNextCard() {
+  stopReadAloud();
   const unanswered = CARDS.filter(c => !(state.cardResults[c.id] && state.cardResults[c.id].answered));
   if (unanswered.length === 0) {
     switchMainTab('results');
@@ -4755,6 +4810,7 @@ function roundRect(ctx, x, y, w, h, r) {
 function toggleSound() {
   state.soundOn = !state.soundOn;
   SoundFX.setEnabled(state.soundOn);
+  if (!state.soundOn) stopReadAloud();
   saveState();
   updateSoundIcon();
   if (state.soundOn) SoundFX.playOutgoing();

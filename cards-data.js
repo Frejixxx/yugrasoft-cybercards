@@ -144,9 +144,9 @@ const DEFAULT_CARDS = [
     },
     correctAnswer: false,
     explanation: {
-      ru: 'Это НЕВЕРНО! Простые пароли (123456, qwerty, дата рождения) программы подбирают меньше чем за секунду. Используй длинный пароль из букв, цифр и символов — и разный для важных аккаунтов.',
-      en: 'FALSE! Simple passwords like 123456 or birthdays are cracked in under a second. Use a long mix of letters, numbers, and symbols — and unique passwords for important accounts.',
-      kca: 'Щит ӐН ТӘСА! Моньщ парольӑт (123456, сємӑн питӑм хӑтӆ) программа секундайн вәӆӆы. Хәв па тӑк пароль (буквайт, цифрайт) хӑншты мӑсӆ.'
+      ru: 'Утверждение неверно: простые пароли (123456, qwerty, дата рождения) программы подбирают меньше чем за секунду. Используй длинный пароль из букв, цифр и символов — и разный для важных аккаунтов.',
+      en: 'This statement is false: simple passwords like 123456 or birthdays are cracked in under a second. Use a long mix of letters, numbers, and symbols — and unique passwords for important accounts.',
+      kca: 'Щи ясӑӊ ӑн тәса: моньщ парольӑт (123456, сємӑн питӑм хӑтӆ) программа секундайн вәӆӆы. Хәв па тӑк пароль (буквайт, цифрайт) хӑншты мӑсӆ.'
     }
   },
 
@@ -367,9 +367,9 @@ const DEFAULT_CARDS = [
       }
     ],
     explanation: {
-      ru: 'Ты верно определил все связи! Фишинговые ссылки закрываем, фото незнакомцам не отправляем, а любые срочные просьбы «друзей» о деньгах или кодах всегда проверяем звонком.',
-      en: 'Great matching! Never click fake domains, never send personal photos to strangers, and always verify urgent friend requests via a phone call.',
-      kca: 'Ёмӑщ! Фишинг ссылкатн ӑн мӑнӆўв, ӑн вәтӑм хоятӑта фото ӑн китӆўв, а юрӑт вохты вух па SMS-код телефонӑн вәньщӆўв.'
+      ru: 'Правило кибердетектива: фишинговые ссылки сразу закрываем, фото школы незнакомцам не отправляем, а любые срочные просьбы «друзей» о деньгах или кодах всегда проверяем звонком.',
+      en: 'Cyber-detective rule: never click fake domains, never send personal or school photos to strangers, and always verify urgent friend requests with a real phone call.',
+      kca: 'Тәса правило: фишинг ссылкатн ӑн мӑнӆўв, ӑн вәтӑм хоятӑта фото ӑн китӆўв, а юрӑт вохты вух па SMS-код телефонӑн вәньщӆўв.'
     }
   },
 
@@ -458,9 +458,9 @@ const DEFAULT_CARDS = [
       }
     ],
     explanation: {
-      ru: 'Отличный алгоритм! Главное в первую минуту — выкинуть взломщика (сменить пароль и закрыть сеансы), усилить защиту (2FA), предупредить знакомых, а при потере доступа обращаться только в официальную поддержку.',
-      en: 'Perfect sequence! First kick the attacker out (password + sessions), enable 2FA, warn contacts, and contact official support if locked out.',
-      kca: 'Тәса алгоритм! Оӆӑӊӑн пароль пєӆӑк пунты па сеансӑт пӑнтты, 2FA пунты, юрӑта ястӑты па мӑсӆ ки — официальной поддержкайн хӑншты.'
+      ru: 'Правильный порядок действий: в первую минуту нужно выкинуть взломщика (сменить пароль и закрыть чужие сеансы), затем включить 2FA, предупредить друзей и родителей, а при потере доступа обращаться только в официальную поддержку.',
+      en: 'Correct sequence: first kick the attacker out (change password + end sessions), then enable 2FA, warn friends and parents, and contact official support if locked out.',
+      kca: 'Тәса вєрӑт: оӆӑӊӑн пароль пєӆӑк пунты па сеансӑт пӑнтты, 2FA пунты, юрӑта ястӑты па мӑсӆ ки — официальной поддержкайн хӑншты.'
     }
   },
 
@@ -521,9 +521,9 @@ const DEFAULT_CARDS = [
     },
     correctAnswer: false,
     explanation: {
-      ru: 'НЕВЕРНО! Все покупки нужно оплачивать только внутри официального приложения или сайта магазина. Переход по сторонней ссылке из чата и ввод CVV/СМС-кода — классическая кража денег с карты.',
-      en: 'FALSE! Always pay strictly inside the official app or store website. External chat links asking for CVV and SMS codes are classic card theft.',
-      kca: 'ӐН ТӘСА! Вух мӑты тәп официальной приложение аӆпа сайтӑн рӑхӆ. Чат ссылкайн CVV па SMS-код хӑншты — карта эвӑӆт вух вўты вєр!'
+      ru: 'Утверждение неверно: все покупки нужно оплачивать только внутри официального приложения или сайта магазина. Переход по сторонней ссылке из чата и ввод 3 цифр с оборота карты (CVV) и кода из СМС — это кража денег с карты.',
+      en: 'This statement is false: always pay strictly inside the official app or store website. External chat links asking for the 3 back digits (CVV) and SMS codes are classic card theft.',
+      kca: 'Щи ясӑӊ ӑн тәса: вух мӑты тәп официальной приложение аӆпа сайтӑн рӑхӆ. Чат ссылкайн CVV па SMS-код хӑншты — карта эвӑӆт вух вўты вєр!'
     }
   },
 
@@ -595,9 +595,9 @@ const DEFAULT_CARDS = [
       }
     ],
     explanation: {
-      ru: 'Супер! Ты знаешь самые свежие приёмы мошенников: подмену домена, фейковые премиум-галочки и запрет рассказывать родителям.',
-      en: 'Awesome! You recognize the latest scammer tricks: lookalike domains, fake Premium checkmarks, and secrecy demands.',
-      kca: 'Пәмащипа, ёмӑщ! Нӑӊ иса мошенник вєрӑт вәӆӑн: ӑн тәса доменӑт, Premium-галочкат па аӊки-ащийн ястӑты ӑн мӑты ясӑӊӑт.'
+      ru: 'Главные уловки мошенников: поддельные адреса сайтов с лишними словами, фейковые премиум-галочки вместо настоящей проверки и запрет рассказывать родителям.',
+      en: 'Key scammer tricks to watch for: lookalike domains with extra words, fake Premium checkmarks instead of real verification, and demands to hide things from parents.',
+      kca: 'Мошенник вєрӑт: ӑн тәса доменӑт, Premium-галочкат па аӊки-ащийн ястӑты ӑн мӑты ясӑӊӑт.'
     }
   }
 ];
