@@ -1709,11 +1709,6 @@ function renderCardVisual(card) {
     sceneHtml = `
       <div class="rounded-2xl bg-white border-2 border-[#fca5a5] overflow-hidden shadow-sm">
         <div class="px-3.5 py-2.5 bg-gradient-to-r from-[#fee2e2] to-[#fef3c7] border-b-2 border-[#fecaca] flex items-center gap-2.5">
-          <div class="flex items-center gap-1.5 shrink-0">
-            <span class="w-3 h-3 rounded-full bg-[#ef4444]"></span>
-            <span class="w-3 h-3 rounded-full bg-[#f59e0b]"></span>
-            <span class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
-          </div>
           <div class="flex-1 bg-white border-2 border-[#fca5a5] rounded-xl px-3 py-1.5 font-mono text-xs text-cgy-err font-bold flex items-center gap-1.5 flex-wrap shadow-inner">
             <i data-lucide="lock-open" class="w-4 h-4 shrink-0 text-cgy-err"></i>
             <span>${urlHtml}</span>
@@ -1724,8 +1719,9 @@ function renderCardVisual(card) {
     `;
   }
 
+  const shellDoneCls = (clues.length === 0 || allCluesFound) ? 'detective-done' : '';
   slot.innerHTML = `
-    <div class="detective-shell rounded-2xl p-3.5 sm:p-4 max-w-2xl">
+    <div class="detective-shell ${shellDoneCls} rounded-2xl p-3.5 sm:p-4 max-w-2xl">
       ${detectiveHeader}
       ${sceneHtml}
       ${evidenceLog}
@@ -4420,65 +4416,46 @@ function initVoxelBackground() {
     { name: 'yugra',   top: '#60a5fa', front: '#1e5aa8', side: '#14407a', speck: '#dbeafe' }
   ];
 
-  // Летающие интерактивные блоки по краям экрана (не мешают тексту карточки, но их можно ломать кликом!)
-  function spawnFloatingBlock(sideHint = null) {
+  // Летающие интерактивные блоки по краям экрана (просто приятный интерактив без баллов и лагов!)
+  function resetFloatingBlock(b, sideHint = null) {
     const type = BLOCK_TYPES[Math.floor(Math.random() * BLOCK_TYPES.length)];
     const isLeft = sideHint === 'left' ? true : (sideHint === 'right' ? false : Math.random() < 0.5);
     const marginW = Math.max(70, Math.min(200, W * 0.14));
-    const x = isLeft
+    b.x = isLeft
       ? 24 + Math.random() * Math.max(24, marginW - 50)
       : W - 56 - Math.random() * Math.max(24, marginW - 50);
-    const y = 135 + Math.random() * Math.max(120, H - 280);
-    return {
-      x, y,
-      baseY: y,
-      size: 28 + Math.floor(Math.random() * 10),
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.018 + Math.random() * 0.012,
-      side: isLeft ? 'left' : 'right',
-      type,
-      scale: 0.01,
-      alive: true
-    };
+    b.baseY = 135 + Math.random() * Math.max(120, H - 280);
+    b.y = b.baseY;
+    b.size = 28 + Math.floor(Math.random() * 10);
+    b.phase = Math.random() * Math.PI * 2;
+    b.speed = 0.018 + Math.random() * 0.012;
+    b.side = isLeft ? 'left' : 'right';
+    b.type = type;
+    b.scale = 0.02;
+    b.alive = true;
+    b.respawnFrames = 0;
+    return b;
   }
 
-  const floatingBlocks = [
-    spawnFloatingBlock('left'),
-    spawnFloatingBlock('left'),
-    spawnFloatingBlock('left'),
-    spawnFloatingBlock('right'),
-    spawnFloatingBlock('right'),
-    spawnFloatingBlock('right')
-  ];
+  const floatingBlocks = ['left', 'left', 'left', 'right', 'right', 'right'].map(side => resetFloatingBlock({}, side));
 
   const particles = [];
 
-  function spawnMineParticles(x, y, type, count = 14) {
+  function spawnMineParticles(x, y, type, count = 12) {
+    if (particles.length > 60) particles.splice(0, count);
     const colors = [type.top, type.front, type.side, type.speck];
     for (let i = 0; i < count; i++) {
       const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
-      const spd = 2.2 + Math.random() * 4.2;
+      const spd = 2.2 + Math.random() * 4.0;
       particles.push({
         x, y,
         vx: Math.cos(ang) * spd,
-        vy: Math.sin(ang) * spd - 2.4,
-        size: 5 + Math.random() * 6,
+        vy: Math.sin(ang) * spd - 2.2,
+        size: 5 + Math.random() * 5,
         color: colors[i % colors.length],
         life: 1
       });
     }
-  }
-
-  function showMiniPopXp(x, y, label) {
-    const layer = document.getElementById('fx-xp-layer');
-    if (!layer) return;
-    const el = document.createElement('div');
-    el.className = 'xp-float fixed font-extrabold text-xs px-2.5 py-1 rounded-full shadow-md border-2 bg-[#fef3c7] border-[#f59e0b] text-[#92400e]';
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
-    el.textContent = label;
-    layer.appendChild(el);
-    setTimeout(() => el.remove(), 1100);
   }
 
   function drawVoxelCube(cx, cy, s, type, scale = 1) {
@@ -4570,12 +4547,9 @@ function initVoxelBackground() {
       if (Math.hypot(cx - bx, cy - by) <= b.size * 0.95) {
         hit = true;
         b.alive = false;
+        b.respawnFrames = 150;
         SoundFX.playDrop();
-        spawnMineParticles(bx, by, b.type, 16);
-        showMiniPopXp(bx, by - 14, '+5 XP');
-        setTimeout(() => {
-          floatingBlocks[i] = spawnFloatingBlock(b.side);
-        }, 2600);
+        spawnMineParticles(bx, by, b.type, 12);
         break;
       }
     }
@@ -4643,13 +4617,20 @@ function initVoxelBackground() {
       drawVoxelTree(W - 64, H - 20, 1.2);
       drawVoxelTree(W - 128, H - 14, 0.9);
 
-      // 5. Летающие кликабельные 3D-блоки по бокам (на широких экранах)
+      // 5. Летающие кликабельные 3D-блоки по бокам (плавный респавн внутри canvas без setTimeout и лагов)
       if (W >= 820) {
         floatingBlocks.forEach(b => {
-          if (!b.alive) return;
+          if (!b.alive) {
+            if (b.respawnFrames > 0) {
+              b.respawnFrames -= 1;
+              if (b.respawnFrames === 0) resetFloatingBlock(b, b.side);
+            }
+            return;
+          }
           b.phase += b.speed;
           b.y = b.baseY + Math.sin(b.phase) * 9;
-          b.scale += (1 - b.scale) * 0.09;
+          if (b.scale < 0.995) b.scale += (1 - b.scale) * 0.08;
+          else b.scale = 1;
           const bx = b.x + (smoothMx - 0.5) * -18;
           const by = b.y + (smoothMy - 0.5) * -12;
           drawVoxelCube(bx, by, b.size, b.type, b.scale);
