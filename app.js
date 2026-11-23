@@ -48,9 +48,9 @@ const I18N = {
       'Настоящий профи сначала проверяет, потом нажимает. Выбери самый безопасный шаг!'
     ],
     yugorka_win: [
-      'Отлично! +100 XP! Мошенник остался ни с чем!',
+      'Отлично! +100 XP! Очень умное и безопасное решение!',
       'Точно в цель! Твой Кибер-щит Югры стал ещё крепче!',
-      'Супер! Уловка раскрыта — работа настоящего кибердетектива!'
+      'Супер! Всё верно — работа настоящего кибердетектива!'
     ],
     yugorka_oops: [
       'Ой, хитрая ловушка! Ничего страшного — давай посмотрим, в чём подвох, и попробуем ещё раз!',
@@ -209,9 +209,9 @@ const I18N = {
       'A true pro checks twice before clicking. Pick the safest move!'
     ],
     yugorka_win: [
-      'GG! Awesome job! Scammers don’t stand a chance!',
+      'Awesome job! Smart and safe choice!',
       'Bullseye! Your diamond Cyber-Shield just got stronger!',
-      'Nice! You spotted the trick like a real cyber-detective!'
+      'Spot on! That is how a true cyber-detective acts!'
     ],
     yugorka_oops: [
       'Whoa, tricky trap! No worries — let’s see why and try again!',
