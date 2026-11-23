@@ -621,8 +621,8 @@ function applyUrlParams() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('embed') === '1') {
       state.embedMode = true;
-      const ed = document.getElementById('link-editor');
-      if (ed) ed.classList.add('hidden');
+      const brandRow = document.getElementById('portal-brand-row');
+      if (brandRow) brandRow.classList.add('hidden');
     }
     const langParam = params.get('lang');
     if (['ru', 'en', 'kca'].includes(langParam)) state.lang = langParam;

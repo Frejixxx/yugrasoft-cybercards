@@ -71,7 +71,7 @@
 
   <!-- OFFICIAL PORTAL HEADER («Цифровой гражданин Югры») -->
   <header class="bg-white/95 backdrop-blur-md border-b-2 border-[#c5daf4] sticky top-0 z-30 shadow-sm">
-    <div class="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3">
+    <div id="portal-brand-row" class="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3">
       <!-- Brand / Portal Mark -->
       <div class="flex items-center gap-3 min-w-0">
         <div class="w-10 h-10 rounded-lg bg-cgy-accent text-white flex items-center justify-center shrink-0 shadow-sm">
@@ -1025,17 +1025,12 @@
           </button>
         </div>
         <div class="flex items-center gap-1 shrink-0">
-          <button id="btn-read-aloud" onclick="toggleReadAloud()" type="button" title="Озвучить"
-            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#eaf1fb] hover:bg-[#dce8f8] border border-[#bfd7f5] text-cgy-accent text-[11px] font-extrabold transition">
-            <i data-lucide="volume-2" class="w-3 h-3"></i>
-            <span id="btn-read-aloud-label" data-i18n="btn_read_aloud">Озвучить</span>
-          </button>
           <button id="btn-mascot-hint" onclick="askMascotHint()" type="button"
             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#fef3c7] hover:bg-[#fde68a] border border-[#f59e0b] text-[#92400e] text-[11px] font-extrabold transition">
             <i data-lucide="lightbulb" class="w-3 h-3"></i>
             <span data-i18n="btn_hint">Подсказка</span>
           </button>
-          <button onclick="toggleSteveBubble()" type="button" title="Скрыть/показать облачко"
+          <button onclick="toggleSteveBubble()" type="button" title="Свернуть"
             class="w-5 h-5 rounded-md hover:bg-slate-100 text-cgy-muted flex items-center justify-center">
             <i data-lucide="minus" class="w-3.5 h-3.5"></i>
           </button>
