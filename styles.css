@@ -351,16 +351,20 @@ body {
   animation: speakWave 1.3s infinite;
 }
 
-/* Mission Map Stepper Nodes */
+/* Mission Map Stepper Nodes (uniform border prevents Chromium Skia crosshair artifact on scale) */
 .mission-node {
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
+  will-change: transform;
+  backface-visibility: hidden;
   transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.16s ease;
 }
 .mission-node:hover {
-  transform: translateY(-2px) scale(1.07);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(30, 90, 168, 0.22);
 }
 .mission-node-current {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(30, 90, 168, 0.28);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px rgba(30, 90, 168, 0.24), 0 3px 10px rgba(30, 90, 168, 0.28);
 }
 
 /* DRAG-AND-DROP STYLES («Тянучки») */

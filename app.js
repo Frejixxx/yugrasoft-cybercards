@@ -17,6 +17,17 @@ const I18N = {
     app_title: 'Кибер-карточки Югры',
     tab_cards: 'Кибер-карточки',
     tab_chat: 'Симулятор чатов',
+    tab_blitz: 'Блиц-атака',
+    blitz_title: 'Блиц: отбей атаку скамеров!',
+    blitz_sub: '60 секунд • 3 сердечка • комбо за скорость',
+    blitz_record_lbl: 'Рекорд',
+    blitz_rules: 'На экран летят сообщения от друзей, учителей и мошенников. Успей за 60 секунд решить: пропустить безопасное сообщение или отправить скамера в БАН!',
+    blitz_btn_safe: 'Безопасно',
+    blitz_btn_ban: 'В БАН! (Скам)',
+    blitz_start_btn: 'Поехали! (60 сек)',
+    blitz_score_lbl: 'Очки',
+    blitz_acc_lbl: 'Верно',
+    blitz_again_btn: 'Сыграть ещё раз',
     tab_results: 'Аналитика и сертификат',
     overall_progress: 'Общий прогресс:',
     card_counter_label: 'Миссия:',
@@ -166,6 +177,17 @@ const I18N = {
     app_title: 'Yugra Cyber-Cards',
     tab_cards: 'Cyber-Cards',
     tab_chat: 'Chat Simulator',
+    tab_blitz: '60s Blitz',
+    blitz_title: '60s Blitz: Stop the Scammers!',
+    blitz_sub: '60 seconds • 3 hearts • speed combo',
+    blitz_record_lbl: 'Best',
+    blitz_rules: 'Messages from friends, teachers, and scammers fly onto the screen. Decide fast: let safe messages pass or BAN the scammer!',
+    blitz_btn_safe: 'Safe',
+    blitz_btn_ban: 'BAN! (Scam)',
+    blitz_start_btn: 'Start! (60 sec)',
+    blitz_score_lbl: 'Score',
+    blitz_acc_lbl: 'Correct',
+    blitz_again_btn: 'Play Again',
     tab_results: 'Analytics & Certificate',
     overall_progress: 'Overall progress:',
     card_counter_label: 'Mission:',
@@ -315,6 +337,17 @@ const I18N = {
     app_title: 'Югра кибер-карточкат',
     tab_cards: 'Кибер-карточкат',
     tab_chat: 'Потӑр симулятор',
+    tab_blitz: 'Блиц 60с',
+    blitz_title: 'Блиц: мошенникӑт пӑнтэ!',
+    blitz_sub: '60 секунда • 3 сӑм • комбо',
+    blitz_record_lbl: 'Рекорд',
+    blitz_rules: '60 секундайн пириэ: тәса нєпек аӆпа мошенник!',
+    blitz_btn_safe: 'Тәса',
+    blitz_btn_ban: 'БАН! (Мошенник)',
+    blitz_start_btn: 'Оӆӊӑӆ! (60с)',
+    blitz_score_lbl: 'Очки',
+    blitz_acc_lbl: 'Тәса',
+    blitz_again_btn: 'Иӆпийн',
     tab_results: 'Аналитика па сертификат',
     overall_progress: 'Иса вєр:',
     card_counter_label: 'Миссия:',
@@ -469,7 +502,9 @@ function L(val) {
 // ==================== СОСТОЯНИЕ ПРИЛОЖЕНИЯ ====================
 const state = {
   lang: 'ru',
-  activeTab: 'cards',         // 'cards' | 'chat' | 'results'
+  activeTab: 'cards',         // 'cards' | 'chat' | 'blitz' | 'results'
+  heroSkin: 'steve',          // 'steve' | 'alex'
+  blitzBest: 0,
   profile: {
     fio: '',
     gradeClass: '5-7'         // '1-4' | '5-7' | '8-11'
@@ -599,7 +634,7 @@ function applyUrlParams() {
       state.chatGradeMode = classParam === '8-11' ? '8-11' : '5-7';
     }
     const tabParam = params.get('tab');
-    if (['cards', 'chat', 'results'].includes(tabParam)) {
+    if (['cards', 'chat', 'blitz', 'results'].includes(tabParam)) {
       state.activeTab = tabParam;
     }
   } catch (e) {}
@@ -609,7 +644,7 @@ window.addEventListener('message', (e) => {
   const data = e.data;
   if (!data || data.target !== 'cybercards-yugra') return;
   if (data.action === 'setLang' && ['ru', 'en', 'kca'].includes(data.value)) setLang(data.value);
-  if (data.action === 'setTab' && ['cards', 'chat', 'results'].includes(data.value)) switchMainTab(data.value);
+  if (data.action === 'setTab' && ['cards', 'chat', 'blitz', 'results'].includes(data.value)) switchMainTab(data.value);
 });
 
 // ==================== ЗАГРУЗКА ДАННЫХ ====================
@@ -644,6 +679,8 @@ function loadState() {
     if (!raw) return;
     const p = JSON.parse(raw);
     if (['ru', 'en', 'kca'].includes(p.lang)) state.lang = p.lang;
+    if (p.heroSkin === 'steve' || p.heroSkin === 'alex') state.heroSkin = p.heroSkin;
+    if (typeof p.blitzBest === 'number') state.blitzBest = p.blitzBest;
     if (p.profile) state.profile = { ...state.profile, ...p.profile };
     if (p.currentCardId) state.currentCardId = p.currentCardId;
     if (typeof p.adaptiveLevel === 'number') state.adaptiveLevel = p.adaptiveLevel;
@@ -668,6 +705,8 @@ function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       lang: state.lang,
+      heroSkin: state.heroSkin,
+      blitzBest: state.blitzBest,
       profile: state.profile,
       currentCardId: state.currentCardId,
       adaptiveLevel: state.adaptiveLevel,
@@ -752,6 +791,7 @@ function init() {
   updateChatGradeUI();
   initDraggableSteve();
   initVoxelBackground();
+  updateBlitzStartUI();
   renderCurrentCard();
   renderChatList();
   updateAllProgressBadges();
@@ -769,10 +809,13 @@ function init() {
 
 function switchMainTab(tab, announce = true) {
   stopReadAloud();
+  if (tab !== 'blitz') stopBlitzTimerOnly();
   state.activeTab = tab;
-  ['cards', 'chat', 'results'].forEach(name => {
-    document.getElementById(`view-${name}`).classList.toggle('hidden', name !== tab);
-    document.getElementById(`nav-tab-${name}`).classList.toggle('active', name === tab);
+  ['cards', 'chat', 'blitz', 'results'].forEach(name => {
+    const v = document.getElementById(`view-${name}`);
+    const n = document.getElementById(`nav-tab-${name}`);
+    if (v) v.classList.toggle('hidden', name !== tab);
+    if (n) n.classList.toggle('active', name === tab);
   });
 
   // Для вкладки «Симулятор чатов» фиксируем высоту ровно под экран — никаких прокруток всей страницы!
@@ -799,6 +842,8 @@ function switchMainTab(tab, announce = true) {
   } else if (tab === 'chat') {
     renderChatList();
     scrollChatToBottom(false);
+  } else if (tab === 'blitz') {
+    updateBlitzStartUI();
   } else if (tab === 'results') {
     renderResultsDashboard();
   }
@@ -935,7 +980,7 @@ function renderCardsStepper() {
     }
 
     const btn = document.createElement('button');
-    btn.className = `mission-node w-9 h-9 rounded-full border-2 border-b-[3px] text-xs flex items-center justify-center ${cls}`;
+    btn.className = `mission-node w-9 h-9 rounded-full border-2 text-xs flex items-center justify-center ${cls}`;
     btn.innerHTML = inner;
     btn.title = `${idx + 1}. ${L(c.title)} (${t('types')[c.type]})`;
     btn.onclick = () => selectCardById(c.id);
@@ -1159,31 +1204,41 @@ function getYugorkaSvg(mood = 'idle', stars = 0) {
   const hasDiamondHelmet = stars >= 6;
   const hasShield = stars >= 4 || mood === 'happy';
 
-  // Глаза и эмоции Стива (пиксельная сетка 24x24, масштаб x4 = 96x96)
+  const isAlex = state.heroSkin === 'alex';
+  const skinMain = isAlex ? '#f3cfb3' : '#c69272';
+  const skinShade = isAlex ? '#e2b796' : '#bd8867';
+  const skinDark = isAlex ? '#c79774' : '#9c6a4d';
+  const hairMain = isAlex ? '#d96b27' : '#3b2715';
+  const hairLight = isAlex ? '#ea853a' : '#4a321b';
+  const hairDark = isAlex ? '#b55017' : '#2f1f10';
+  const eyeCol = isAlex ? '#1e7e34' : '#49399b';
+  const sleeveL = isAlex ? '#4ade80' : '#00a8a8';
+  const sleeveR = isAlex ? '#22c55e' : '#008c8c';
+  const tunicMain = isAlex ? '#16a34a' : '#1e5aa8';
+  const tunicDark = isAlex ? '#15803d' : '#164482';
+
+  // Глаза и эмоции героя (пиксельная сетка 24x24, масштаб x4 = 96x96)
   let eyes = `
-    <!-- Левый глаз (белок + сине-фиолетовый зрачок Стива, следит за курсором!) -->
     <rect x="30" y="34" width="12" height="6" fill="#ffffff"/>
     <rect x="54" y="34" width="12" height="6" fill="#ffffff"/>
     <g class="steve-pupils">
-      <rect x="36" y="34" width="6" height="6" fill="#49399b"/>
-      <rect x="54" y="34" width="6" height="6" fill="#49399b"/>
+      <rect x="36" y="34" width="6" height="6" fill="${eyeCol}"/>
+      <rect x="54" y="34" width="6" height="6" fill="${eyeCol}"/>
     </g>
-    <!-- Веки для живого моргания -->
     <g class="steve-blink" opacity="0">
-      <rect x="30" y="34" width="12" height="6" fill="#c69272"/>
-      <rect x="30" y="38" width="12" height="2" fill="#7c4f35"/>
-      <rect x="54" y="34" width="12" height="6" fill="#c69272"/>
-      <rect x="54" y="38" width="12" height="2" fill="#7c4f35"/>
+      <rect x="30" y="34" width="12" height="6" fill="${skinMain}"/>
+      <rect x="30" y="38" width="12" height="2" fill="${skinDark}"/>
+      <rect x="54" y="34" width="12" height="6" fill="${skinMain}"/>
+      <rect x="54" y="38" width="12" height="2" fill="${skinDark}"/>
     </g>
   `;
 
   let mouth = `
-    <!-- Классический нос + улыбка Стива -->
-    <rect x="42" y="40" width="12" height="5" fill="#9c6a4d"/>
+    <rect x="42" y="40" width="12" height="5" fill="${skinDark}"/>
     <g class="steve-mouth-idle">
-      <rect x="36" y="45" width="6" height="6" fill="#6b3e26"/>
-      <rect x="42" y="47" width="12" height="5" fill="#6b3e26"/>
-      <rect x="54" y="45" width="6" height="6" fill="#6b3e26"/>
+      <rect x="36" y="45" width="6" height="6" fill="${isAlex ? '#b86e5a' : '#6b3e26'}"/>
+      <rect x="42" y="47" width="12" height="5" fill="${isAlex ? '#b86e5a' : '#6b3e26'}"/>
+      <rect x="54" y="45" width="6" height="6" fill="${isAlex ? '#b86e5a' : '#6b3e26'}"/>
     </g>
   `;
 
@@ -1284,34 +1339,31 @@ function getYugorkaSvg(mood = 'idle', stars = 0) {
       <rect width="96" height="96" fill="#f0f7ff"/>
       <rect x="0" y="76" width="96" height="20" fill="#e2effd"/>
 
-      <!-- Тело Стива (голубая/синяя туника ЦГЮ + 3D-тень справа) -->
-      <rect x="14" y="60" width="14" height="36" fill="#00a8a8"/>
-      <rect x="14" y="74" width="14" height="22" fill="#c69272"/>
-      <rect x="68" y="60" width="14" height="36" fill="#008c8c"/>
-      <rect x="68" y="74" width="14" height="22" fill="#b37d5c"/>
-      <rect x="28" y="60" width="40" height="36" fill="#1e5aa8"/>
-      <rect x="62" y="60" width="6" height="36" fill="#164482"/>
-      <!-- Вырез футболки Стива -->
-      <rect x="40" y="60" width="16" height="6" fill="#b37d5c"/>
-      <rect x="44" y="66" width="8" height="4" fill="#b37d5c"/>
-      <!-- Пиксельный щит Югры на груди -->
+      <!-- Тело героя (Стив / Алекс + 3D-тень справа) -->
+      <rect x="14" y="60" width="14" height="36" fill="${sleeveL}"/>
+      <rect x="14" y="74" width="14" height="22" fill="${skinMain}"/>
+      <rect x="68" y="60" width="14" height="36" fill="${sleeveR}"/>
+      <rect x="68" y="74" width="14" height="22" fill="${skinShade}"/>
+      <rect x="28" y="60" width="40" height="36" fill="${tunicMain}"/>
+      <rect x="62" y="60" width="6" height="36" fill="${tunicDark}"/>
+      <rect x="40" y="60" width="16" height="6" fill="${skinShade}"/>
+      <rect x="44" y="66" width="8" height="4" fill="${skinShade}"/>
       <rect x="42" y="74" width="12" height="12" fill="#ffffff"/>
-      <rect x="45" y="77" width="6" height="6" fill="#1e7e34"/>
+      <rect x="45" y="77" width="6" height="6" fill="${isAlex ? '#1e5aa8' : '#1e7e34'}"/>
 
       <!-- 3D-тень головы справа (воксельный объём!) -->
-      <rect x="72" y="14" width="6" height="46" fill="#9c6a4d"/>
-      <rect x="72" y="14" width="6" height="14" fill="#26170b"/>
+      <rect x="72" y="14" width="6" height="46" fill="${skinDark}"/>
+      <rect x="72" y="14" width="6" height="14" fill="${hairDark}"/>
 
-      <!-- Голова Стива (8x8 блоков) -->
-      <rect x="24" y="12" width="48" height="48" fill="#c69272"/>
-      <!-- Лёгкая пиксельная текстура кожи -->
-      <rect x="24" y="48" width="6" height="12" fill="#bd8867"/>
-      <rect x="66" y="48" width="6" height="12" fill="#bd8867"/>
-      <!-- Волосы Стива -->
-      <rect x="24" y="12" width="48" height="12" fill="#3b2715"/>
-      <rect x="24" y="12" width="48" height="4" fill="#4a321b"/>
-      <rect x="24" y="24" width="6" height="6" fill="#2f1f10"/>
-      <rect x="66" y="24" width="6" height="6" fill="#2f1f10"/>
+      <!-- Голова героя (8x8 блоков) -->
+      <rect x="24" y="12" width="48" height="48" fill="${skinMain}"/>
+      <rect x="24" y="48" width="6" height="12" fill="${skinShade}"/>
+      <rect x="66" y="48" width="6" height="12" fill="${skinShade}"/>
+      <rect x="24" y="12" width="48" height="12" fill="${hairMain}"/>
+      <rect x="24" y="12" width="48" height="4" fill="${hairLight}"/>
+      <rect x="24" y="24" width="6" height="${isAlex ? 14 : 6}" fill="${hairDark}"/>
+      <rect x="66" y="24" width="6" height="${isAlex ? 26 : 6}" fill="${hairMain}"/>
+      ${isAlex ? `<rect x="64" y="50" width="8" height="18" fill="${hairDark}"/><rect x="66" y="66" width="6" height="8" fill="${hairMain}"/>` : ''}
 
       ${eyes}
       ${mouth}
@@ -1346,9 +1398,19 @@ function updateMascot(mood = 'idle', speechText = '', animate = true) {
   if (!avatar || !speech) return;
 
   const stars = getCardStatsSummary().correct;
+  const isAlex = state.heroSkin === 'alex';
+  const heroLabel = state.lang === 'en'
+    ? (isAlex ? 'Cyber-Alex' : 'Cyber-Steve')
+    : (isAlex ? 'Кибер-Алекс' : 'Кибер-Стив');
+  const otherShort = state.lang === 'en'
+    ? (isAlex ? '⇄ Steve' : '⇄ Alex')
+    : (isAlex ? '⇄ Стив' : '⇄ Алекс');
+
   avatar.innerHTML = getYugorkaSvg(mood, stars);
-  if (nameBadge) nameBadge.textContent = t('yugorka_name');
-  if (roleTag) roleTag.textContent = t('yugorka_role');
+  if (nameBadge) nameBadge.textContent = heroLabel;
+  if (roleTag) roleTag.textContent = heroLabel;
+  const skinBtn = document.getElementById('btn-hero-skin');
+  if (skinBtn) skinBtn.textContent = otherShort;
   if (speechText) speech.textContent = speechText;
 
   // Цвет рамки облачка под настроение
@@ -1393,6 +1455,17 @@ function petYugorka() {
   const list = t('yugorka_pet');
   const msg = list[Math.floor(Math.random() * list.length)];
   updateMascot('happy', msg, true);
+}
+
+function toggleHeroSkin() {
+  state.heroSkin = state.heroSkin === 'alex' ? 'steve' : 'alex';
+  saveState();
+  SoundFX.playConnect();
+  const isAlex = state.heroSkin === 'alex';
+  const greet = state.lang === 'en'
+    ? (isAlex ? 'Hey! I am Cyber-Alex — ready to catch scammers!' : 'Hey! Cyber-Steve is back on patrol!')
+    : (isAlex ? 'Привет! Я Кибер-Алекс — погнали ловить мошенников!' : 'Привет! Кибер-Стив снова на страже!');
+  updateMascot('happy', greet, true);
 }
 
 function toggleSteveBubble() {
@@ -4125,45 +4198,56 @@ function drawCanvasStar(ctx, cx, cy, outerR, innerR, fillColor, strokeColor) {
   }
 }
 
-// Рисуем пиксельного Кибер-Стива прямо на игровом дипломе!
+// Рисуем пиксельного героя (Стива или Алекс) прямо на игровом дипломе!
 function drawCertSteve(ctx, ox, oy, scale, stars) {
+  const isAlex = state.heroSkin === 'alex';
   const px = (x, y, w, h, color) => {
     ctx.fillStyle = color;
     ctx.fillRect(ox + x * scale, oy + y * scale, w * scale, h * scale);
   };
 
-  // Карточка-пьедестал под Стивом
-  ctx.fillStyle = '#e6f2ff';
-  ctx.strokeStyle = '#93c5fd';
+  // Карточка-пьедестал под героем
+  ctx.fillStyle = isAlex ? '#ecfdf5' : '#e6f2ff';
+  ctx.strokeStyle = isAlex ? '#6ee7b7' : '#93c5fd';
   ctx.lineWidth = 3;
   roundRect(ctx, ox - 14, oy - 14, 96 * scale + 28, 96 * scale + 28, 22);
   ctx.fill();
   ctx.stroke();
 
+  const skinM = isAlex ? '#f3cfb3' : '#c69272';
+  const skinS = isAlex ? '#e2b796' : '#b37d5c';
+  const skinD = isAlex ? '#c79774' : '#9c6a4d';
+  const hairM = isAlex ? '#d96b27' : '#3b2715';
+  const hairL = isAlex ? '#ea853a' : '#4a321b';
+  const hairD = isAlex ? '#b55017' : '#2f1f10';
+
   // Тело и руки
-  px(14, 60, 14, 36, '#00a8a8');
-  px(14, 74, 14, 22, '#c69272');
-  px(68, 60, 14, 36, '#008c8c');
-  px(68, 74, 14, 22, '#b37d5c');
-  px(28, 60, 40, 36, '#1e5aa8');
-  px(62, 60, 6, 36, '#164482');
-  px(40, 60, 16, 6, '#b37d5c');
-  px(44, 66, 8, 4, '#b37d5c');
-  // Щит на груди
+  px(14, 60, 14, 36, isAlex ? '#4ade80' : '#00a8a8');
+  px(14, 74, 14, 22, skinM);
+  px(68, 60, 14, 36, isAlex ? '#22c55e' : '#008c8c');
+  px(68, 74, 14, 22, skinS);
+  px(28, 60, 40, 36, isAlex ? '#16a34a' : '#1e5aa8');
+  px(62, 60, 6, 36, isAlex ? '#15803d' : '#164482');
+  px(40, 60, 16, 6, skinS);
+  px(44, 66, 8, 4, skinS);
   px(42, 74, 12, 12, '#ffffff');
-  px(45, 77, 6, 6, '#1e7e34');
+  px(45, 77, 6, 6, isAlex ? '#1e5aa8' : '#1e7e34');
 
   // 3D тень головы
-  px(72, 14, 6, 46, '#9c6a4d');
-  px(72, 14, 6, 14, '#26170b');
+  px(72, 14, 6, 46, skinD);
+  px(72, 14, 6, 14, hairD);
   // Голова + волосы
-  px(24, 12, 48, 48, '#c69272');
-  px(24, 48, 6, 12, '#bd8867');
-  px(66, 48, 6, 12, '#bd8867');
-  px(24, 12, 48, 12, '#3b2715');
-  px(24, 12, 48, 4, '#4a321b');
-  px(24, 24, 6, 6, '#2f1f10');
-  px(66, 24, 6, 6, '#2f1f10');
+  px(24, 12, 48, 48, skinM);
+  px(24, 48, 6, 12, skinS);
+  px(66, 48, 6, 12, skinS);
+  px(24, 12, 48, 12, hairM);
+  px(24, 12, 48, 4, hairL);
+  px(24, 24, 6, isAlex ? 14 : 6, hairD);
+  px(66, 24, 6, isAlex ? 26 : 6, hairM);
+  if (isAlex) {
+    px(64, 50, 8, 18, hairD);
+    px(66, 66, 6, 8, hairM);
+  }
 
   // Радостные глаза и улыбка
   px(30, 33, 12, 4, '#2f1f10');
@@ -4690,6 +4774,206 @@ function burstConfetti(intensity = 'small') {
   }
   draw();
 }
+
+// ==================== БЛИЦ-АТАКА 60 СЕКУНД («ОТБЕЙ СКАМЕРОВ!») ====================
+
+const BLITZ_POOL = [
+  { safe: false, color: '#c97b2b', av: 'AP', sender: 'Admin_Pro99', tag: { ru: 'Игровой чат', en: 'Game Chat', kca: 'Юнт чат' }, text: { ru: 'Дарова! Выдаю бесплатную админку — скинь логин и пароль на 2 минуты!', en: 'Hey! Free admin rights — send your login and password for 2 mins!', kca: 'Вух ӆыпи админка мӑӆум — логин па пароль китэ!' }, why: { ru: 'Админ никогда не просит пароль!', en: 'Admins never ask for passwords!', kca: 'Админ пароль ӑн вохӆ!' } },
+  { safe: true,  color: '#4c8c5c', av: 'МА', sender: 'Мама', tag: { ru: 'Семья', en: 'Family', kca: 'Хот' }, text: { ru: 'Привет! Купи хлеба по дороге домой, деньги я оставила на столе.', en: 'Hi! Grab some bread on your way home, I left cash on the table.', kca: 'Вўща! Хот юшӑн нянь вўэ, вух пасан эӆты хӑщсум.' }, why: { ru: 'Обычная просьба мамы без кодов и ссылок.', en: 'Normal family message with no red flags.', kca: 'Ёмӑщ хот потӑр!' } },
+  { safe: false, color: '#dc2626', av: 'ГУ', sender: 'Госуслуги_Бот', tag: { ru: 'Неизвестный бот', en: 'Unknown Bot', kca: 'Бот' }, text: { ru: 'СРОЧНО! Вас взломали! Пришлите 6-значный код из СМС прямо сюда за 60 секунд!', en: 'URGENT! Hacked! Send your 6-digit SMS code right here within 60 seconds!', kca: 'ЩИМӐЩ! 60 секундайн SMS-код тӑта хӑншэ!' }, why: { ru: 'Госуслуги не пишут ботами и не просят СМС-коды!', en: 'Official agencies never ask for SMS codes in chat!', kca: 'Госуслуги SMS-код ӑн вохӆ!' } },
+  { safe: true,  color: '#1e5aa8', av: '6Б', sender: 'Артём (6Б)', tag: { ru: 'Одноклассник', en: 'Classmate', kca: 'Юр' }, text: { ru: 'Го сегодня в 18:00 в Майнкрафт на нашем сервере? Построим замок!', en: 'Wanna play Minecraft on our server at 6 PM? Let’s build a castle!', kca: '18:00 Майнкрафт юнтӆўв?' }, why: { ru: 'Обычное приглашение поиграть без паролей и денег.', en: 'Just a friendly game invite — totally safe!', kca: 'Ёмӑщ юнт потӑр!' } },
+  { safe: false, color: '#a84b7a', av: 'ВЛ', sender: 'Вика_Приз_VIP', tag: { ru: 'Фейк-блогер', en: 'Fake Blogger', kca: 'Блогер' }, text: { ru: 'Ты выиграл iPhone 16! Оплати 490 ₽ за доставку по ссылке cdek-priz86.ru!', en: 'You won an iPhone 16! Pay $5 delivery fee at cdek-priz86.ru!', kca: 'iPhone вўсэн! Доставка пӑта 490 ₽ китэ!' }, why: { ru: 'За настоящий приз никогда не просят платить!', en: 'Real prizes never charge a delivery fee!', kca: 'Приз пӑта вух ӑн вохӆӑт!' } },
+  { safe: false, color: '#6d5cae', av: 'ЕВ', sender: 'Завуч (новый акк)', tag: { ru: 'Создан вчера', en: 'Created yesterday', kca: 'Хӑӆєвӑт вєрсы' }, text: { ru: 'В школе секретная проверка! Никому не говори, даже родителям, и перейди по ссылке!', en: 'Secret school inspection! Tell nobody, not even parents, and click this link!', kca: 'Тайной проверка! Аӊки-ащийн ӑн ястӑэ па ссылкайн ӆәӊэ!' }, why: { ru: 'Запрет рассказывать родителям — 100% мошенник!', en: 'Forbidding you to tell parents is 100% a scam!', kca: 'Аӊки-ащийн ӑн мӑты — мошенник!' } },
+  { safe: true,  color: '#0d9488', av: 'УЧ', sender: 'Ольга Ивановна', tag: { ru: 'Общий чат класса', en: 'Class Group', kca: 'Класс чат' }, text: { ru: 'Ребята, напоминаю: завтра первый урок начинается в 8:30, принесите тетради.', en: 'Kids, reminder: first class starts at 8:30 tomorrow, bring your notebooks.', kca: 'Хӑӆєвӑт 8:30 урок, тетрадьӑт тәты.' }, why: { ru: 'Обычное объявление учителя в общем чате класса.', en: 'Normal teacher announcement in the class group.', kca: 'Тәса ӑшкола нєпек.' } },
+  { safe: false, color: '#2e8b6a', av: 'Р86', sender: 'Работа 86', tag: { ru: 'Скрытый номер', en: 'Hidden Number', kca: 'Ӑн вәтӑм' }, text: { ru: 'Лёгкие 5000 ₽ в день! Просто принимай чужие переводы на свою карту и переводи дальше.', en: 'Easy $50/day! Just receive strangers’ transfers on your card and forward them.', kca: '5000 ₽ хӑтӆӑн! Йиӆуп вух картайн вўэ па єӆӆы китэ.' }, why: { ru: 'Это дропперство — уголовная ответственность и блокировка карт!', en: 'That is illegal money muling (dropper scam)!', kca: 'Щит дропперство — закон эвӑӆт ӑн рӑхӆ!' } },
+  { safe: false, color: '#3b82b6', av: 'МК', sender: 'Макс (взломан?)', tag: { ru: 'Личка', en: 'DM', kca: 'Чат' }, text: { ru: 'Бро срочно скинь 1500 ₽ на карту моего кента Руслана, звонить не могу!', en: 'Bro urgently send 1500 ₽ to my buddy’s card, can’t pick up calls!', kca: 'Щимӑщ 1500 ₽ йиӆуп хоят картайн китэ, телефон ӑн вўӆум!' }, why: { ru: 'Деньги на чужую карту без звонка — аккаунт друга взломали!', en: 'Sending money to a stranger’s card without calling = hacked friend!', kca: 'Йиӆуп карта — взлом!' } },
+  { safe: true,  color: '#2563eb', av: 'ДР', sender: 'Саша', tag: { ru: 'Друг', en: 'Friend', kca: 'Юр' }, text: { ru: 'Скинь пожалуйста фотку домашнего задания по математике, я страницу забыл!', en: 'Could you send a photo of the math homework? I forgot the page number!', kca: 'Математика дз фото китэ пж!' }, why: { ru: 'Просьба скинуть домашку — полностью безопасно.', en: 'Asking for math homework — completely safe!', kca: 'Ёмӑщ потӑр!' } },
+  { safe: false, color: '#b45309', av: 'АВ', sender: 'Продавец куртки', tag: { ru: 'Объявление', en: 'Marketplace', kca: 'Тыныты хоят' }, text: { ru: 'Чтобы получить оплату, перейди по ссылке avito-oplata-free.ru и введи 3 цифры с оборота карты!', en: 'To receive payment, open avito-oplata-free.ru and enter the 3 digits on the back of your card!', kca: 'Вух вўты пӑта avito-oplata-free.ru ссылкайн карта юпи 3 цифра хӑншэ!' }, why: { ru: 'Для получения денег никогда не нужны 3 цифры CVV и левая ссылка!', en: 'You NEVER enter CVV digits on an external link to receive money!', kca: 'CVV па левой ссылка — кража!' } },
+  { safe: true,  color: '#7c3aed', av: 'ТР', sender: 'Тренер секции', tag: { ru: 'Чат футбола', en: 'Soccer Chat', kca: 'Спорт чат' }, text: { ru: 'В субботу тренировка переносится в малый зал на 11:00. Возьмите воду и сменку.', en: 'Saturday practice moves to the small gym at 11 AM. Bring water and sneakers.', kca: 'Субботайн тренировка 11:00 вәӆӆ.' }, why: { ru: 'Обычное сообщение от тренера без ссылок и просьб о деньгах.', en: 'Regular coach update — totally safe.', kca: 'Тәса нєпек!' } },
+  { safe: false, color: '#0891b2', av: 'КН', sender: 'Конкурс Талантов', tag: { ru: 'Голосование', en: 'Contest', kca: 'Конкурс' }, text: { ru: 'Проголосуй за мою племянницу! Введи свой номер и код из СМС от Telegram на сайте!', en: 'Vote for my niece! Enter your phone and Telegram SMS code on the site!', kca: 'Голосование пӑта Telegram SMS-код хӑншэ!' }, why: { ru: 'Код от Telegram на чужом сайте = мгновенный угон аккаунта!', en: 'Typing a Telegram SMS code on a contest site steals your account!', kca: 'Telegram SMS-код хӑншты ӑн рӑхӆ!' } },
+  { safe: true,  color: '#16a34a', av: 'ПА', sender: 'Папа', tag: { ru: 'Семья', en: 'Family', kca: 'Хот' }, text: { ru: 'Я подъехал к школе, стою у главных ворот. Выходи, как закончишь!', en: 'I’m parked by the main school gate. Come out when you’re done!', kca: 'Ӑшкола хося юхӑтсум, єӆӆы ким этэ!' }, why: { ru: 'Обычное сообщение от папы — никаких признаков обмана.', en: 'Normal message from Dad — totally safe.', kca: 'Ёмӑщ хот потӑр!' } }
+];
+
+let blitzState = {
+  running: false,
+  timeLeft: 60,
+  hearts: 3,
+  score: 0,
+  combo: 0,
+  correct: 0,
+  total: 0,
+  queue: [],
+  current: null,
+  timerId: null
+};
+
+function stopBlitzTimerOnly() {
+  if (blitzState.timerId) {
+    clearInterval(blitzState.timerId);
+    blitzState.timerId = null;
+  }
+  blitzState.running = false;
+}
+
+function updateBlitzStartUI() {
+  const bestEl = document.getElementById('blitz-start-best');
+  const badgeEl = document.getElementById('badge-blitz-best');
+  if (bestEl) bestEl.textContent = state.blitzBest || 0;
+  if (badgeEl) badgeEl.textContent = state.blitzBest > 0 ? `★ ${state.blitzBest}` : '60с';
+}
+
+function shuffleBlitzQueue() {
+  const arr = [...BLITZ_POOL];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startBlitzGame() {
+  stopBlitzTimerOnly();
+  blitzState = {
+    running: true,
+    timeLeft: 60,
+    hearts: 3,
+    score: 0,
+    combo: 0,
+    correct: 0,
+    total: 0,
+    queue: shuffleBlitzQueue(),
+    current: null,
+    timerId: null
+  };
+
+  document.getElementById('blitz-start').classList.add('hidden');
+  document.getElementById('blitz-end').classList.add('hidden');
+  document.getElementById('blitz-arena').classList.remove('hidden');
+  document.getElementById('blitz-last-fb').classList.add('hidden');
+
+  SoundFX.playConnect();
+  nextBlitzCard();
+  updateBlitzHud();
+
+  blitzState.timerId = setInterval(() => {
+    blitzState.timeLeft -= 1;
+    updateBlitzHud();
+    if (blitzState.timeLeft <= 0) {
+      finishBlitzGame(false);
+    }
+  }, 1000);
+}
+
+function nextBlitzCard() {
+  if (!blitzState.queue.length) blitzState.queue = shuffleBlitzQueue();
+  blitzState.current = blitzState.queue.pop();
+  const c = blitzState.current;
+
+  const av = document.getElementById('blitz-sender-av');
+  if (av) { av.style.backgroundColor = c.color; av.textContent = c.av; }
+  document.getElementById('blitz-sender-name').textContent = c.sender;
+  document.getElementById('blitz-sender-tag').textContent = L(c.tag);
+  document.getElementById('blitz-msg-text').textContent = L(c.text);
+  document.getElementById('blitz-counter').textContent = `#${blitzState.total + 1}`;
+
+  const cardEl = document.getElementById('blitz-card');
+  if (cardEl) {
+    cardEl.classList.remove('card-enter');
+    void cardEl.offsetWidth;
+    cardEl.classList.add('card-enter');
+  }
+  refreshIcons();
+}
+
+function updateBlitzHud() {
+  const tEl = document.getElementById('blitz-timer-text');
+  const bar = document.getElementById('blitz-timer-bar');
+  const heartsEl = document.getElementById('blitz-hearts');
+  const scoreEl = document.getElementById('blitz-score-text');
+  const comboEl = document.getElementById('blitz-combo-pill');
+
+  if (tEl) tEl.textContent = `${blitzState.timeLeft}с`;
+  if (bar) bar.style.width = `${Math.max(0, (blitzState.timeLeft / 60) * 100)}%`;
+  if (scoreEl) scoreEl.textContent = blitzState.score;
+  const mult = Math.min(4, 1 + Math.floor(blitzState.combo / 3));
+  if (comboEl) comboEl.textContent = `x${mult}`;
+  if (heartsEl) {
+    heartsEl.innerHTML = [0, 1, 2].map(i =>
+      `<span class="${i < blitzState.hearts ? 'text-[#ef4444]' : 'text-slate-300'}">❤</span>`
+    ).join('');
+  }
+}
+
+function answerBlitz(pickedSafe) {
+  if (!blitzState.running || !blitzState.current) return;
+  const c = blitzState.current;
+  const isOk = pickedSafe === c.safe;
+  blitzState.total += 1;
+
+  const fb = document.getElementById('blitz-last-fb');
+  fb.classList.remove('hidden');
+
+  if (isOk) {
+    blitzState.correct += 1;
+    blitzState.combo += 1;
+    const mult = Math.min(4, 1 + Math.floor((blitzState.combo - 1) / 3));
+    const gain = 25 * mult;
+    blitzState.score += gain;
+    SoundFX.playWin(Math.min(5, blitzState.combo));
+    fb.className = 'rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold border-2 bg-[#ecfdf5] border-[#86efac] text-[#14532d]';
+    fb.textContent = `+${gain} XP! ${L(c.why)}`;
+    if (blitzState.combo % 4 === 0) updateMascot('happy', `${blitzState.combo} подряд! Так держать!`, true);
+  } else {
+    blitzState.combo = 0;
+    blitzState.hearts -= 1;
+    SoundFX.playFail();
+    fb.className = 'rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold border-2 bg-[#fdecec] border-[#fca5a5] text-[#7f1d1d]';
+    fb.textContent = `Ой! ${L(c.why)}`;
+    updateMascot('oops', L(c.why), true);
+  }
+
+  updateBlitzHud();
+  if (blitzState.hearts <= 0) {
+    finishBlitzGame(true);
+  } else {
+    nextBlitzCard();
+  }
+}
+
+function finishBlitzGame(outOfHearts) {
+  stopBlitzTimerOnly();
+  document.getElementById('blitz-arena').classList.add('hidden');
+  document.getElementById('blitz-end').classList.remove('hidden');
+
+  const isNewRecord = blitzState.score > (state.blitzBest || 0);
+  if (isNewRecord) {
+    state.blitzBest = blitzState.score;
+    saveState();
+  }
+  updateBlitzStartUI();
+
+  const isEn = state.lang === 'en';
+  document.getElementById('blitz-end-title').textContent = outOfHearts
+    ? (isEn ? 'Out of Hearts!' : 'Сердечки закончились!')
+    : (isEn ? 'Time’s Up! Great Run!' : 'Время вышло! Крутой результат!');
+  document.getElementById('blitz-end-score').textContent = blitzState.score;
+  document.getElementById('blitz-end-acc').textContent = `${blitzState.correct}/${blitzState.total}`;
+  document.getElementById('blitz-end-best').textContent = state.blitzBest;
+  document.getElementById('blitz-new-record').classList.toggle('hidden', !isNewRecord);
+
+  if (blitzState.score >= 100 || isNewRecord) {
+    SoundFX.playAchievement();
+    burstConfetti('big');
+  }
+  refreshIcons();
+}
+
+// Поддержка стрелок клавиатуры в Блице (← Безопасно / → В БАН!)
+document.addEventListener('keydown', (e) => {
+  if (state.activeTab !== 'blitz' || !blitzState.running) return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); answerBlitz(true); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); answerBlitz(false); }
+});
 
 // ==================== ИНТЕРАКТИВНЫЙ МАЙНКРАФТ-ФОН ЮГРЫ (ЖИВОЕ НЕБО, ОБЛАКА, ТАЙГА И КЛИКАБЕЛЬНЫЕ БЛОКИ) ====================
 

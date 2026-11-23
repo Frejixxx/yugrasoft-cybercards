@@ -134,6 +134,12 @@
             <span id="badge-chat-progress" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-cgy-bg text-cgy-muted border border-cgy-border tabular-nums">0/7</span>
           </button>
 
+          <button id="nav-tab-blitz" onclick="switchMainTab('blitz')" class="nav-tab px-3 sm:px-4 py-3 text-sm sm:text-[15px] flex items-center gap-2 whitespace-nowrap">
+            <i data-lucide="zap" class="w-4 h-4 text-[#d97706]"></i>
+            <span data-i18n="tab_blitz">Блиц-атака</span>
+            <span id="badge-blitz-best" class="px-2 py-0.5 rounded-full text-xs font-bold bg-[#fef3c7] text-[#92400e] border border-[#f59e0b]/60 tabular-nums">60с</span>
+          </button>
+
           <button id="nav-tab-results" onclick="switchMainTab('results')" class="nav-tab px-3 sm:px-4 py-3 text-sm sm:text-[15px] flex items-center gap-2 whitespace-nowrap">
             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
             <span data-i18n="tab_results">Аналитика и сертификат</span>
@@ -429,6 +435,133 @@
             </div>
           </div>
         </section>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- VIEW 2.5: БЛИЦ-АТАКА 60 СЕКУНД («ОТБЕЙ АТАКУ СКАМЕРОВ!»)   -->
+    <!-- ========================================================== -->
+    <section id="view-blitz" class="hidden flex-1 flex flex-col items-center justify-start gap-4 pb-20 sm:pb-6">
+      <!-- Start Screen -->
+      <div id="blitz-start" class="max-w-2xl w-full bg-white border-2 border-[#f59e0b] border-b-[6px] rounded-3xl shadow-md overflow-hidden">
+        <div class="bg-gradient-to-r from-[#fef3c7] via-[#fde68a] to-[#dbeafe] border-b-2 border-[#fcd34d] px-6 py-5 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-[#d97706] text-white flex items-center justify-center shadow-sm">
+              <i data-lucide="zap" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl font-extrabold text-cgy-text leading-tight" data-i18n="blitz_title">Блиц: отбей атаку скамеров!</h2>
+              <p class="text-xs sm:text-sm font-bold text-[#92400e]" data-i18n="blitz_sub">60 секунд • 3 сердечка • комбо за скорость</p>
+            </div>
+          </div>
+          <div class="px-3.5 py-2 rounded-2xl bg-white border-2 border-[#f59e0b] text-center shrink-0 shadow-sm">
+            <div class="text-[10px] font-extrabold uppercase text-[#b45309]" data-i18n="blitz_record_lbl">Рекорд</div>
+            <div id="blitz-start-best" class="text-xl font-extrabold text-cgy-accent tabular-nums">0</div>
+          </div>
+        </div>
+        <div class="p-6 space-y-5 text-center">
+          <p class="text-base font-semibold text-[#334155] leading-relaxed" data-i18n="blitz_rules">
+            На экран летят сообщения от друзей, учителей и мошенников. Успей за 60 секунд решить: пропустить безопасное сообщение или отправить скамера в БАН!
+          </p>
+          <div class="grid grid-cols-2 gap-3 max-w-md mx-auto text-sm font-extrabold">
+            <div class="rounded-2xl bg-[#ecfdf5] border-2 border-[#86efac] p-3 text-[#14532d]">
+              ← <span data-i18n="blitz_btn_safe">Безопасно</span>
+            </div>
+            <div class="rounded-2xl bg-[#fef2f2] border-2 border-[#fca5a5] p-3 text-[#991b1b]">
+              <span data-i18n="blitz_btn_ban">В БАН! (Скам)</span> →
+            </div>
+          </div>
+          <button onclick="startBlitzGame()" class="btn-3d px-8 py-4 rounded-2xl bg-cgy-accent hover:bg-cgy-accentHover border-b-[#133b72] text-white font-extrabold text-lg shadow-md inline-flex items-center gap-2.5">
+            <i data-lucide="play" class="w-5 h-5 fill-white"></i>
+            <span data-i18n="blitz_start_btn">Поехали! (60 сек)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Blitz Arena -->
+      <div id="blitz-arena" class="hidden max-w-2xl w-full flex flex-col gap-4">
+        <!-- HUD Bar -->
+        <div class="bg-white border-2 border-[#93c5fd] border-b-4 rounded-2xl p-3.5 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#eaf3ff] border border-[#93c5fd] font-extrabold text-cgy-accent text-sm tabular-nums">
+                <i data-lucide="timer" class="w-4 h-4"></i>
+                <span id="blitz-timer-text">60с</span>
+              </span>
+              <div id="blitz-hearts" class="flex items-center gap-1 text-lg"></div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="blitz-combo-pill" class="px-2.5 py-1 rounded-xl bg-[#fef3c7] border border-[#f59e0b] text-xs font-extrabold text-[#92400e]">x1</span>
+              <span class="px-3 py-1 rounded-xl bg-[#ecfdf5] border border-[#86efac] font-extrabold text-[#15803d] text-sm tabular-nums">
+                <span id="blitz-score-text">0</span> XP
+              </span>
+            </div>
+          </div>
+          <div class="h-2.5 bg-slate-200 rounded-full overflow-hidden">
+            <div id="blitz-timer-bar" class="h-full bg-gradient-to-r from-[#1e5aa8] via-[#38bdf8] to-[#16a34a] transition-all duration-300" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <!-- Incoming Message Card -->
+        <div id="blitz-card" class="bg-white border-2 border-[#93c5fd] border-b-[6px] rounded-3xl p-5 sm:p-7 shadow-md space-y-4">
+          <div class="flex items-center justify-between gap-2 pb-3 border-b border-[#e5edf7]">
+            <div class="flex items-center gap-3">
+              <div id="blitz-sender-av" class="w-11 h-11 rounded-2xl bg-cgy-accent text-white font-extrabold flex items-center justify-center text-sm shadow-sm">?</div>
+              <div>
+                <div id="blitz-sender-name" class="font-extrabold text-base text-cgy-text leading-tight">Отправитель</div>
+                <div id="blitz-sender-tag" class="text-xs font-bold text-cgy-muted">Чат</div>
+              </div>
+            </div>
+            <span id="blitz-counter" class="text-xs font-extrabold text-cgy-muted bg-[#f1f5f9] px-2.5 py-1 rounded-full tabular-nums">#1</span>
+          </div>
+
+          <div id="blitz-msg-text" class="rounded-2xl bg-[#f4f8ff] border-2 border-[#d4e3f6] px-5 py-5 text-base sm:text-lg font-bold text-cgy-text leading-relaxed min-h-[108px] flex items-center">
+            ...
+          </div>
+
+          <!-- Two Big Action Buttons -->
+          <div class="grid grid-cols-2 gap-3.5 pt-1">
+            <button onclick="answerBlitz(true)" class="card-option tf-true-opt py-4 sm:py-5 px-4 flex items-center justify-center gap-2 text-base sm:text-lg font-extrabold">
+              <i data-lucide="shield-check" class="w-6 h-6 text-[#1e7e34]"></i>
+              <span data-i18n="blitz_btn_safe">Безопасно</span>
+            </button>
+            <button onclick="answerBlitz(false)" class="card-option tf-false-opt py-4 sm:py-5 px-4 flex items-center justify-center gap-2 text-base sm:text-lg font-extrabold">
+              <i data-lucide="ban" class="w-6 h-6 text-[#c62828]"></i>
+              <span data-i18n="blitz_btn_ban">В БАН! (Скам)</span>
+            </button>
+          </div>
+
+          <div id="blitz-last-fb" class="hidden rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold border-2"></div>
+        </div>
+      </div>
+
+      <!-- End Screen -->
+      <div id="blitz-end" class="hidden max-w-xl w-full bg-white border-2 border-[#4ade80] border-b-[6px] rounded-3xl p-6 sm:p-7 shadow-md text-center space-y-4">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-[#ecfdf5] border-2 border-[#4ade80] text-[#15803d] flex items-center justify-center">
+          <i data-lucide="trophy" class="w-9 h-9"></i>
+        </div>
+        <div>
+          <span id="blitz-new-record" class="hidden inline-block mb-1.5 px-3 py-0.5 rounded-full bg-[#fef3c7] border border-[#f59e0b] text-xs font-extrabold text-[#92400e]">НОВЫЙ РЕКОРД!</span>
+          <h3 id="blitz-end-title" class="text-2xl font-extrabold text-cgy-text">Время вышло!</h3>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="rounded-2xl bg-[#eaf3ff] border-2 border-[#93c5fd] p-3">
+            <div class="text-[11px] font-bold text-cgy-muted" data-i18n="blitz_score_lbl">Очки</div>
+            <div id="blitz-end-score" class="text-2xl font-extrabold text-cgy-accent tabular-nums">0</div>
+          </div>
+          <div class="rounded-2xl bg-[#ecfdf5] border-2 border-[#86efac] p-3">
+            <div class="text-[11px] font-bold text-cgy-muted" data-i18n="blitz_acc_lbl">Верно</div>
+            <div id="blitz-end-acc" class="text-2xl font-extrabold text-[#15803d] tabular-nums">0/0</div>
+          </div>
+          <div class="rounded-2xl bg-[#fef7e0] border-2 border-[#f59e0b] p-3">
+            <div class="text-[11px] font-bold text-cgy-muted" data-i18n="blitz_record_lbl">Рекорд</div>
+            <div id="blitz-end-best" class="text-2xl font-extrabold text-[#b45309] tabular-nums">0</div>
+          </div>
+        </div>
+        <button onclick="startBlitzGame()" class="btn-3d px-7 py-3.5 rounded-2xl bg-cgy-accent hover:bg-cgy-accentHover border-b-[#133b72] text-white font-extrabold text-base inline-flex items-center gap-2">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span data-i18n="blitz_again_btn">Сыграть ещё раз</span>
+        </button>
       </div>
     </section>
 
@@ -884,7 +1017,13 @@
     <!-- Speech Bubble ABOVE Steve's Head -->
     <div id="yugorka-bubble" class="steve-speech-top pointer-events-auto mb-2.5 w-[260px] sm:w-[285px] bg-white border-2 border-[#1e5aa8] rounded-2xl px-3.5 py-2.5 shadow-xl transition-all">
       <div class="flex items-center justify-between gap-1.5 mb-1">
-        <span id="yugorka-status-tag" class="font-pixel text-xs font-bold text-cgy-accent uppercase tracking-wide truncate">Кибер-Стив</span>
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span id="yugorka-status-tag" class="font-pixel text-xs font-bold text-cgy-accent uppercase tracking-wide truncate">Кибер-Стив</span>
+          <button id="btn-hero-skin" onclick="toggleHeroSkin()" type="button" title="Сменить героя: Стив / Алекс"
+            class="px-1.5 py-0.5 rounded-md bg-[#eef5ff] hover:bg-[#dce8f8] border border-[#bfd7f5] text-[10px] font-extrabold text-cgy-accent transition shrink-0">
+            ⇄ Алекс
+          </button>
+        </div>
         <div class="flex items-center gap-1 shrink-0">
           <button id="btn-read-aloud" onclick="toggleReadAloud()" type="button" title="Озвучить"
             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#eaf1fb] hover:bg-[#dce8f8] border border-[#bfd7f5] text-cgy-accent text-[11px] font-extrabold transition">
