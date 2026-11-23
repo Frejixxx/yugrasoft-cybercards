@@ -5547,25 +5547,6 @@ function initVoxelBackground() {
 
   const floatingBlocks = ['left', 'left', 'left', 'right', 'right', 'right'].map(side => resetFloatingBlock({}, side));
 
-  const particles = [];
-
-  function spawnMineParticles(x, y, type, count = 12) {
-    if (particles.length > 60) particles.splice(0, count);
-    const colors = [type.top, type.front, type.side, type.speck];
-    for (let i = 0; i < count; i++) {
-      const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
-      const spd = 2.2 + Math.random() * 4.0;
-      particles.push({
-        x, y,
-        vx: Math.cos(ang) * spd,
-        vy: Math.sin(ang) * spd - 2.2,
-        size: 5 + Math.random() * 5,
-        color: colors[i % colors.length],
-        life: 1
-      });
-    }
-  }
-
   function drawVoxelCube(cx, cy, s, type, scale = 1) {
     const sz = s * scale;
     const half = sz / 2;
@@ -5682,23 +5663,19 @@ function initVoxelBackground() {
     mouseY = e.clientY / Math.max(1, H);
   }, { passive: true });
 
-  // Клик по пустому фону или по летающему блоку «добывает» блок в пиксельные частицы!
+  // Интерактив фона без лишних блёсток: клик по мельнице раскручивает лопасти, клик по блоку аккуратно убирает и спавнит новый
   window.addEventListener('click', (e) => {
-    // Не перехватываем клики по кнопкам, карточкам, формам и ссылкам
     if (e.target.closest('button, a, input, select, textarea, #card-stage, #floating-steve, #chat-sidebar, #chat-pane, .mc-hotbar')) {
       return;
     }
     const cx = e.clientX;
     const cy = e.clientY;
-    let hit = false;
 
-    // Клик по мельнице раскручивает её в турбо-режим!
     const millX = 96;
     const millHubY = H - 78;
     if (W >= 820 && Math.hypot(cx - millX, cy - millHubY) <= 58) {
       millSpeed = Math.min(0.22, millSpeed + 0.085);
-      SoundFX.playConnect();
-      spawnMineParticles(millX, millHubY, { top: '#ffffff', front: '#93c5fd', side: '#1e5aa8', speck: '#fde047' }, 10);
+      SoundFX.playDrop();
       return;
     }
 
@@ -5708,18 +5685,11 @@ function initVoxelBackground() {
       const bx = b.x + (smoothMx - 0.5) * -18;
       const by = b.y + (smoothMy - 0.5) * -12;
       if (Math.hypot(cx - bx, cy - by) <= b.size * 0.95) {
-        hit = true;
         b.alive = false;
         b.respawnFrames = 150;
         SoundFX.playDrop();
-        spawnMineParticles(bx, by, b.type, 12);
         break;
       }
-    }
-
-    if (!hit) {
-      // Лёгкий клик по небу/облачку — салют из светлых пикселей!
-      spawnMineParticles(cx, cy, { top: '#ffffff', front: '#93c5fd', side: '#60a5fa', speck: '#fef08a' }, 8);
     }
   });
 
@@ -5807,24 +5777,6 @@ function initVoxelBackground() {
           drawVoxelCube(0, 0, b.size, b.type, b.scale);
           ctx.restore();
         });
-      }
-
-      // 6. Частицы разбитых блоков
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.22;
-        p.life -= 0.025;
-        if (p.life <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-        ctx.save();
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
-        ctx.restore();
       }
     }
     requestAnimationFrame(renderFrame);
