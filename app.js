@@ -1161,20 +1161,30 @@ function getYugorkaSvg(mood = 'idle', stars = 0) {
 
   // Глаза и эмоции Стива (пиксельная сетка 24x24, масштаб x4 = 96x96)
   let eyes = `
-    <!-- Левый глаз (белок + сине-фиолетовый зрачок Стива) -->
-    <rect x="30" y="34" width="6" height="6" fill="#ffffff"/>
-    <rect x="36" y="34" width="6" height="6" fill="#49399b"/>
-    <!-- Правый глаз -->
-    <rect x="54" y="34" width="6" height="6" fill="#49399b"/>
-    <rect x="60" y="34" width="6" height="6" fill="#ffffff"/>
+    <!-- Левый глаз (белок + сине-фиолетовый зрачок Стива, следит за курсором!) -->
+    <rect x="30" y="34" width="12" height="6" fill="#ffffff"/>
+    <rect x="54" y="34" width="12" height="6" fill="#ffffff"/>
+    <g class="steve-pupils">
+      <rect x="36" y="34" width="6" height="6" fill="#49399b"/>
+      <rect x="54" y="34" width="6" height="6" fill="#49399b"/>
+    </g>
+    <!-- Веки для живого моргания -->
+    <g class="steve-blink" opacity="0">
+      <rect x="30" y="34" width="12" height="6" fill="#c69272"/>
+      <rect x="30" y="38" width="12" height="2" fill="#7c4f35"/>
+      <rect x="54" y="34" width="12" height="6" fill="#c69272"/>
+      <rect x="54" y="38" width="12" height="2" fill="#7c4f35"/>
+    </g>
   `;
 
   let mouth = `
     <!-- Классический нос + улыбка Стива -->
     <rect x="42" y="40" width="12" height="5" fill="#9c6a4d"/>
-    <rect x="36" y="45" width="6" height="6" fill="#6b3e26"/>
-    <rect x="42" y="47" width="12" height="5" fill="#6b3e26"/>
-    <rect x="54" y="45" width="6" height="6" fill="#6b3e26"/>
+    <g class="steve-mouth-idle">
+      <rect x="36" y="45" width="6" height="6" fill="#6b3e26"/>
+      <rect x="42" y="47" width="12" height="5" fill="#6b3e26"/>
+      <rect x="54" y="45" width="6" height="6" fill="#6b3e26"/>
+    </g>
   `;
 
   let extraProp = '';
@@ -1296,6 +1306,20 @@ function getYugorkaSvg(mood = 'idle', stars = 0) {
 
       ${eyes}
       ${mouth}
+      <!-- Анимация открытого рта и звуковых волн во время озвучки! -->
+      <g class="steve-mouth-talk" style="display:none">
+        <rect x="36" y="45" width="24" height="8" fill="#4b2316"/>
+        <rect x="40" y="45" width="16" height="2.5" fill="#ffffff"/>
+        <rect x="42" y="50" width="12" height="3" fill="#e11d48"/>
+      </g>
+      <g class="steve-mouth-talk-mid" style="display:none">
+        <rect x="39" y="46" width="18" height="5" fill="#4b2316"/>
+        <rect x="42" y="46" width="12" height="2" fill="#ffffff"/>
+      </g>
+      <g class="steve-sound-waves" style="display:none">
+        <rect x="81" y="36" width="3" height="8" fill="#1e5aa8"/>
+        <rect x="87" y="32" width="3" height="16" fill="#38bdf8"/>
+      </g>
       ${glassesSvg}
       ${helmetSvg}
       ${shieldSvg}
@@ -1433,6 +1457,68 @@ function initDraggableSteve() {
 
   handle.addEventListener('pointerup', endDrag);
   handle.addEventListener('pointercancel', endDrag);
+
+  // Стив следит глазами за мышкой + периодически моргает (живой персонаж!)
+  window.addEventListener('mousemove', (e) => {
+    const avatar = document.getElementById('yugorka-avatar');
+    if (!avatar) return;
+    const pupils = avatar.querySelector('.steve-pupils');
+    if (!pupils) return;
+    const r = avatar.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dx = Math.max(-2.4, Math.min(2.4, (e.clientX - cx) / 90));
+    const dy = Math.max(-1.4, Math.min(1.4, (e.clientY - cy) / 110));
+    pupils.setAttribute('transform', `translate(${dx.toFixed(1)}, ${dy.toFixed(1)})`);
+  }, { passive: true });
+
+  setInterval(() => {
+    if (document.hidden || isReadingAloud) return;
+    const blink = document.querySelector('#yugorka-avatar .steve-blink');
+    if (!blink) return;
+    blink.setAttribute('opacity', '1');
+    setTimeout(() => {
+      const b2 = document.querySelector('#yugorka-avatar .steve-blink');
+      if (b2) b2.setAttribute('opacity', '0');
+    }, 150);
+  }, 4200);
+}
+
+let steveTalkInterval = null;
+let steveTalkFrame = 0;
+
+function setSteveTalking(active) {
+  const avatar = document.getElementById('yugorka-avatar');
+  if (steveTalkInterval) {
+    clearInterval(steveTalkInterval);
+    steveTalkInterval = null;
+  }
+
+  const applyMouthFrame = (mode) => {
+    const idleM = document.querySelector('#yugorka-avatar .steve-mouth-idle');
+    const openM = document.querySelector('#yugorka-avatar .steve-mouth-talk');
+    const midM = document.querySelector('#yugorka-avatar .steve-mouth-talk-mid');
+    const waves = document.querySelector('#yugorka-avatar .steve-sound-waves');
+    if (idleM) idleM.style.display = mode === 'idle' ? '' : 'none';
+    if (openM) openM.style.display = mode === 'open' ? '' : 'none';
+    if (midM) midM.style.display = mode === 'mid' ? '' : 'none';
+    if (waves) waves.style.display = mode === 'idle' ? 'none' : '';
+  };
+
+  if (!active) {
+    if (avatar) avatar.classList.remove('steve-talking');
+    applyMouthFrame('idle');
+    return;
+  }
+
+  if (avatar) avatar.classList.add('steve-talking');
+  steveTalkFrame = 0;
+  const seq = ['open', 'mid', 'open', 'idle', 'mid', 'open'];
+  applyMouthFrame('open');
+  steveTalkInterval = setInterval(() => {
+    steveTalkFrame = (steveTalkFrame + 1) % seq.length;
+    applyMouthFrame(seq[steveTalkFrame]);
+  }, 135);
 }
 
 // Пиксельные иконки предметов для Майнкрафт-хотбара кибер-лута
@@ -1499,6 +1585,7 @@ function updateReadAloudAvailability() {
 
 function stopReadAloud() {
   isReadingAloud = false;
+  setSteveTalking(false);
   SoundFX.stopSpeech();
   ['btn-read-aloud', 'btn-card-read-aloud'].forEach(id => {
     const btn = document.getElementById(id);
@@ -1527,6 +1614,7 @@ function toggleReadAloud() {
   const isEvaluated = Boolean(res && res.answered && !state.cardDraft.retrying);
   const setSpeakingUI = (active) => {
     isReadingAloud = active;
+    setSteveTalking(active);
     ['btn-read-aloud', 'btn-card-read-aloud'].forEach(id => {
       const btn = document.getElementById(id);
       if (btn) btn.classList.toggle('btn-speaking', active);

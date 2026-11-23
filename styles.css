@@ -214,6 +214,14 @@ body {
 .yugorka-oops {
   animation: bearOops 0.55s ease-out;
 }
+@keyframes steveTalkBob {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(-1.8deg); }
+  75% { transform: translateY(-2px) rotate(1.8deg); }
+}
+.steve-talking {
+  animation: steveTalkBob 0.42s ease-in-out infinite !important;
+}
 .yugorka-bubble {
   position: relative;
 }
