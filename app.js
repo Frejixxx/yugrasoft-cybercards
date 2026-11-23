@@ -2482,20 +2482,20 @@ function renderCardVisual(card) {
     const noteHtml = applyClueHotspots(L(v.note), card);
     sceneHtml = `
       <div class="rounded-2xl bg-white border-2 border-[#fca5a5] overflow-hidden shadow-sm">
-        <div class="px-3.5 py-2.5 bg-gradient-to-r from-[#fee2e2] to-[#fef3c7] border-b-2 border-[#fecaca] flex items-center gap-2.5">
-          <div class="flex-1 bg-white border-2 border-[#fca5a5] rounded-xl px-3 py-1.5 font-mono text-xs text-cgy-err font-bold flex items-center gap-1.5 flex-wrap shadow-inner">
+        <div class="px-3 sm:px-3.5 py-2 sm:py-2.5 bg-gradient-to-r from-[#fee2e2] to-[#fef3c7] border-b-2 border-[#fecaca] flex items-center gap-2">
+          <div class="flex-1 min-w-0 bg-white border-2 border-[#fca5a5] rounded-xl px-2.5 sm:px-3 py-1.5 font-mono text-[11px] sm:text-xs text-cgy-err font-bold flex items-center gap-1.5 flex-wrap break-all shadow-inner">
             <i data-lucide="lock-open" class="w-4 h-4 shrink-0 text-cgy-err"></i>
-            <span>${urlHtml}</span>
+            <span class="min-w-0 break-all">${urlHtml}</span>
           </div>
         </div>
-        <div class="p-4 bg-[#fffbfb] text-sm sm:text-[15px] text-cgy-text font-semibold leading-relaxed">${noteHtml}</div>
+        <div class="p-3 sm:p-4 bg-[#fffbfb] text-sm sm:text-[15px] text-cgy-text font-semibold leading-relaxed">${noteHtml}</div>
       </div>
     `;
   }
 
   const shellDoneCls = (clues.length === 0 || allCluesFound) ? 'detective-done' : '';
   slot.innerHTML = `
-    <div class="detective-shell ${shellDoneCls} rounded-2xl p-3.5 sm:p-4 max-w-2xl">
+    <div class="detective-shell ${shellDoneCls} rounded-2xl p-3 sm:p-4 max-w-2xl">
       ${detectiveHeader}
       ${sceneHtml}
       ${evidenceLog}
@@ -2528,11 +2528,11 @@ function renderChoiceTask(card, container, isEvaluated, res) {
       extra = 'opacity-45 cursor-not-allowed';
     }
     btn.disabled = isEvaluated || isEliminated;
-    btn.className = `card-option ${extra} w-full text-left px-4 sm:px-5 py-4 flex items-start gap-3.5 text-base font-bold`;
+    btn.className = `card-option ${extra} w-full text-left px-3 sm:px-5 py-3 sm:py-4 flex items-start gap-2.5 sm:gap-3.5 text-sm sm:text-base font-bold`;
     btn.innerHTML = `
-      <span class="w-8 h-8 rounded-xl ${isEliminated ? 'bg-slate-400 text-white' : pillColors[i % pillColors.length]} text-sm font-extrabold flex items-center justify-center shrink-0 mt-0.5 shadow-sm">${letters[i] || (i + 1)}</span>
-      <span class="leading-snug flex-1 ${isEliminated ? 'line-through text-slate-500' : ''}">${L(opt.text)}</span>
-      ${isEliminated ? `<span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-600 text-[11px] font-extrabold shrink-0 self-center">${state.lang === 'en' ? '50/50' : 'Убрано (50/50)'}</span>` : ''}
+      <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl ${isEliminated ? 'bg-slate-400 text-white' : pillColors[i % pillColors.length]} text-xs sm:text-sm font-extrabold flex items-center justify-center shrink-0 mt-0.5 shadow-sm">${letters[i] || (i + 1)}</span>
+      <span class="leading-snug flex-1 min-w-0 break-words ${isEliminated ? 'line-through text-slate-500' : ''}">${L(opt.text)}</span>
+      ${isEliminated ? `<span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-600 text-[10px] sm:text-[11px] font-extrabold shrink-0 self-center">${state.lang === 'en' ? '50/50' : '50/50'}</span>` : ''}
     `;
     if (!isEliminated) {
       btn.onclick = () => evaluateCardResult(card, opt.correct, { chosenId: opt.id });
@@ -2546,7 +2546,7 @@ function renderChoiceTask(card, container, isEvaluated, res) {
 // --- Тип 2: Верно / Неверно ---
 function renderTrueFalseTask(card, container, isEvaluated, res) {
   const wrap = document.createElement('div');
-  wrap.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3.5';
+  wrap.className = 'grid grid-cols-2 gap-2.5 sm:gap-3.5';
 
   [
     { val: true, label: t('true_btn'), icon: 'check-circle-2', cls: 'tf-true-opt', iconColor: 'text-[#1e7e34]' },
@@ -2559,9 +2559,9 @@ function renderTrueFalseTask(card, container, isEvaluated, res) {
       else if (res && res.chosenBool === item.val) extra = 'is-wrong';
     }
     btn.disabled = isEvaluated;
-    btn.className = `card-option ${extra} py-5 px-5 flex items-center justify-center gap-3 text-lg font-extrabold`;
+    btn.className = `card-option ${extra} py-4 sm:py-5 px-3 sm:px-5 flex items-center justify-center gap-2 sm:gap-3 text-base sm:text-lg font-extrabold`;
     btn.innerHTML = `
-      <i data-lucide="${item.icon}" class="w-6 h-6 ${isEvaluated ? '' : item.iconColor}"></i>
+      <i data-lucide="${item.icon}" class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 ${isEvaluated ? '' : item.iconColor}"></i>
       <span>${item.label}</span>
     `;
     btn.onclick = () => evaluateCardResult(card, item.val === card.correctAnswer, { chosenBool: item.val });
@@ -2609,9 +2609,9 @@ function renderSortTask(card, container, isEvaluated) {
     poolWrap.innerHTML = `<div class="py-2 text-center text-sm font-semibold text-cgy-ok flex items-center justify-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4"></i><span>${t('sort_pool_empty')}</span></div>`;
   } else {
     const chipsBox = document.createElement('div');
-    chipsBox.className = 'flex flex-wrap gap-2.5';
+    chipsBox.className = 'flex flex-col md:flex-row md:flex-wrap gap-2.5';
     unassigned.forEach(item => {
-      chipsBox.appendChild(createSortChipEl(item, null, isEvaluated, selectedChip === item.id));
+      chipsBox.appendChild(createSortChipEl(item, null, isEvaluated, selectedChip === item.id, card));
     });
     poolWrap.appendChild(chipsBox);
   }
@@ -2619,14 +2619,15 @@ function renderSortTask(card, container, isEvaluated) {
 
   // 2. Две большие корзины для перетаскивания (Drop Zones)
   const bucketsGrid = document.createElement('div');
-  bucketsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+  bucketsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4';
 
   [
     { key: 'safe', label: L(card.buckets.safe), icon: 'check-circle-2', zoneCls: 'drop-zone-safe', headCls: 'text-cgy-ok' },
     { key: 'private', label: L(card.buckets.private), icon: 'shield-off', zoneCls: 'drop-zone-private', headCls: 'text-cgy-err' }
   ].forEach(b => {
     const zone = document.createElement('div');
-    zone.className = `drop-zone ${b.zoneCls} rounded-xl p-4 min-h-[160px] flex flex-col gap-3 cursor-pointer`;
+    const pulseCls = (!isEvaluated && selectedChip) ? 'ring-2 ring-cgy-accent/40' : '';
+    zone.className = `drop-zone ${b.zoneCls} ${pulseCls} rounded-xl p-3 sm:p-4 min-h-[110px] sm:min-h-[160px] flex flex-col gap-2.5 sm:gap-3 cursor-pointer`;
 
     if (!isEvaluated) {
       zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('drag-over'); };
@@ -2665,7 +2666,7 @@ function renderSortTask(card, container, isEvaluated) {
       innerList.innerHTML = `<div class="flex-1 flex items-center justify-center text-xs font-semibold text-cgy-muted/75 py-6">${t('drop_here')}</div>`;
     } else {
       itemsInBucket.forEach(item => {
-        innerList.appendChild(createSortChipEl(item, b.key, isEvaluated, selectedChip === item.id));
+        innerList.appendChild(createSortChipEl(item, b.key, isEvaluated, selectedChip === item.id, card));
       });
     }
     zone.appendChild(innerList);
@@ -2676,30 +2677,47 @@ function renderSortTask(card, container, isEvaluated) {
   container.appendChild(wrap);
 }
 
-function createSortChipEl(item, currentBucket, isEvaluated, isSelected) {
+function createSortChipEl(item, currentBucket, isEvaluated, isSelected, cardRef = null) {
   const chip = document.createElement('div');
   const isLocked = !isEvaluated && Array.isArray(state.cardDraft.lockedIds) && state.cardDraft.lockedIds.includes(item.id);
   const isOk = isEvaluated && currentBucket === item.bucket;
   const isBad = isEvaluated && currentBucket !== item.bucket;
+  const safeLbl = cardRef && cardRef.buckets ? L(cardRef.buckets.safe) : 'Можно';
+  const privLbl = cardRef && cardRef.buckets ? L(cardRef.buckets.private) : 'Нельзя';
 
   let colorCls = 'bg-white border-cgy-border text-cgy-text';
   if (isOk) colorCls = 'bg-[#e9f6ec] border-cgy-ok text-[#14532d]';
   else if (isBad) colorCls = 'bg-[#fdecec] border-cgy-err text-[#7f1d1d]';
   else if (isLocked) colorCls = 'bg-[#eff6ff] border-[#93c5fd] text-[#1e40af]';
 
-  chip.className = `draggable-chip ${isSelected ? 'chip-selected' : ''} ${colorCls} border-2 rounded-xl px-3.5 py-2.5 text-sm sm:text-[15px] font-semibold shadow-sm flex items-center justify-between gap-2.5`;
+  const showMobileQuickBtns = !isEvaluated && !isLocked && !currentBucket;
+  chip.className = `draggable-chip ${isSelected ? 'chip-selected' : ''} ${colorCls} border-2 rounded-xl px-3 sm:px-3.5 py-2.5 text-sm sm:text-[15px] font-semibold shadow-sm flex ${showMobileQuickBtns ? 'flex-col md:flex-row md:items-center' : 'items-center'} justify-between gap-2`;
   chip.draggable = !isEvaluated && !isLocked;
 
   chip.innerHTML = `
     <div class="flex items-center gap-2 min-w-0">
-      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="w-4 h-4 text-slate-400 shrink-0"></i>' : ''}
+      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="hidden md:inline w-4 h-4 text-slate-400 shrink-0"></i>' : ''}
       ${isLocked ? '<i data-lucide="pin" class="w-3.5 h-3.5 text-cgy-accent shrink-0"></i>' : ''}
-      <span class="leading-snug">${L(item.text)}</span>
+      <span class="leading-snug break-words">${L(item.text)}</span>
     </div>
+    ${showMobileQuickBtns ? `
+      <div class="grid grid-cols-2 gap-1.5 md:hidden pt-1 border-t border-slate-100">
+        <button type="button" onclick="event.stopPropagation(); assignSortItem('${item.id}', 'safe')"
+          class="px-2.5 py-1.5 rounded-lg bg-[#ecfdf5] active:bg-[#bbf7d0] border border-[#86efac] text-[#14532d] text-xs font-extrabold flex items-center justify-center gap-1">
+          <i data-lucide="check" class="w-3.5 h-3.5 shrink-0"></i>
+          <span class="truncate">${safeLbl}</span>
+        </button>
+        <button type="button" onclick="event.stopPropagation(); assignSortItem('${item.id}', 'private')"
+          class="px-2.5 py-1.5 rounded-lg bg-[#fef2f2] active:bg-[#fecaca] border border-[#fca5a5] text-[#991b1b] text-xs font-extrabold flex items-center justify-center gap-1">
+          <i data-lucide="shield-off" class="w-3.5 h-3.5 shrink-0"></i>
+          <span class="truncate">${privLbl}</span>
+        </button>
+      </div>
+    ` : ''}
     ${isLocked ? `<span class="px-2 py-0.5 rounded-md bg-white border border-[#bfdbfe] text-[10px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Example' : 'Пример'}</span>` : ''}
     ${!isEvaluated && !isLocked && currentBucket ? `
       <button type="button" onclick="event.stopPropagation(); removeSortItem('${item.id}')" title="Вернуть обратно"
-        class="w-6 h-6 rounded-md hover:bg-black/10 text-cgy-muted flex items-center justify-center shrink-0">
+        class="w-7 h-7 sm:w-6 sm:h-6 rounded-md hover:bg-black/10 text-cgy-muted flex items-center justify-center shrink-0">
         <i data-lucide="x" class="w-3.5 h-3.5"></i>
       </button>
     ` : ''}
@@ -2771,10 +2789,15 @@ function renderMatchTask(card, container, isEvaluated) {
   const grid = document.createElement('div');
   grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 relative z-20';
 
-  // Левая колонка (Ситуации — можно перетаскивать на правую колонку!)
+  // Левая колонка (Ситуации — на ПК перетаскивание + клик, на мобиле чёткий Шаг 1!)
   const lockedLeftId = !isEvaluated ? state.cardDraft.lockedLeftId : null;
   const leftCol = document.createElement('div');
-  leftCol.className = 'space-y-3';
+  leftCol.className = 'space-y-2.5 sm:space-y-3';
+  const leftMobileHdr = document.createElement('div');
+  leftMobileHdr.className = 'md:hidden text-xs font-extrabold uppercase tracking-wide text-cgy-accent flex items-center gap-1.5';
+  leftMobileHdr.innerHTML = `<span class="w-5 h-5 rounded-full bg-cgy-accent text-white text-[11px] flex items-center justify-center">1</span><span>${state.lang === 'en' ? 'Step 1: tap a situation' : 'Шаг 1: выбери ситуацию'}</span>`;
+  leftCol.appendChild(leftMobileHdr);
+
   card.pairs.forEach((pair, idx) => {
     const num = idx + 1;
     const isLocked = Boolean(lockedLeftId && pair.id === lockedLeftId);
@@ -2789,12 +2812,12 @@ function renderMatchTask(card, container, isEvaluated) {
     btn.id = `match-left-${pair.id}`;
     btn.disabled = isEvaluated || isLocked;
     btn.draggable = !isEvaluated && !isLocked;
-    btn.className = `match-btn ${stateCls} w-full text-left p-3.5 rounded-xl flex items-center gap-3 text-sm sm:text-[15px] font-medium relative`;
+    btn.className = `match-btn ${stateCls} w-full text-left p-3 sm:p-3.5 rounded-xl flex items-center gap-2.5 sm:gap-3 text-[13px] sm:text-[15px] font-medium relative`;
     btn.innerHTML = `
-      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="w-4 h-4 opacity-50 shrink-0 hidden sm:inline"></i>' : ''}
+      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="w-4 h-4 opacity-50 shrink-0 hidden md:inline"></i>' : ''}
       <span class="w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center shrink-0"
         style="background-color: ${isSelected ? '#0f172a' : badgeColors[idx % badgeColors.length]}">${num}</span>
-      <span class="leading-snug flex-1">${L(pair.left)}</span>
+      <span class="leading-snug flex-1 min-w-0 break-words">${L(pair.left)}</span>
       ${isLocked ? `<span class="px-2 py-0.5 rounded-md bg-[#eff6ff] border border-[#bfdbfe] text-[10px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Example' : 'Пример'}</span>` : ''}
     `;
     if (!isEvaluated && !isLocked) {
@@ -2804,17 +2827,34 @@ function renderMatchTask(card, container, isEvaluated) {
         SoundFX.playPick();
       };
       btn.onclick = () => {
-        state.cardDraft.selectedLeft = (state.cardDraft.selectedLeft === pair.id) ? null : pair.id;
+        const willSelect = state.cardDraft.selectedLeft !== pair.id;
+        state.cardDraft.selectedLeft = willSelect ? pair.id : null;
         SoundFX.playPick();
         renderCurrentCard();
+        if (willSelect && window.innerWidth < 768) {
+          requestAnimationFrame(() => {
+            const rc = document.getElementById('match-right-col');
+            if (rc) rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+        }
       };
     }
     leftCol.appendChild(btn);
   });
 
-  // Правая колонка (Реакции — принимают перетаскивание и клики)
+  // Правая колонка (Реакции — на ПК принимают drag+клик, на мобиле чёткий Шаг 2 с подсветкой!)
   const rightCol = document.createElement('div');
-  rightCol.className = 'space-y-3';
+  rightCol.id = 'match-right-col';
+  rightCol.className = `space-y-2.5 sm:space-y-3 ${(!isEvaluated && selectedLeft) ? 'md:p-0 p-2.5 rounded-2xl bg-[#eef5ff]/70 ring-2 ring-cgy-accent/35 md:bg-transparent md:ring-0' : ''}`;
+
+  const selectedNum = selectedLeft ? (leftKeys.indexOf(selectedLeft) + 1) : 0;
+  const rightMobileHdr = document.createElement('div');
+  rightMobileHdr.className = 'md:hidden text-xs font-extrabold uppercase tracking-wide flex items-center gap-1.5 ' + (selectedNum ? 'text-[#15803d]' : 'text-cgy-muted');
+  rightMobileHdr.innerHTML = selectedNum
+    ? `<span class="w-5 h-5 rounded-full bg-[#16a34a] text-white text-[11px] flex items-center justify-center">2</span><span>${state.lang === 'en' ? `Tap the match for #${selectedNum} ↓` : `Выбрана №${selectedNum} — нажми ответ ниже ↓`}</span>`
+    : `<span class="w-5 h-5 rounded-full bg-slate-400 text-white text-[11px] flex items-center justify-center">2</span><span>${state.lang === 'en' ? 'Step 2: tap matching answer' : 'Шаг 2: выбери ответ'}</span>`;
+  rightCol.appendChild(rightMobileHdr);
+
   rightOrder.forEach(rightId => {
     const pairObj = card.pairs.find(p => p.id === rightId);
     if (!pairObj) return;
@@ -2829,14 +2869,14 @@ function renderMatchTask(card, container, isEvaluated) {
     const btn = document.createElement('button');
     btn.id = `match-right-${rightId}`;
     btn.disabled = isEvaluated || isRightLocked;
-    btn.className = `match-btn ${stateCls} w-full text-left p-3.5 rounded-xl flex items-center gap-3 text-sm sm:text-[15px] font-medium`;
+    btn.className = `match-btn ${stateCls} w-full text-left p-3 sm:p-3.5 rounded-xl flex items-center gap-2.5 sm:gap-3 text-[13px] sm:text-[15px] font-medium`;
     btn.innerHTML = `
       <span class="w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center shrink-0 ${
         leftIdx >= 0 ? 'text-white' : 'bg-cgy-bg text-cgy-muted border border-cgy-border'
       }" style="${leftIdx >= 0 ? `background-color: ${badgeColors[leftIdx % badgeColors.length]}` : ''}">
         ${leftIdx >= 0 ? leftIdx + 1 : '?'}
       </span>
-      <span class="leading-snug flex-1">${L(pairObj.right)}</span>
+      <span class="leading-snug flex-1 min-w-0 break-words">${L(pairObj.right)}</span>
       ${isRightLocked ? `<span class="px-2 py-0.5 rounded-md bg-[#eff6ff] border border-[#bfdbfe] text-[10px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Example' : 'Пример'}</span>` : ''}
     `;
 
@@ -2963,30 +3003,30 @@ function renderOrderTask(card, container, isEvaluated) {
 
     const row = document.createElement('div');
     row.draggable = !isEvaluated && !isLocked;
-    row.className = `order-card p-3.5 rounded-xl border-2 flex items-center gap-3 ${
+    row.className = `order-card p-3 sm:p-3.5 rounded-xl border-2 flex items-center gap-2.5 sm:gap-3 ${
       isRightPos ? 'bg-[#e9f6ec] border-cgy-ok'
         : (isWrongPos ? 'bg-[#fdecec] border-cgy-err'
           : (isLocked ? 'bg-[#eff6ff] border-[#93c5fd]' : 'bg-white border-cgy-border hover:border-cgy-accent shadow-sm'))
     }`;
 
     row.innerHTML = `
-      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="w-5 h-5 text-slate-400 shrink-0"></i>' : ''}
+      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="hidden md:inline w-5 h-5 text-slate-400 shrink-0"></i>' : ''}
       ${isLocked ? '<i data-lucide="lock" class="w-4 h-4 text-cgy-accent shrink-0"></i>' : ''}
-      <span class="w-8 h-8 rounded-lg ${
+      <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg ${
         isRightPos ? 'bg-cgy-ok text-white' : (isWrongPos ? 'bg-cgy-err text-white' : (isLocked ? 'bg-[#16a34a] text-white' : 'bg-cgy-accent text-white'))
-      } text-sm font-bold flex items-center justify-center shrink-0">
+      } text-xs sm:text-sm font-bold flex items-center justify-center shrink-0">
         ${pos + 1}
       </span>
-      <div class="flex-1 text-sm sm:text-base font-medium text-cgy-text leading-snug">${L(stepObj.text)}</div>
-      ${isLocked ? `<span class="px-2.5 py-1 rounded-lg bg-white border border-[#bfdbfe] text-[11px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Step 1 locked' : 'Шаг 1 на месте'}</span>` : ''}
+      <div class="flex-1 min-w-0 text-[13px] sm:text-base font-medium text-cgy-text leading-snug break-words">${L(stepObj.text)}</div>
+      ${isLocked ? `<span class="px-2 sm:px-2.5 py-1 rounded-lg bg-white border border-[#bfdbfe] text-[10px] sm:text-[11px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Step 1' : 'Шаг 1'}</span>` : ''}
       ${!isEvaluated && !isLocked ? `
-        <div class="flex flex-col sm:flex-row gap-1 shrink-0">
+        <div class="flex flex-row gap-1.5 shrink-0">
           <button type="button" onclick="moveOrderStep(${pos}, -1)" ${pos === 0 || (lockedFirst && pos === 1) ? 'disabled' : ''}
-            class="w-9 h-9 rounded-lg bg-cgy-bg border border-cgy-border hover:border-cgy-accent disabled:opacity-35 flex items-center justify-center text-cgy-text transition" title="Вверх">
+            class="w-10 h-10 sm:w-9 sm:h-9 rounded-lg bg-[#eef5ff] sm:bg-cgy-bg border border-[#bfd7f5] sm:border-cgy-border hover:border-cgy-accent active:bg-[#dce8f8] disabled:opacity-30 flex items-center justify-center text-cgy-accent sm:text-cgy-text transition" title="Вверх">
             <i data-lucide="arrow-up" class="w-4 h-4"></i>
           </button>
           <button type="button" onclick="moveOrderStep(${pos}, 1)" ${pos === order.length - 1 ? 'disabled' : ''}
-            class="w-9 h-9 rounded-lg bg-cgy-bg border border-cgy-border hover:border-cgy-accent disabled:opacity-35 flex items-center justify-center text-cgy-text transition" title="Вниз">
+            class="w-10 h-10 sm:w-9 sm:h-9 rounded-lg bg-[#eef5ff] sm:bg-cgy-bg border border-[#bfd7f5] sm:border-cgy-border hover:border-cgy-accent active:bg-[#dce8f8] disabled:opacity-30 flex items-center justify-center text-cgy-accent sm:text-cgy-text transition" title="Вниз">
             <i data-lucide="arrow-down" class="w-4 h-4"></i>
           </button>
         </div>
