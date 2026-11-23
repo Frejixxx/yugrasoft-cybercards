@@ -760,12 +760,12 @@
       <div id="call-avatar-wrap" class="w-16 h-16 mx-auto rounded-full flex items-center justify-center text-xl font-bold text-white call-ringing"></div>
       <div>
         <h3 id="call-name" class="font-bold text-base text-cgy-text"></h3>
-        <div id="call-status" class="text-sm text-cgy-accent mt-1 font-semibold">Вызов...</div>
+        <div id="call-status" class="text-sm text-cgy-accent mt-1 font-semibold" data-i18n="call_calling">Вызов...</div>
       </div>
       <div id="call-result-box" class="hidden text-left bg-cgy-bg border border-cgy-border rounded-lg p-3 text-xs text-cgy-text leading-relaxed"></div>
       <button onclick="closeCallModal()" class="w-full py-2.5 rounded-lg bg-cgy-err hover:opacity-90 text-white font-bold text-sm transition flex items-center justify-center gap-2">
         <i data-lucide="phone-off" class="w-4 h-4"></i>
-        <span id="call-btn-label">Завершить</span>
+        <span id="call-btn-label" data-i18n="call_end">Завершить</span>
       </button>
     </div>
   </div>
@@ -779,8 +779,8 @@
             <i data-lucide="message-square-text" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-bold text-sm text-cgy-text">Сообщения (SMS)</h3>
-            <p class="text-xs text-cgy-muted">Входящие на твой телефон</p>
+            <h3 class="font-bold text-sm text-cgy-text" data-i18n="sms_title">Сообщения (SMS)</h3>
+            <p class="text-xs text-cgy-muted" data-i18n="sms_sub">Входящие на твой телефон</p>
           </div>
         </div>
         <button onclick="closeSmsModal()" class="w-8 h-8 rounded-lg hover:bg-slate-200 text-cgy-muted flex items-center justify-center">
@@ -789,8 +789,8 @@
       </div>
       <div id="sms-list" class="p-4 space-y-3 overflow-y-auto custom-scroll flex-1 bg-[#f8fafc]"></div>
       <div class="px-4 py-3 bg-white border-t border-cgy-border flex items-center justify-between gap-2 shrink-0">
-        <span class="text-xs text-cgy-muted">Всегда читай, от кого и зачем пришёл код.</span>
-        <button onclick="closeSmsModal()" class="px-4 py-1.5 rounded-lg bg-cgy-bg hover:bg-slate-200 text-xs font-bold text-cgy-text">Закрыть</button>
+        <span class="text-xs text-cgy-muted" data-i18n="sms_footer_tip">Всегда читай, от кого и зачем пришёл код.</span>
+        <button onclick="closeSmsModal()" class="px-4 py-1.5 rounded-lg bg-cgy-bg hover:bg-slate-200 text-xs font-bold text-cgy-text" data-i18n="btn_close">Закрыть</button>
       </div>
     </div>
   </div>
@@ -799,7 +799,7 @@
   <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 animate-fade-in" onclick="if(event.target===this) closeProfileModal()">
     <div class="max-w-sm w-full bg-white border border-cgy-border rounded-xl overflow-hidden shadow-2xl">
       <div class="px-4 py-3 border-b border-cgy-border flex items-center justify-between bg-cgy-bg">
-        <span class="text-sm font-bold text-cgy-text">Информация о контакте</span>
+        <span class="text-sm font-bold text-cgy-text" data-i18n="cprof_title">Информация о контакте</span>
         <button onclick="closeProfileModal()" class="w-7 h-7 rounded-md hover:bg-slate-200 text-cgy-muted flex items-center justify-center">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
@@ -811,30 +811,30 @@
             <h3 id="prof-name" class="font-bold text-base text-cgy-text truncate"></h3>
             <span id="prof-badge" class="shrink-0 inline-flex items-center"></span>
           </div>
-          <div id="prof-status" class="text-xs text-cgy-accent font-medium mt-0.5">в сети</div>
+          <div id="prof-status" class="text-xs text-cgy-accent font-medium mt-0.5" data-i18n="chat_online">в сети</div>
         </div>
       </div>
       <div id="prof-badge-alert" class="hidden mx-4 mt-3 p-3 rounded-lg bg-[#fef3c7] border border-[#f59e0b] text-xs leading-relaxed text-[#92400e]"></div>
       <div class="p-4 space-y-3 text-sm">
         <div>
           <div id="prof-handle" class="text-cgy-accent font-mono text-xs font-semibold"></div>
-          <div class="text-xs text-cgy-muted mt-0.5">Имя пользователя / Контакт</div>
+          <div class="text-xs text-cgy-muted mt-0.5" data-i18n="cprof_handle">Имя пользователя / Контакт</div>
         </div>
         <div>
           <div id="prof-bio" class="text-cgy-text leading-snug"></div>
-          <div class="text-xs text-cgy-muted mt-0.5">О себе</div>
+          <div class="text-xs text-cgy-muted mt-0.5" data-i18n="cprof_bio">О себе</div>
         </div>
         <div>
           <div id="prof-meta" class="text-cgy-text text-xs"></div>
-          <div class="text-xs text-cgy-muted mt-0.5">Сведения об аккаунте</div>
+          <div class="text-xs text-cgy-muted mt-0.5" data-i18n="cprof_meta">Сведения об аккаунте</div>
         </div>
       </div>
       <div class="px-4 py-3 bg-cgy-bg border-t border-cgy-border flex items-center justify-between gap-2">
         <button id="prof-block-btn" onclick="closeProfileModal(); openReportModal();" class="text-xs font-bold text-cgy-err hover:underline flex items-center gap-1.5">
           <i data-lucide="ban" class="w-3.5 h-3.5"></i>
-          <span>Заблокировать</span>
+          <span data-i18n="btn_block">Заблокировать</span>
         </button>
-        <button onclick="closeProfileModal()" class="px-3.5 py-1.5 rounded-lg bg-white border border-cgy-border text-xs font-bold text-cgy-text">Закрыть</button>
+        <button onclick="closeProfileModal()" class="px-3.5 py-1.5 rounded-lg bg-white border border-cgy-border text-xs font-bold text-cgy-text" data-i18n="btn_close">Закрыть</button>
       </div>
     </div>
   </div>
@@ -845,16 +845,16 @@
       <div class="bg-[#d97706] px-5 py-4 flex items-center gap-3 text-white">
         <i data-lucide="alert-triangle" class="w-6 h-6 shrink-0"></i>
         <div>
-          <h3 class="font-bold text-base">Ложная тревога!</h3>
-          <p class="text-xs text-amber-100">Не спеши блокировать честных людей</p>
+          <h3 class="font-bold text-base" data-i18n="fa_title">Ложная тревога!</h3>
+          <p class="text-xs text-amber-100" data-i18n="fa_sub">Не спеши блокировать честных людей</p>
         </div>
       </div>
       <div class="p-4 sm:p-5 space-y-4 overflow-y-auto custom-scroll">
         <p id="false-alarm-text" class="text-sm text-cgy-text leading-relaxed"></p>
-        <div class="bg-cgy-bg border border-cgy-border rounded-lg p-3 text-xs text-cgy-muted">
+        <div class="bg-cgy-bg border border-cgy-border rounded-lg p-3 text-xs text-cgy-muted" data-i18n="fa_tip">
           Подсказка: проверь профиль контакта, нажми на трубку сверху (чтобы позвонить) и просто ответь в чате.
         </div>
-        <button onclick="closeFalseAlarmModal()" class="w-full py-2.5 rounded-lg bg-cgy-accent hover:bg-cgy-accentHover text-white font-bold text-sm transition">
+        <button onclick="closeFalseAlarmModal()" class="w-full py-2.5 rounded-lg bg-cgy-accent hover:bg-cgy-accentHover text-white font-bold text-sm transition" data-i18n="fa_btn">
           Понятно, вернуться в чат
         </button>
       </div>
@@ -869,8 +869,8 @@
           <i data-lucide="shield-alert" class="w-6 h-6"></i>
         </div>
         <div>
-          <h2 id="fail-title" class="text-lg sm:text-xl font-extrabold uppercase">ТЕБЯ РАЗВЕЛИ!</h2>
-          <p id="fail-subtitle" class="text-red-100 text-xs mt-0.5">Ошибка в действиях</p>
+          <h2 id="fail-title" class="text-lg sm:text-xl font-extrabold uppercase" data-i18n="fail_default_title">ТЕБЯ РАЗВЕЛИ!</h2>
+          <p id="fail-subtitle" class="text-red-100 text-xs mt-0.5" data-i18n="fail_default_sub">Ошибка в действиях</p>
         </div>
       </div>
 
@@ -878,20 +878,20 @@
         <div id="fail-url-box" class="hidden bg-[#fdecec] border border-[#f5c2c2] rounded-lg p-3">
           <div class="text-xs text-cgy-err font-bold uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
             <i data-lucide="globe" class="w-3.5 h-3.5"></i>
-            <span>Разбор ссылки</span>
+            <span data-i18n="fail_url_lbl">Разбор ссылки</span>
           </div>
           <div id="fail-url-display" class="font-mono text-xs bg-white px-3 py-2 rounded border border-cgy-border break-all text-cgy-text"></div>
         </div>
 
         <div class="bg-cgy-bg border border-cgy-border rounded-lg p-3.5">
-          <div class="text-xs font-bold uppercase tracking-wide text-cgy-err mb-1">Что произошло</div>
+          <div class="text-xs font-bold uppercase tracking-wide text-cgy-err mb-1" data-i18n="fail_what_lbl">Что произошло</div>
           <p id="fail-reason" class="text-sm text-cgy-text leading-relaxed"></p>
         </div>
 
         <div>
           <div class="text-xs font-bold uppercase tracking-wide text-[#b45309] mb-2 flex items-center gap-1.5">
             <i data-lucide="flag" class="w-3.5 h-3.5"></i>
-            <span>Красные флаги</span>
+            <span data-i18n="fail_flags_lbl">Красные флаги</span>
           </div>
           <ul id="fail-flags" class="space-y-1.5 text-sm text-cgy-text"></ul>
         </div>
@@ -900,7 +900,7 @@
       <div class="px-5 py-3.5 bg-cgy-bg border-t border-cgy-border flex justify-end">
         <button onclick="retryFromFail()" class="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-cgy-err hover:opacity-90 text-white font-bold text-sm transition flex items-center justify-center gap-2">
           <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-          <span>Попробовать снова</span>
+          <span data-i18n="retry_card">Попробовать снова</span>
         </button>
       </div>
     </div>
@@ -911,8 +911,8 @@
     <div class="max-w-md w-full bg-white border border-cgy-border rounded-xl overflow-hidden shadow-2xl">
       <div class="px-4 py-3.5 bg-cgy-bg border-b border-cgy-border flex items-center justify-between">
         <div>
-          <h3 class="font-bold text-cgy-text text-sm">Пожаловаться и заблокировать</h3>
-          <p class="text-xs text-cgy-muted mt-0.5">Укажи точную схему мошенника</p>
+          <h3 class="font-bold text-cgy-text text-sm" data-i18n="rep_title">Пожаловаться и заблокировать</h3>
+          <p class="text-xs text-cgy-muted mt-0.5" data-i18n="rep_sub">Укажи точную схему мошенника</p>
         </div>
         <button onclick="closeReportModal()" class="w-7 h-7 rounded-md hover:bg-slate-200 text-cgy-muted flex items-center justify-center">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -922,43 +922,43 @@
         <button onclick="submitReport('phishing')" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border hover:border-cgy-accent transition flex items-start gap-3">
           <i data-lucide="link-2-off" class="w-4 h-4 text-cgy-accent shrink-0 mt-0.5"></i>
           <div>
-            <div class="font-semibold text-sm text-cgy-text">Фишинг / поддельная ссылка</div>
-            <div class="text-xs text-cgy-muted">Подмена домена, выманивание пароля под видом приза</div>
+            <div class="font-semibold text-sm text-cgy-text" data-i18n="rep_phish_t">Фишинг / поддельная ссылка</div>
+            <div class="text-xs text-cgy-muted" data-i18n="rep_phish_d">Подмена домена, выманивание пароля под видом приза</div>
           </div>
         </button>
         <button onclick="submitReport('fake_blogger')" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border hover:border-cgy-accent transition flex items-start gap-3">
           <i data-lucide="badge-alert" class="w-4 h-4 text-cgy-accent shrink-0 mt-0.5"></i>
           <div>
-            <div class="font-semibold text-sm text-cgy-text">Фейковый блогер / поддельная галочка</div>
-            <div class="text-xs text-cgy-muted">Эмодзи-статус вместо верификации и «комиссия» за приз</div>
+            <div class="font-semibold text-sm text-cgy-text" data-i18n="rep_blog_t">Фейковый блогер / поддельная галочка</div>
+            <div class="text-xs text-cgy-muted" data-i18n="rep_blog_d">Эмодзи-статус вместо верификации и «комиссия» за приз</div>
           </div>
         </button>
         <button onclick="submitReport('hacked_friend')" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border hover:border-cgy-accent transition flex items-start gap-3">
           <i data-lucide="user-x" class="w-4 h-4 text-cgy-accent shrink-0 mt-0.5"></i>
           <div>
-            <div class="font-semibold text-sm text-cgy-text">Взломанный аккаунт знакомого</div>
-            <div class="text-xs text-cgy-muted">Перевод на чужую карту, дипфейк или код из SMS</div>
+            <div class="font-semibold text-sm text-cgy-text" data-i18n="rep_friend_t">Взломанный аккаунт знакомого</div>
+            <div class="text-xs text-cgy-muted" data-i18n="rep_friend_d">Перевод на чужую карту, дипфейк или код из SMS</div>
           </div>
         </button>
         <button onclick="submitReport('dropper')" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border hover:border-cgy-accent transition flex items-start gap-3">
           <i data-lucide="credit-card" class="w-4 h-4 text-cgy-accent shrink-0 mt-0.5"></i>
           <div>
-            <div class="font-semibold text-sm text-cgy-text">Дропперство / «лёгкий заработок»</div>
-            <div class="text-xs text-cgy-muted">Просят принимать чужие деньги на свою карту</div>
+            <div class="font-semibold text-sm text-cgy-text" data-i18n="rep_drop_t">Дропперство / «лёгкий заработок»</div>
+            <div class="text-xs text-cgy-muted" data-i18n="rep_drop_d">Просят принимать чужие деньги на свою карту</div>
           </div>
         </button>
         <button onclick="submitReport('fake_support')" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border hover:border-cgy-accent transition flex items-start gap-3">
           <i data-lucide="landmark" class="w-4 h-4 text-cgy-accent shrink-0 mt-0.5"></i>
           <div>
-            <div class="font-semibold text-sm text-cgy-text">Фейковая техподдержка / Госуслуги</div>
-            <div class="text-xs text-cgy-muted">Запугивают взломом и требуют код или переход по ссылке</div>
+            <div class="font-semibold text-sm text-cgy-text" data-i18n="rep_sup_t">Фейковая техподдержка / Госуслуги</div>
+            <div class="text-xs text-cgy-muted" data-i18n="rep_sup_d">Запугивают взломом и требуют код или переход по ссылке</div>
           </div>
         </button>
         <button onclick="submitReport('fake_authority')" class="w-full text-left px-3.5 py-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border hover:border-cgy-accent transition flex items-start gap-3">
           <i data-lucide="graduation-cap" class="w-4 h-4 text-cgy-accent shrink-0 mt-0.5"></i>
           <div>
-            <div class="font-semibold text-sm text-cgy-text">Фейковый руководитель / завуч</div>
-            <div class="text-xs text-cgy-muted">«Секретная проверка», запрет говорить родителям</div>
+            <div class="font-semibold text-sm text-cgy-text" data-i18n="rep_auth_t">Фейковый руководитель / завуч</div>
+            <div class="text-xs text-cgy-muted" data-i18n="rep_auth_d">«Секретная проверка», запрет говорить родителям</div>
           </div>
         </button>
         <p id="report-feedback" class="hidden text-xs bg-[#fef3c7] border border-[#f59e0b] text-[#92400e] rounded-lg p-2.5 mt-2"></p>
@@ -973,16 +973,16 @@
         <div id="win-badge-icon" class="w-14 h-14 mx-auto mb-3 rounded-xl bg-[#e9f6ec] border border-[#b7e4c7] text-cgy-ok flex items-center justify-center">
           <i data-lucide="shield-check" class="w-7 h-7"></i>
         </div>
-        <div class="text-xs font-bold uppercase tracking-wider text-cgy-ok mb-1">Сценарий пройден!</div>
+        <div class="text-xs font-bold uppercase tracking-wider text-cgy-ok mb-1" data-i18n="win_done_lbl">Сценарий пройден!</div>
         <h3 id="win-badge-title" class="text-lg font-bold text-cgy-text">Анти-фишинг</h3>
         <p id="win-badge-desc" class="text-sm text-cgy-muted mt-1 leading-relaxed"></p>
       </div>
       <div class="p-4 space-y-4">
         <div class="bg-cgy-bg rounded-lg p-3.5 border border-cgy-border">
-          <div class="text-xs font-bold text-cgy-accent uppercase tracking-wide mb-1">Что запомнить</div>
+          <div class="text-xs font-bold text-cgy-accent uppercase tracking-wide mb-1" data-i18n="win_remember_lbl">Что запомнить</div>
           <p id="win-lesson" class="text-sm text-cgy-text leading-relaxed"></p>
         </div>
-        <button id="win-next-btn" onclick="handleWinNextChat()" class="w-full py-2.5 rounded-lg bg-cgy-accent hover:bg-cgy-accentHover text-white font-bold text-sm transition">
+        <button id="win-next-btn" onclick="handleWinNextChat()" class="w-full py-2.5 rounded-lg bg-cgy-accent hover:bg-cgy-accentHover text-white font-bold text-sm transition" data-i18n="win_next_chat">
           К следующему чату
         </button>
       </div>

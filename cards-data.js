@@ -18,7 +18,7 @@ const DEFAULT_CARDS = [
     clues: [
       {
         id: 'c_game_1',
-        match: { ru: 'бесплатную АДМИНКУ на сервере', en: 'free ADMIN on the server', kca: 'вух ӆыпи АДМИНКА' },
+        match: { ru: 'бесплатную АДМИНКУ на сервере', en: 'free ADMIN on the server', kca: 'Вух ӆыпи АДМИНКА' },
         note: {
           ru: 'Улика №1: «Бесплатная админка» — классическая приманка для школьников! Настоящую админку не раздают незнакомцам в чате.',
           en: 'Clue #1: "Free admin" is classic bait! Real server admins never hand out admin rights to strangers in chat.',

@@ -175,7 +175,44 @@ const I18N = {
     sort_pool_empty: 'Все карточки разложены! Нажми «Проверить ответ».',
     match_drag_hint: 'Перетащи ситуацию слева на реакцию справа (или кликни по паре):',
     drop_here: 'Перетащи сюда',
-    streak_label: 'Серия'
+    streak_label: 'Серия',
+    call_calling: 'Вызов...',
+    call_end: 'Завершить',
+    sms_title: 'Сообщения (SMS)',
+    sms_sub: 'Входящие на твой телефон',
+    sms_footer_tip: 'Всегда читай, от кого и зачем пришёл код.',
+    btn_close: 'Закрыть',
+    cprof_title: 'Информация о контакте',
+    chat_online: 'в сети',
+    cprof_handle: 'Имя пользователя / Контакт',
+    cprof_bio: 'О себе',
+    cprof_meta: 'Сведения об аккаунте',
+    fa_title: 'Ложная тревога!',
+    fa_sub: 'Не спеши блокировать честных людей',
+    fa_tip: 'Подсказка: проверь профиль контакта, нажми на трубку сверху (чтобы позвонить) и просто ответь в чате.',
+    fa_btn: 'Понятно, вернуться в чат',
+    fail_default_title: 'ТЕБЯ РАЗВЕЛИ!',
+    fail_default_sub: 'Ошибка в действиях',
+    fail_url_lbl: 'Разбор ссылки',
+    fail_what_lbl: 'Что произошло',
+    fail_flags_lbl: 'Красные флаги',
+    rep_title: 'Пожаловаться и заблокировать',
+    rep_sub: 'Укажи точную схему мошенника',
+    rep_phish_t: 'Фишинг / поддельная ссылка',
+    rep_phish_d: 'Подмена домена, выманивание пароля под видом приза',
+    rep_blog_t: 'Фейковый блогер / поддельная галочка',
+    rep_blog_d: 'Эмодзи-статус вместо верификации и «комиссия» за приз',
+    rep_friend_t: 'Взломанный аккаунт знакомого',
+    rep_friend_d: 'Перевод на чужую карту, дипфейк или код из SMS',
+    rep_drop_t: 'Дропперство / «лёгкий заработок»',
+    rep_drop_d: 'Просят принимать чужие деньги на свою карту',
+    rep_sup_t: 'Фейковая техподдержка / Госуслуги',
+    rep_sup_d: 'Запугивают взломом и требуют код или переход по ссылке',
+    rep_auth_t: 'Фейковый руководитель / завуч',
+    rep_auth_d: '«Секретная проверка», запрет говорить родителям',
+    win_done_lbl: 'Сценарий пройден!',
+    win_remember_lbl: 'Что запомнить',
+    win_next_chat: 'К следующему чату'
   },
   en: {
     portal_name: 'Digital Citizen of Yugra',
@@ -340,7 +377,44 @@ const I18N = {
     sort_pool_empty: 'All cards sorted! Click "Check Answer".',
     match_drag_hint: 'Drag a situation on the left onto a reaction on the right (or click to connect):',
     drop_here: 'Drop here',
-    streak_label: 'Streak'
+    streak_label: 'Streak',
+    call_calling: 'Calling...',
+    call_end: 'End Call',
+    sms_title: 'Messages (SMS)',
+    sms_sub: 'Incoming messages on your phone',
+    sms_footer_tip: 'Always check who sent a code and why.',
+    btn_close: 'Close',
+    cprof_title: 'Contact Info',
+    chat_online: 'online',
+    cprof_handle: 'Username / Contact',
+    cprof_bio: 'Bio',
+    cprof_meta: 'Account Details',
+    fa_title: 'False Alarm!',
+    fa_sub: 'Don’t rush to block honest people',
+    fa_tip: 'Tip: check the contact profile, tap the phone icon above to call, and just reply in chat.',
+    fa_btn: 'Got it, back to chat',
+    fail_default_title: 'YOU GOT SCAMMED!',
+    fail_default_sub: 'Mistake in your actions',
+    fail_url_lbl: 'Link Breakdown',
+    fail_what_lbl: 'What Happened',
+    fail_flags_lbl: 'Red Flags',
+    rep_title: 'Report & Block',
+    rep_sub: 'Select the exact scam scheme',
+    rep_phish_t: 'Phishing / Fake Link',
+    rep_phish_d: 'Lookalike domain stealing passwords under a prize pretext',
+    rep_blog_t: 'Fake Blogger / Fake Checkmark',
+    rep_blog_d: 'Emoji status instead of verification and a "prize fee"',
+    rep_friend_t: 'Hacked Friend Account',
+    rep_friend_d: 'Transfer to a stranger’s card, deepfake, or SMS code',
+    rep_drop_t: 'Money Mule / "Easy Money"',
+    rep_drop_d: 'Asking to receive strangers’ money onto your card',
+    rep_sup_t: 'Fake Support / Gov Portal',
+    rep_sup_d: 'Scaring with a hack and demanding a code or link click',
+    rep_auth_t: 'Fake Principal / Authority',
+    rep_auth_d: '"Secret check" and forbidding you to tell parents',
+    win_done_lbl: 'Scenario Completed!',
+    win_remember_lbl: 'Key Takeaway',
+    win_next_chat: 'Next Chat'
   },
   kca: {
     portal_name: 'Югра цифровой хоят',
@@ -499,7 +573,44 @@ const I18N = {
     sort_pool_empty: 'Иса карточкат пунсыйт! «Вәньщты» кнопка пириэ.',
     match_drag_hint: 'Хӑӆ пєӆӑк вєр ем пєӆӑк ястӑпсыйн вўсэ (аӆпа пириэ):',
     drop_here: 'Тӑта пунэ',
-    streak_label: 'Серия'
+    streak_label: 'Серия',
+    call_calling: 'Телефон вохӆ...',
+    call_end: 'Пӑнтты',
+    sms_title: 'Нєпекӑт (SMS)',
+    sms_sub: 'Нӑӊ телефона юхтӑм SMS',
+    sms_footer_tip: 'Хәйата па муй пӑта код юхтӑс — вәньщэ.',
+    btn_close: 'Пӑнтты',
+    cprof_title: 'Контакт вєрӑт',
+    chat_online: 'сетьӑн',
+    cprof_handle: 'Нєм / Контакт',
+    cprof_bio: 'Ӆўв пӑта',
+    cprof_meta: 'Аккаунт вєрӑт',
+    fa_title: 'Щит тәса хоят!',
+    fa_sub: 'Тәса хоятӑт блокӑн пунты ӑн мӑсӆ',
+    fa_tip: 'Нётты ясӑӊ: профиль вәньщэ, телефонӑн вохэ па чатӑн ястӑэ.',
+    fa_btn: 'Вәӆум, чата мӑнты',
+    fail_default_title: 'МОШЕННИК НӐӉЭН ӅИӅӐС!',
+    fail_default_sub: 'Ӑн тәса вєр',
+    fail_url_lbl: 'Ссылка вәньщты',
+    fail_what_lbl: 'Муй йис',
+    fail_flags_lbl: 'Ӑн тәса признакӑт',
+    rep_title: 'Ястӑты па блокӑн пунты',
+    rep_sub: 'Мошенник вєр пириэ',
+    rep_phish_t: 'Фишинг / ӑн тәса ссылка',
+    rep_phish_d: 'Ӑн тәса сайт, приз пӑта пароль вохӆ',
+    rep_blog_t: 'Фейк-блогер / ӑн тәса галочка',
+    rep_blog_d: 'Эмодзи-статус па приз пӑта «комиссия»',
+    rep_friend_t: 'Вўсы юр аккаунт',
+    rep_friend_d: 'Йиӆуп картайн вух китты, дипфейк аӆпа SMS-код',
+    rep_drop_t: 'Дропперство / «моньщ вух»',
+    rep_drop_d: 'Нӑӊ картайн йиӆуп хоят вух вўты вохӆӑт',
+    rep_sup_t: 'Фейк техподдержка / Госуслуги',
+    rep_sup_d: 'Взломӑн пӑӆтӑӆӑт па код аӆпа ссылка вохӆӑт',
+    rep_auth_t: 'Фейк завуч / директор',
+    rep_auth_d: '«Секретной проверка», аӊки-ащийн ястӑты ӑн мӑӆ',
+    win_done_lbl: 'Сценарий вєрӑн!',
+    win_remember_lbl: 'Муй нумӑсты',
+    win_next_chat: 'Йиӆуп чата'
   }
 };
 
@@ -799,15 +910,6 @@ function init() {
       saveState();
       updateHeaderProfileUI();
       updateCertFormUI();
-    });
-  }
-
-  // Поиск в чатах
-  const chatSearch = document.getElementById('chat-search');
-  if (chatSearch) {
-    chatSearch.addEventListener('input', (e) => {
-      state.chatSearch = e.target.value.trim().toLowerCase();
-      renderChatList();
     });
   }
 
