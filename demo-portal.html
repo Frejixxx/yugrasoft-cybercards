@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Цифровой гражданин Югры — Встраивание модуля «Кибер-карточки Югры»</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="bg-[#f5f7fa] text-[#1f2937] font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Имитация шапки портала «Цифровой гражданин Югры» -->
+  <header class="bg-white border-b border-[#d1d5db] px-4 sm:px-8 py-3.5 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-[#1e5aa8] text-white flex items-center justify-center font-extrabold text-sm">ЦГЮ</div>
+        <div>
+          <div class="font-bold text-base text-[#1f2937] leading-tight">Цифровой гражданин Югры</div>
+          <div class="text-xs text-[#5b6778]">Раздел «Кибербезопасность детей» — демонстрация встраивания модуля через iframe + postMessage API</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
+        <button onclick="sendCmd('setTab', 'cards')" class="px-3 py-1.5 rounded-lg bg-[#eaf1fb] text-[#1e5aa8] hover:bg-[#dce8f8] transition">Карточки</button>
+        <button onclick="sendCmd('setTab', 'chat')" class="px-3 py-1.5 rounded-lg bg-[#f5f7fa] border border-[#d1d5db] text-[#1f2937] hover:bg-slate-100 transition">Симулятор чатов</button>
+        <button onclick="sendCmd('setTab', 'results')" class="px-3 py-1.5 rounded-lg bg-[#f5f7fa] border border-[#d1d5db] text-[#1f2937] hover:bg-slate-100 transition">Аналитика</button>
+        <button onclick="sendCmd('setLang', 'ru')" class="px-2.5 py-1.5 rounded-lg bg-[#1e5aa8] text-white">RU</button>
+        <button onclick="sendCmd('setLang', 'kca')" class="px-2.5 py-1.5 rounded-lg bg-[#eaf1fb] border border-[#1e5aa8] text-[#1e5aa8]" title="Хантыйский язык (Ханты ясӑӊ)">ХАН</button>
+        <button onclick="sendCmd('setLang', 'en')" class="px-2.5 py-1.5 rounded-lg bg-slate-200 text-[#1f2937]">EN</button>
+        <a href="index.html" class="px-3 py-1.5 rounded-lg border border-[#1e5aa8] text-[#1e5aa8] hover:bg-[#eaf1fb] transition">На весь экран</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5">
+    <!-- EMBEDDED MODULE -->
+    <div class="lg:col-span-9 flex flex-col">
+      <div class="bg-white rounded-xl border border-[#d1d5db] shadow-sm overflow-hidden flex-1 flex flex-col min-h-[700px]">
+        <div class="px-4 py-2.5 bg-[#f8fafc] border-b border-[#e5e9f0] flex items-center justify-between text-xs text-[#5b6778]">
+          <span class="font-semibold text-[#1f2937]">Встроенный модуль тренажёра (iframe)</span>
+          <span class="font-mono text-[11px]">index.html?embed=1&amp;lang=ru</span>
+        </div>
+        <iframe id="mod-frame" src="index.html?embed=1&lang=ru" class="w-full flex-1 min-h-[660px] border-0"></iframe>
+      </div>
+    </div>
+
+    <!-- LIVE POSTMESSAGE LOG -->
+    <aside class="lg:col-span-3 bg-white rounded-xl border border-[#d1d5db] shadow-sm p-4 flex flex-col max-h-[740px]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#e5e9f0]">
+        <div>
+          <h2 class="font-bold text-sm text-[#1f2937]">API портала ЦГЮ</h2>
+          <p class="text-[11px] text-[#5b6778]">Живые события postMessage</p>
+        </div>
+        <span class="w-2.5 h-2.5 rounded-full bg-[#1e7e34]"></span>
+      </div>
+
+      <div id="event-log" class="flex-1 overflow-y-auto py-3 space-y-2 text-[11px] font-mono">
+        <div class="text-slate-400 italic">Ожидание событий от модуля...</div>
+      </div>
+
+      <div class="pt-3 border-t border-[#e5e9f0] text-xs text-[#5b6778] leading-relaxed">
+        Код вставки на портал:
+        <code class="block mt-1.5 p-2 rounded bg-[#f5f7fa] border border-[#d1d5db] text-[10.5px] break-all text-[#1e5aa8]">&lt;iframe src="/modules/cybercards/index.html?embed=1" width="100%" height="760"&gt;&lt;/iframe&gt;</code>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const frame = document.getElementById('mod-frame');
+    const logEl = document.getElementById('event-log');
+    let first = true;
+
+    function sendCmd(action, value) {
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({ target: 'cybercards-yugra', action, value }, '*');
+      }
+    }
+
+    window.addEventListener('message', (e) => {
+      const d = e.data;
+      if (!d || d.source !== 'cybercards-yugra') return;
+      if (first) { logEl.innerHTML = ''; first = false; }
+      const el = document.createElement('div');
+      el.className = 'p-2.5 rounded-lg bg-[#f5f7fa] border border-[#d1d5db] break-words';
+      el.innerHTML = `
+        <div class="flex items-center justify-between text-[10.5px] text-[#1e5aa8] font-bold mb-1">
+          <span class="uppercase">${d.event}</span>
+          <span class="text-[#5b6778] font-normal">${new Date(d.timestamp).toLocaleTimeString('ru-RU')}</span>
+        </div>
+        <pre class="text-[10.5px] whitespace-pre-wrap text-[#1f2937] leading-snug">${JSON.stringify(d.payload, null, 2)}</pre>
+      `;
+      logEl.prepend(el);
+    });
+  </script>
+</body>
+</html>
