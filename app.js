@@ -516,6 +516,7 @@ const state = {
   // Состояние карточек
   currentCardId: null,
   adaptiveLevel: 1,           // 1, 2, 3
+  supportMode: false,         // true после ошибки или для 1-4 кл.: реально упрощает задание (50/50, примеры, 1-й шаг)
   streak: 0,
   unlockedAchIds: [],
   cardResults: {},            // cardId -> { answered: bool, correct: bool, firstTryCorrect: bool, attempts: n }
@@ -648,6 +649,10 @@ function applyUrlParams() {
     if (['1-4', '5-7', '8-11'].includes(classParam)) {
       state.profile.gradeClass = classParam;
       state.chatGradeMode = classParam === '8-11' ? '8-11' : '5-7';
+      if (Object.keys(state.cardResults || {}).length === 0) {
+        state.adaptiveLevel = classParam === '8-11' ? 3 : 1;
+        state.supportMode = classParam === '1-4';
+      }
     }
     const tabParam = params.get('tab');
     if (['cards', 'chat', 'blitz', 'results'].includes(tabParam)) {
@@ -701,6 +706,7 @@ function loadState() {
     if (p.profile) state.profile = { ...state.profile, ...p.profile };
     if (p.currentCardId) state.currentCardId = p.currentCardId;
     if (typeof p.adaptiveLevel === 'number') state.adaptiveLevel = p.adaptiveLevel;
+    if (typeof p.supportMode === 'boolean') state.supportMode = p.supportMode;
     if (typeof p.streak === 'number') state.streak = p.streak;
     if (Array.isArray(p.unlockedAchIds)) state.unlockedAchIds = p.unlockedAchIds;
     if (p.cardResults) state.cardResults = p.cardResults;
@@ -728,6 +734,7 @@ function saveState() {
       profile: state.profile,
       currentCardId: state.currentCardId,
       adaptiveLevel: state.adaptiveLevel,
+      supportMode: state.supportMode,
       streak: state.streak,
       unlockedAchIds: state.unlockedAchIds,
       cardResults: state.cardResults,
@@ -1044,11 +1051,30 @@ function closeStudentProfileModal() {
 function saveStudentProfile(e) {
   e.preventDefault();
   const prevSkin = state.heroSkin;
+  const prevGrade = state.profile.gradeClass;
   state.profile.fio = document.getElementById('prof-fio-input').value.trim();
   state.profile.gradeClass = document.getElementById('prof-class-select').value;
   state.chatGradeMode = state.profile.gradeClass === '8-11' ? '8-11' : '5-7';
   state.heroSkin = modalHeroDraft === 'alex' ? 'alex' : 'steve';
   state.heroSkinManual = modalHeroManual;
+
+  if (state.profile.gradeClass !== prevGrade) {
+    if (state.profile.gradeClass === '1-4') {
+      state.adaptiveLevel = 1;
+      state.supportMode = true;
+    } else if (state.profile.gradeClass === '8-11') {
+      state.adaptiveLevel = 3;
+      state.supportMode = false;
+    } else if (Object.keys(state.cardResults || {}).length === 0) {
+      state.adaptiveLevel = 1;
+      state.supportMode = false;
+    }
+    // Пересобираем черновик текущей нерешённой карточки под новый режим сложности
+    const curRes = state.cardResults[state.currentCardId];
+    if (!curRes || !curRes.answered || state.cardDraft.retrying) {
+      state.cardDraft = { retrying: Boolean(state.cardDraft.retrying) };
+    }
+  }
   saveState();
 
   const certInp = document.getElementById('cert-name-input');
@@ -1058,6 +1084,7 @@ function saveStudentProfile(e) {
   updateChatGradeUI();
   updateCertFormUI();
   updateAllProgressBadges();
+  renderCurrentCard();
   renderChatList();
   closeStudentProfileModal();
 
@@ -1145,21 +1172,67 @@ function selectCardById(cardId) {
   renderCurrentCard(true);
 }
 
+function isSupportModeActive(card) {
+  if (!card) return false;
+  const res = state.cardResults[card.id];
+  const isRetryingAfterError = Boolean(state.cardDraft && state.cardDraft.retrying && res && !res.correct);
+  return Boolean(state.supportMode || isRetryingAfterError);
+}
+
+function getNextAdaptiveTarget() {
+  const unanswered = CARDS.filter(c => !(state.cardResults[c.id] && state.cardResults[c.id].answered));
+  if (unanswered.length > 0) {
+    unanswered.sort((a, b) => Math.abs((a.level || 1) - state.adaptiveLevel) - Math.abs((b.level || 1) - state.adaptiveLevel));
+    return { card: unanswered[0], reason: 'adaptive' };
+  }
+  const wrongCards = CARDS.filter(c => {
+    const r = state.cardResults[c.id];
+    return r && r.answered && !r.correct && c.id !== state.currentCardId;
+  });
+  if (wrongCards.length > 0) {
+    return { card: wrongCards[0], reason: 'review' };
+  }
+  return null;
+}
+
 function initCardDraftIfNeeded(card) {
   if (state.cardDraft.cardId === card.id) return;
   const savedRes = state.cardResults[card.id];
-  const restoringEvaluated = Boolean(savedRes && savedRes.answered && savedRes.savedDraft && !state.cardDraft.retrying);
-  state.cardDraft = { cardId: card.id };
+  const wasRetrying = Boolean(state.cardDraft.retrying);
+  const restoringEvaluated = Boolean(savedRes && savedRes.answered && savedRes.savedDraft && !wasRetrying);
+  state.cardDraft = { cardId: card.id, retrying: wasRetrying };
   if (restoringEvaluated) {
     state.cardDraft = { cardId: card.id, ...JSON.parse(JSON.stringify(savedRes.savedDraft)) };
     return;
   }
 
-  if (card.type === 'sort') {
+  const supportOn = isSupportModeActive(card);
+  state.cardDraft.supportApplied = supportOn;
+
+  if (card.type === 'choice') {
+    if (supportOn && Array.isArray(card.options) && card.options.length >= 3) {
+      const wrongOpt = card.options.find(o => !o.correct);
+      if (wrongOpt) state.cardDraft.eliminatedOptId = wrongOpt.id;
+    }
+  } else if (card.type === 'truefalse') {
+    state.cardDraft.showHint = supportOn;
+  } else if (card.type === 'sort') {
     state.cardDraft.assignments = {}; // itemId -> 'safe' | 'private'
+    state.cardDraft.lockedIds = [];
+    if (supportOn && Array.isArray(card.items)) {
+      const oneSafe = card.items.find(it => it.bucket === 'safe');
+      const onePriv = card.items.find(it => it.bucket === 'private');
+      [oneSafe, onePriv].forEach(it => {
+        if (it) {
+          state.cardDraft.assignments[it.id] = it.bucket;
+          state.cardDraft.lockedIds.push(it.id);
+        }
+      });
+    }
   } else if (card.type === 'match') {
     state.cardDraft.selectedLeft = null;
     state.cardDraft.pairs = {}; // leftId -> rightId
+    state.cardDraft.lockedLeftId = null;
     // Детерминированно перемешанный правый столбец
     const rightIds = card.pairs.map(p => p.id);
     const shuffled = [...rightIds];
@@ -1171,10 +1244,28 @@ function initCardDraftIfNeeded(card) {
       }
     }
     state.cardDraft.rightOrder = shuffled;
+    if (supportOn && card.pairs.length >= 3) {
+      const starter = card.pairs[0];
+      state.cardDraft.pairs[starter.id] = starter.id;
+      state.cardDraft.lockedLeftId = starter.id;
+    }
   } else if (card.type === 'order') {
     // Перемешанный порядок шагов (отличный от правильного)
     const ids = card.steps.map(s => s.id);
-    state.cardDraft.order = ids.length === 4 ? [ids[2], ids[0], ids[3], ids[1]] : [...ids].reverse();
+    if (supportOn && ids.length >= 3) {
+      // В облегчённом режиме шаг №1 сразу зафиксирован на месте, а остальные 3 перемешаны!
+      const firstStep = card.steps.find(s => s.correctPos === 0);
+      const rest = card.steps.filter(s => s.id !== (firstStep ? firstStep.id : ids[0])).map(s => s.id);
+      if (rest.length >= 2) {
+        const last = rest.pop();
+        rest.unshift(last);
+      }
+      state.cardDraft.order = [firstStep ? firstStep.id : ids[0], ...rest];
+      state.cardDraft.lockedFirst = true;
+    } else {
+      state.cardDraft.order = ids.length === 4 ? [ids[2], ids[0], ids[3], ids[1]] : [...ids].reverse();
+      state.cardDraft.lockedFirst = false;
+    }
   }
 }
 
@@ -1199,8 +1290,62 @@ function renderCurrentCard(animateEntrance = false) {
 
   // Верхняя строка статуса
   document.getElementById('card-step-text').textContent = `${idx + 1} ${t('of_word')} ${CARDS.length}`;
-  document.getElementById('adaptive-level-badge').textContent = t('levels')[state.adaptiveLevel] || t('levels')[1];
+  const lvlText = t('levels')[state.adaptiveLevel] || t('levels')[1];
+  const adaptBadge = document.getElementById('adaptive-level-badge');
+  const adaptWrap = document.getElementById('adaptive-pill-wrap');
+  const supportApplied = !isEvaluated && Boolean(state.cardDraft.supportApplied);
+  if (adaptBadge) {
+    adaptBadge.textContent = state.supportMode
+      ? `${lvlText} • ${state.lang === 'en' ? 'Guided' : 'Облегчено'}`
+      : lvlText;
+    adaptBadge.className = state.supportMode ? 'font-extrabold text-[#15803d]' : 'font-extrabold text-cgy-accent';
+  }
+  if (adaptWrap) {
+    adaptWrap.className = state.supportMode
+      ? 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#ecfdf5] border-2 border-[#86efac] text-xs font-bold text-[#166534] transition'
+      : 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 border-2 border-[#d1d5db] text-xs font-bold text-cgy-muted transition';
+  }
   document.getElementById('cards-live-score').textContent = `${stats.correct} / ${stats.total}`;
+
+  // Наглядная плашка облегчённого режима (чтобы было сразу видно, ЧТО именно упростилось!)
+  const assistBar = document.getElementById('adaptive-assist-bar');
+  const assistText = document.getElementById('adaptive-assist-text');
+  if (assistBar && assistText) {
+    if (supportApplied) {
+      const isEn = state.lang === 'en';
+      let msg = '';
+      if (card.type === 'choice' && state.cardDraft.eliminatedOptId) {
+        msg = isEn
+          ? 'Guided mode active: 1 wrong option has been crossed out (50/50).'
+          : 'Облегчённый режим: 1 неверный вариант уже убран — осталось выбрать из двух.';
+      } else if (card.type === 'sort' && (state.cardDraft.lockedIds || []).length > 0) {
+        msg = isEn
+          ? `Guided mode active: ${state.cardDraft.lockedIds.length} example cards are already sorted for you.`
+          : `Облегчённый режим: ${state.cardDraft.lockedIds.length} карточки уже разложены по корзинам как пример.`;
+      } else if (card.type === 'match' && state.cardDraft.lockedLeftId) {
+        msg = isEn
+          ? 'Guided mode active: pair #1 is already connected as an example.'
+          : 'Облегчённый режим: первая пара уже соединена для примера — осталось соединить остальные.';
+      } else if (card.type === 'order' && state.cardDraft.lockedFirst) {
+        msg = isEn
+          ? 'Guided mode active: Step #1 is locked in the right spot — arrange the remaining steps.'
+          : 'Облегчённый режим: шаг №1 уже поставлен на верное место — расставь остальные.';
+      } else if (card.type === 'truefalse') {
+        const tip = card.mascotTip ? L(card.mascotTip) : '';
+        msg = isEn
+          ? `Guided mode active — detective hint unlocked: ${tip}`
+          : `Облегчённый режим — подсказка открыта сразу: ${tip}`;
+      }
+      if (msg) {
+        assistText.textContent = msg;
+        assistBar.classList.remove('hidden');
+      } else {
+        assistBar.classList.add('hidden');
+      }
+    } else {
+      assistBar.classList.add('hidden');
+    }
+  }
 
   // Теги карточки
   const typeIcons = {
@@ -1302,7 +1447,26 @@ function renderCurrentCard(animateEntrance = false) {
   retryBtn.textContent = t('retry_card');
 
   const allDone = stats.answered === stats.total;
-  document.getElementById('btn-card-next-label').textContent = allDone ? t('to_results') : t('next_card');
+  const nextTarget = getNextAdaptiveTarget();
+  const nextLblEl = document.getElementById('btn-card-next-label');
+  if (nextLblEl) {
+    if (!nextTarget) {
+      nextLblEl.textContent = t('to_results');
+    } else {
+      const nextNum = CARDS.findIndex(c => c.id === nextTarget.card.id) + 1;
+      const nextLvl = nextTarget.card.level || 1;
+      const starsStr = '★'.repeat(nextLvl) + '☆'.repeat(Math.max(0, 3 - nextLvl));
+      if (nextTarget.reason === 'review') {
+        nextLblEl.textContent = state.lang === 'en'
+          ? `Review #${nextNum} (Guided)`
+          : `Закрепить №${nextNum} (облегчённо)`;
+      } else {
+        nextLblEl.textContent = state.lang === 'en'
+          ? `Next: #${nextNum} (${starsStr})`
+          : `Дальше: №${nextNum} (${starsStr} ${t('levelShort')[nextLvl]})`;
+      }
+    }
+  }
 
   if (isEvaluated) {
     showCardFeedbackUI(card, res.correct, res.adaptiveNote || '');
@@ -2315,20 +2479,28 @@ function renderChoiceTask(card, container, isEvaluated, res) {
     'bg-[#d97706] text-white'
   ];
 
+  const eliminatedId = !isEvaluated ? state.cardDraft.eliminatedOptId : null;
+
   card.options.forEach((opt, i) => {
+    const isEliminated = Boolean(eliminatedId && opt.id === eliminatedId);
     const btn = document.createElement('button');
     let extra = '';
     if (isEvaluated) {
       if (opt.correct) extra = 'is-correct';
       else if (res && res.chosenId === opt.id) extra = 'is-wrong';
+    } else if (isEliminated) {
+      extra = 'opacity-45 cursor-not-allowed';
     }
-    btn.disabled = isEvaluated;
+    btn.disabled = isEvaluated || isEliminated;
     btn.className = `card-option ${extra} w-full text-left px-4 sm:px-5 py-4 flex items-start gap-3.5 text-base font-bold`;
     btn.innerHTML = `
-      <span class="w-8 h-8 rounded-xl ${pillColors[i % pillColors.length]} text-sm font-extrabold flex items-center justify-center shrink-0 mt-0.5 shadow-sm">${letters[i] || (i + 1)}</span>
-      <span class="leading-snug flex-1">${L(opt.text)}</span>
+      <span class="w-8 h-8 rounded-xl ${isEliminated ? 'bg-slate-400 text-white' : pillColors[i % pillColors.length]} text-sm font-extrabold flex items-center justify-center shrink-0 mt-0.5 shadow-sm">${letters[i] || (i + 1)}</span>
+      <span class="leading-snug flex-1 ${isEliminated ? 'line-through text-slate-500' : ''}">${L(opt.text)}</span>
+      ${isEliminated ? `<span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-600 text-[11px] font-extrabold shrink-0 self-center">${state.lang === 'en' ? '50/50' : 'Убрано (50/50)'}</span>` : ''}
     `;
-    btn.onclick = () => evaluateCardResult(card, opt.correct, { chosenId: opt.id });
+    if (!isEliminated) {
+      btn.onclick = () => evaluateCardResult(card, opt.correct, { chosenId: opt.id });
+    }
     wrap.appendChild(btn);
   });
 
@@ -2470,22 +2642,26 @@ function renderSortTask(card, container, isEvaluated) {
 
 function createSortChipEl(item, currentBucket, isEvaluated, isSelected) {
   const chip = document.createElement('div');
+  const isLocked = !isEvaluated && Array.isArray(state.cardDraft.lockedIds) && state.cardDraft.lockedIds.includes(item.id);
   const isOk = isEvaluated && currentBucket === item.bucket;
   const isBad = isEvaluated && currentBucket !== item.bucket;
 
   let colorCls = 'bg-white border-cgy-border text-cgy-text';
   if (isOk) colorCls = 'bg-[#e9f6ec] border-cgy-ok text-[#14532d]';
   else if (isBad) colorCls = 'bg-[#fdecec] border-cgy-err text-[#7f1d1d]';
+  else if (isLocked) colorCls = 'bg-[#eff6ff] border-[#93c5fd] text-[#1e40af]';
 
   chip.className = `draggable-chip ${isSelected ? 'chip-selected' : ''} ${colorCls} border-2 rounded-xl px-3.5 py-2.5 text-sm sm:text-[15px] font-semibold shadow-sm flex items-center justify-between gap-2.5`;
-  chip.draggable = !isEvaluated;
+  chip.draggable = !isEvaluated && !isLocked;
 
   chip.innerHTML = `
     <div class="flex items-center gap-2 min-w-0">
-      ${!isEvaluated ? '<i data-lucide="grip-vertical" class="w-4 h-4 text-slate-400 shrink-0"></i>' : ''}
+      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="w-4 h-4 text-slate-400 shrink-0"></i>' : ''}
+      ${isLocked ? '<i data-lucide="pin" class="w-3.5 h-3.5 text-cgy-accent shrink-0"></i>' : ''}
       <span class="leading-snug">${L(item.text)}</span>
     </div>
-    ${!isEvaluated && currentBucket ? `
+    ${isLocked ? `<span class="px-2 py-0.5 rounded-md bg-white border border-[#bfdbfe] text-[10px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Example' : 'Пример'}</span>` : ''}
+    ${!isEvaluated && !isLocked && currentBucket ? `
       <button type="button" onclick="event.stopPropagation(); removeSortItem('${item.id}')" title="Вернуть обратно"
         class="w-6 h-6 rounded-md hover:bg-black/10 text-cgy-muted flex items-center justify-center shrink-0">
         <i data-lucide="x" class="w-3.5 h-3.5"></i>
@@ -2494,7 +2670,7 @@ function createSortChipEl(item, currentBucket, isEvaluated, isSelected) {
     ${isEvaluated ? `<i data-lucide="${isOk ? 'check-circle-2' : 'x-circle'}" class="w-4 h-4 ${isOk ? 'text-cgy-ok' : 'text-cgy-err'} shrink-0"></i>` : ''}
   `;
 
-  if (!isEvaluated) {
+  if (!isEvaluated && !isLocked) {
     chip.ondragstart = (e) => {
       e.dataTransfer.setData('text/plain', item.id);
       e.dataTransfer.effectAllowed = 'move';
@@ -2560,10 +2736,12 @@ function renderMatchTask(card, container, isEvaluated) {
   grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 relative z-20';
 
   // Левая колонка (Ситуации — можно перетаскивать на правую колонку!)
+  const lockedLeftId = !isEvaluated ? state.cardDraft.lockedLeftId : null;
   const leftCol = document.createElement('div');
   leftCol.className = 'space-y-3';
   card.pairs.forEach((pair, idx) => {
     const num = idx + 1;
+    const isLocked = Boolean(lockedLeftId && pair.id === lockedLeftId);
     const isPaired = Boolean(pairs[pair.id]);
     const isSelected = selectedLeft === pair.id;
     let stateCls = '';
@@ -2573,16 +2751,17 @@ function renderMatchTask(card, container, isEvaluated) {
 
     const btn = document.createElement('button');
     btn.id = `match-left-${pair.id}`;
-    btn.disabled = isEvaluated;
-    btn.draggable = !isEvaluated;
+    btn.disabled = isEvaluated || isLocked;
+    btn.draggable = !isEvaluated && !isLocked;
     btn.className = `match-btn ${stateCls} w-full text-left p-3.5 rounded-xl flex items-center gap-3 text-sm sm:text-[15px] font-medium relative`;
     btn.innerHTML = `
-      ${!isEvaluated ? '<i data-lucide="grip-vertical" class="w-4 h-4 opacity-50 shrink-0 hidden sm:inline"></i>' : ''}
+      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="w-4 h-4 opacity-50 shrink-0 hidden sm:inline"></i>' : ''}
       <span class="w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center shrink-0"
         style="background-color: ${isSelected ? '#0f172a' : badgeColors[idx % badgeColors.length]}">${num}</span>
       <span class="leading-snug flex-1">${L(pair.left)}</span>
+      ${isLocked ? `<span class="px-2 py-0.5 rounded-md bg-[#eff6ff] border border-[#bfdbfe] text-[10px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Example' : 'Пример'}</span>` : ''}
     `;
-    if (!isEvaluated) {
+    if (!isEvaluated && !isLocked) {
       btn.ondragstart = (e) => {
         e.dataTransfer.setData('text/plain', pair.id);
         state.cardDraft.selectedLeft = pair.id;
@@ -2604,6 +2783,7 @@ function renderMatchTask(card, container, isEvaluated) {
     const pairObj = card.pairs.find(p => p.id === rightId);
     if (!pairObj) return;
     const matchedLeftId = Object.keys(pairs).find(k => pairs[k] === rightId);
+    const isRightLocked = Boolean(lockedLeftId && rightId === lockedLeftId);
     const leftIdx = matchedLeftId ? leftKeys.indexOf(matchedLeftId) : -1;
 
     let stateCls = '';
@@ -2612,7 +2792,7 @@ function renderMatchTask(card, container, isEvaluated) {
 
     const btn = document.createElement('button');
     btn.id = `match-right-${rightId}`;
-    btn.disabled = isEvaluated;
+    btn.disabled = isEvaluated || isRightLocked;
     btn.className = `match-btn ${stateCls} w-full text-left p-3.5 rounded-xl flex items-center gap-3 text-sm sm:text-[15px] font-medium`;
     btn.innerHTML = `
       <span class="w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center shrink-0 ${
@@ -2621,10 +2801,11 @@ function renderMatchTask(card, container, isEvaluated) {
         ${leftIdx >= 0 ? leftIdx + 1 : '?'}
       </span>
       <span class="leading-snug flex-1">${L(pairObj.right)}</span>
+      ${isRightLocked ? `<span class="px-2 py-0.5 rounded-md bg-[#eff6ff] border border-[#bfdbfe] text-[10px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Example' : 'Пример'}</span>` : ''}
     `;
 
     const connectPair = (leftIdToLink) => {
-      if (!leftIdToLink) return;
+      if (!leftIdToLink || isRightLocked || (lockedLeftId && leftIdToLink === lockedLeftId)) return;
       Object.keys(state.cardDraft.pairs).forEach(k => {
         if (state.cardDraft.pairs[k] === rightId) delete state.cardDraft.pairs[k];
       });
@@ -2634,7 +2815,7 @@ function renderMatchTask(card, container, isEvaluated) {
       renderCurrentCard();
     };
 
-    if (!isEvaluated) {
+    if (!isEvaluated && !isRightLocked) {
       btn.ondragover = (e) => { e.preventDefault(); btn.classList.add('drag-over'); };
       btn.ondragleave = () => btn.classList.remove('drag-over');
       btn.ondrop = (e) => {
@@ -2735,29 +2916,36 @@ function renderOrderTask(card, container, isEvaluated) {
   const list = document.createElement('div');
   list.className = 'space-y-2.5';
 
+  const lockedFirst = !isEvaluated && Boolean(state.cardDraft.lockedFirst);
+
   order.forEach((stepId, pos) => {
     const stepObj = card.steps.find(s => s.id === stepId);
     if (!stepObj) return;
+    const isLocked = lockedFirst && pos === 0;
     const isRightPos = isEvaluated && stepObj.correctPos === pos;
     const isWrongPos = isEvaluated && stepObj.correctPos !== pos;
 
     const row = document.createElement('div');
-    row.draggable = !isEvaluated;
+    row.draggable = !isEvaluated && !isLocked;
     row.className = `order-card p-3.5 rounded-xl border-2 flex items-center gap-3 ${
-      isRightPos ? 'bg-[#e9f6ec] border-cgy-ok' : (isWrongPos ? 'bg-[#fdecec] border-cgy-err' : 'bg-white border-cgy-border hover:border-cgy-accent shadow-sm')
+      isRightPos ? 'bg-[#e9f6ec] border-cgy-ok'
+        : (isWrongPos ? 'bg-[#fdecec] border-cgy-err'
+          : (isLocked ? 'bg-[#eff6ff] border-[#93c5fd]' : 'bg-white border-cgy-border hover:border-cgy-accent shadow-sm'))
     }`;
 
     row.innerHTML = `
-      ${!isEvaluated ? '<i data-lucide="grip-vertical" class="w-5 h-5 text-slate-400 shrink-0"></i>' : ''}
+      ${!isEvaluated && !isLocked ? '<i data-lucide="grip-vertical" class="w-5 h-5 text-slate-400 shrink-0"></i>' : ''}
+      ${isLocked ? '<i data-lucide="lock" class="w-4 h-4 text-cgy-accent shrink-0"></i>' : ''}
       <span class="w-8 h-8 rounded-lg ${
-        isRightPos ? 'bg-cgy-ok text-white' : (isWrongPos ? 'bg-cgy-err text-white' : 'bg-cgy-accent text-white')
+        isRightPos ? 'bg-cgy-ok text-white' : (isWrongPos ? 'bg-cgy-err text-white' : (isLocked ? 'bg-[#16a34a] text-white' : 'bg-cgy-accent text-white'))
       } text-sm font-bold flex items-center justify-center shrink-0">
         ${pos + 1}
       </span>
       <div class="flex-1 text-sm sm:text-base font-medium text-cgy-text leading-snug">${L(stepObj.text)}</div>
-      ${!isEvaluated ? `
+      ${isLocked ? `<span class="px-2.5 py-1 rounded-lg bg-white border border-[#bfdbfe] text-[11px] font-extrabold text-cgy-accent shrink-0">${state.lang === 'en' ? 'Step 1 locked' : 'Шаг 1 на месте'}</span>` : ''}
+      ${!isEvaluated && !isLocked ? `
         <div class="flex flex-col sm:flex-row gap-1 shrink-0">
-          <button type="button" onclick="moveOrderStep(${pos}, -1)" ${pos === 0 ? 'disabled' : ''}
+          <button type="button" onclick="moveOrderStep(${pos}, -1)" ${pos === 0 || (lockedFirst && pos === 1) ? 'disabled' : ''}
             class="w-9 h-9 rounded-lg bg-cgy-bg border border-cgy-border hover:border-cgy-accent disabled:opacity-35 flex items-center justify-center text-cgy-text transition" title="Вверх">
             <i data-lucide="arrow-up" class="w-4 h-4"></i>
           </button>
@@ -2769,7 +2957,7 @@ function renderOrderTask(card, container, isEvaluated) {
       ` : ''}
     `;
 
-    if (!isEvaluated) {
+    if (!isEvaluated && !isLocked) {
       row.ondragstart = (e) => {
         e.dataTransfer.setData('text/plain', String(pos));
         e.dataTransfer.effectAllowed = 'move';
@@ -2808,6 +2996,7 @@ function renderOrderTask(card, container, isEvaluated) {
 function reorderStepDrag(fromIdx, toIdx) {
   const order = state.cardDraft.order;
   if (!order) return;
+  if (state.cardDraft.lockedFirst && (fromIdx === 0 || toIdx === 0)) return;
   const [moved] = order.splice(fromIdx, 1);
   order.splice(toIdx, 0, moved);
   SoundFX.playDrop();
@@ -2818,6 +3007,7 @@ function moveOrderStep(pos, delta) {
   const order = state.cardDraft.order;
   if (!order) return;
   const target = pos + delta;
+  if (state.cardDraft.lockedFirst && (pos === 0 || target === 0)) return;
   if (target < 0 || target >= order.length) return;
   [order[pos], order[target]] = [order[target], order[pos]];
   SoundFX.playDrop();
@@ -2871,23 +3061,22 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
   const prev = state.cardResults[card.id];
   const isFirstAttempt = !prev || !prev.answered;
 
-  // Динамическая сложность + Комбо-серия + Визуальные эффекты!
-  let adaptiveNote = '';
+  // Динамическая сложность + Облегчённый режим поддержки + Комбо-серия!
   if (isCorrect) {
     state.streak = (state.streak || 0) + 1;
+    state.supportMode = false;
     SoundFX.playWin(state.streak);
     burstConfetti('small');
     showFloatingXp(state.streak >= 2 ? `+100 XP • ${t('streak_label')} x${state.streak}` : '+100 XP', true);
     if (state.adaptiveLevel < 3) {
       state.adaptiveLevel += 1;
-      adaptiveNote = t('adaptive_up');
     }
   } else {
     state.streak = 0;
+    state.supportMode = true;
     SoundFX.playFail();
     if (state.adaptiveLevel > 1) {
       state.adaptiveLevel -= 1;
-      adaptiveNote = t('adaptive_down');
     }
   }
 
@@ -2896,10 +3085,33 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
     correct: isCorrect,
     firstTryCorrect: isFirstAttempt ? isCorrect : Boolean(prev.firstTryCorrect),
     wrongCount: (prev ? (prev.wrongCount || 0) : 0) + (isCorrect ? 0 : 1),
-    adaptiveNote,
+    adaptiveNote: '',
     ...extra
   };
   state.cardDraft.retrying = false;
+
+  // Формируем ЧЕСТНУЮ заметку о том, что реально произойдёт дальше (никакого вранья на 8-й карточке!)
+  const nextTarget = getNextAdaptiveTarget();
+  const isEn = state.lang === 'en';
+  let adaptiveNote = '';
+  if (!nextTarget) {
+    adaptiveNote = isEn
+      ? 'All 8 missions completed! Open Analytics to download your Cyber-Hero Diploma.'
+      : 'Все 8 карточек решены! Можно переходить к аналитике и именному диплому.';
+  } else {
+    const nextNum = CARDS.findIndex(c => c.id === nextTarget.card.id) + 1;
+    const nextLvlName = t('levelShort')[nextTarget.card.level || 1];
+    if (isCorrect) {
+      adaptiveNote = isEn
+        ? `Adaptive level ${state.adaptiveLevel}/3 — next up: Mission #${nextNum} (${nextLvlName}).`
+        : `Уровень сложности ${state.adaptiveLevel}/3 — дальше откроется карточка №${nextNum} (${nextLvlName}).`;
+    } else {
+      adaptiveNote = isEn
+        ? `Guided mode activated (${state.adaptiveLevel}/3): retry or next mission (#${nextNum}) will include built-in help.`
+        : `Включён облегчённый режим (${state.adaptiveLevel}/3): при повторе или на карточке №${nextNum} часть задания будет подсказана (50/50, пример или шаг №1).`;
+    }
+  }
+  state.cardResults[card.id].adaptiveNote = adaptiveNote;
 
   // Записываем точку в историю динамики прохождений при каждом завершении всех карточек
   const summary = getCardStatsSummary();
@@ -2983,15 +3195,23 @@ function retryCurrentCard() {
 
 function goNextCard() {
   stopReadAloud();
-  const unanswered = CARDS.filter(c => !(state.cardResults[c.id] && state.cardResults[c.id].answered));
-  if (unanswered.length === 0) {
+  const nextTarget = getNextAdaptiveTarget();
+  if (!nextTarget) {
     switchMainTab('results');
     return;
   }
 
-  // Адаптивный подбор следующей карточки: выбираем ближайшую к текущему state.adaptiveLevel
-  unanswered.sort((a, b) => Math.abs((a.level || 1) - state.adaptiveLevel) - Math.abs((b.level || 1) - state.adaptiveLevel));
-  selectCardById(unanswered[0].id);
+  if (nextTarget.reason === 'review') {
+    state.supportMode = true;
+    state.currentCardId = nextTarget.card.id;
+    state.cardDraft = { retrying: true };
+    saveState();
+    SoundFX.playPick();
+    renderCurrentCard(true);
+    return;
+  }
+
+  selectCardById(nextTarget.card.id);
 }
 
 function resetCardsSession() {
@@ -3002,7 +3222,8 @@ function resetCardsSession() {
   state.currentSessionTag = Date.now();
   state.cardResults = {};
   state.cardDraft = {};
-  state.adaptiveLevel = 1;
+  state.adaptiveLevel = state.profile.gradeClass === '8-11' ? 3 : 1;
+  state.supportMode = state.profile.gradeClass === '1-4';
   state.streak = 0;
   state.currentCardId = CARDS[0].id;
   stopReadAloud();
@@ -4823,31 +5044,53 @@ function updateSoundIcon() {
   document.getElementById('sound-icon-off').classList.toggle('hidden', state.soundOn);
 }
 
+let resetConfirmArmed = false;
+let resetConfirmTimer = null;
+
 function confirmFullReset() {
-  if (confirm('Сбросить весь прогресс по карточкам, чатам, графикам и SMS?')) {
-    clearTypingTimers();
-    state.cardResults = {};
-    state.cardDraft = {};
-    state.adaptiveLevel = 1;
-    state.streak = 0;
-    state.unlockedAchIds = [];
-    state.sessionHistory = [];
-    state.chatCompleted = [];
-    state.chats = {};
-    state.smsInbox = [];
-    state.chatStats = { mistakes: 0, falseAlarms: 0, failedScenarioIds: [] };
-    state.activeScenarioId = null;
-    state.currentCardId = CARDS[0].id;
-    saveState();
-    updateSmsBadge();
-    updateAllProgressBadges();
-    renderCurrentCard();
-    renderChatList();
-    renderResultsDashboard();
-    document.getElementById('active-chat').classList.add('hidden');
-    document.getElementById('chat-empty-state').classList.remove('hidden');
-    showToast('Весь прогресс сброшен', 'info');
+  const btn = document.getElementById('btn-reset-all');
+  const lbl = document.getElementById('btn-reset-all-label');
+  if (!resetConfirmArmed) {
+    resetConfirmArmed = true;
+    if (btn) btn.classList.add('bg-[#fdecec]', 'text-cgy-err', 'border', 'border-[#f5c2c2]');
+    if (lbl) lbl.textContent = state.lang === 'en' ? 'Click again to reset' : 'Точно сбросить? Нажми ещё раз';
+    if (resetConfirmTimer) clearTimeout(resetConfirmTimer);
+    resetConfirmTimer = setTimeout(() => {
+      resetConfirmArmed = false;
+      if (btn) btn.classList.remove('bg-[#fdecec]', 'text-cgy-err', 'border', 'border-[#f5c2c2]');
+      if (lbl) lbl.textContent = t('btn_reset_all');
+    }, 3500);
+    return;
   }
+  resetConfirmArmed = false;
+  if (resetConfirmTimer) clearTimeout(resetConfirmTimer);
+  if (btn) btn.classList.remove('bg-[#fdecec]', 'text-cgy-err', 'border', 'border-[#f5c2c2]');
+  if (lbl) lbl.textContent = t('btn_reset_all');
+
+  clearTypingTimers();
+  stopReadAloud();
+  state.cardResults = {};
+  state.cardDraft = {};
+  state.adaptiveLevel = state.profile.gradeClass === '8-11' ? 3 : 1;
+  state.supportMode = state.profile.gradeClass === '1-4';
+  state.streak = 0;
+  state.unlockedAchIds = [];
+  state.sessionHistory = [];
+  state.chatCompleted = [];
+  state.chats = {};
+  state.smsInbox = [];
+  state.chatStats = { mistakes: 0, falseAlarms: 0, failedScenarioIds: [] };
+  state.activeScenarioId = null;
+  state.currentCardId = CARDS[0].id;
+  saveState();
+  updateSmsBadge();
+  updateAllProgressBadges();
+  renderCurrentCard();
+  renderChatList();
+  renderResultsDashboard();
+  document.getElementById('active-chat').classList.add('hidden');
+  document.getElementById('chat-empty-state').classList.remove('hidden');
+  showToast(state.lang === 'en' ? 'Progress reset' : 'Весь прогресс сброшен', 'info');
 }
 
 function showToast(text, type = 'info', duration = 2600) {
