@@ -90,8 +90,8 @@
       <!-- Right Controls -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <!-- Student Profile Pill -->
-        <button onclick="openStudentProfileModal()" class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-xs sm:text-sm font-medium text-cgy-text transition">
-          <i data-lucide="user-round" class="w-4 h-4 text-cgy-accent shrink-0"></i>
+        <button onclick="openStudentProfileModal()" class="flex items-center gap-2 pl-1.5 pr-2.5 sm:pr-3 py-1 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-xs sm:text-sm font-medium text-cgy-text transition">
+          <span id="header-hero-mini" class="w-6 h-6 rounded-md bg-white border border-[#b6d0f2] overflow-hidden flex items-center justify-center shrink-0"></span>
           <span id="header-profile-label" class="max-w-[110px] sm:max-w-[170px] truncate">Ученик • 5–7 кл.</span>
         </button>
 
@@ -689,9 +689,10 @@
       <form onsubmit="saveStudentProfile(event)" class="p-5 space-y-4">
         <div>
           <label class="block text-sm font-semibold text-cgy-text mb-1" data-i18n="prof_fio_lbl">ФИО ученика</label>
-          <input id="prof-fio-input" type="text" placeholder="Например: Глушко Андрей Андреевич" maxlength="60"
+          <input id="prof-fio-input" type="text" placeholder="Например: Глушко Андрей или Иванова Мария" maxlength="60"
+            oninput="onProfileFioInput()"
             class="w-full bg-cgy-bg border-2 border-cgy-border focus:border-cgy-accent focus:bg-white rounded-lg px-3.5 py-2.5 text-sm outline-none" />
-          <p class="text-xs text-cgy-muted mt-1" data-i18n="prof_fio_hint">Подставится автоматически в именной сертификат.</p>
+          <p class="text-xs text-cgy-muted mt-1" data-i18n="prof_fio_hint">Подставится в сертификат и автоматически подберёт напарника.</p>
         </div>
         <div>
           <label class="block text-sm font-semibold text-cgy-text mb-1" data-i18n="prof_grade_lbl">Класс</label>
@@ -700,6 +701,32 @@
             <option value="5-7" selected data-i18n="opt_grade_5_7">5–7 классы</option>
             <option value="8-11" data-i18n="opt_grade_8_11">8–11 классы</option>
           </select>
+        </div>
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <label class="text-sm font-semibold text-cgy-text" data-i18n="prof_hero_lbl">Твой напарник</label>
+            <span id="prof-hero-auto-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#eef5ff] text-cgy-accent border border-[#bfd7f5]">
+              Подобрано по имени
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" id="prof-hero-card-steve" onclick="selectProfileHero('steve')"
+              class="flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-cgy-accent bg-[#eef5ff] text-left transition">
+              <div id="prof-hero-preview-steve" class="w-12 h-12 rounded-lg bg-white border border-[#bfd7f5] overflow-hidden shrink-0 flex items-center justify-center"></div>
+              <div class="min-w-0">
+                <div class="font-bold text-sm text-cgy-text leading-tight">Кибер-Стив</div>
+                <div class="text-[11px] font-semibold text-cgy-muted mt-0.5">Напарник</div>
+              </div>
+            </button>
+            <button type="button" id="prof-hero-card-alex" onclick="selectProfileHero('alex')"
+              class="flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-cgy-border bg-white hover:bg-cgy-bg text-left transition">
+              <div id="prof-hero-preview-alex" class="w-12 h-12 rounded-lg bg-white border border-[#cbd5e1] overflow-hidden shrink-0 flex items-center justify-center"></div>
+              <div class="min-w-0">
+                <div class="font-bold text-sm text-cgy-text leading-tight">Кибер-Алекс</div>
+                <div class="text-[11px] font-semibold text-cgy-muted mt-0.5">Напарница</div>
+              </div>
+            </button>
+          </div>
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" onclick="closeStudentProfileModal()" class="px-4 py-2 rounded-lg bg-cgy-bg hover:bg-slate-200 text-sm font-semibold text-cgy-text" data-i18n="btn_cancel">Отмена</button>
@@ -1017,13 +1044,7 @@
     <!-- Speech Bubble ABOVE Steve's Head -->
     <div id="yugorka-bubble" class="steve-speech-top pointer-events-auto mb-2.5 w-[260px] sm:w-[285px] bg-white border-2 border-[#1e5aa8] rounded-2xl px-3.5 py-2.5 shadow-xl transition-all">
       <div class="flex items-center justify-between gap-1.5 mb-1">
-        <div class="flex items-center gap-1.5 min-w-0">
-          <span id="yugorka-status-tag" class="font-pixel text-xs font-bold text-cgy-accent uppercase tracking-wide truncate">Кибер-Стив</span>
-          <button id="btn-hero-skin" onclick="toggleHeroSkin()" type="button" title="Сменить героя: Стив / Алекс"
-            class="px-1.5 py-0.5 rounded-md bg-[#eef5ff] hover:bg-[#dce8f8] border border-[#bfd7f5] text-[10px] font-extrabold text-cgy-accent transition shrink-0">
-            ⇄ Алекс
-          </button>
-        </div>
+        <span id="yugorka-status-tag" class="font-pixel text-xs font-bold text-cgy-accent uppercase tracking-wide truncate">Кибер-Стив</span>
         <div class="flex items-center gap-1 shrink-0">
           <button id="btn-mascot-hint" onclick="askMascotHint()" type="button"
             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#fef3c7] hover:bg-[#fde68a] border border-[#f59e0b] text-[#92400e] text-[11px] font-extrabold transition">
@@ -1058,6 +1079,7 @@
 
   <!-- SCRIPTS -->
   <script src="sound.js"></script>
+  <script src="fio-gender.js"></script>
   <script src="cards-data.js"></script>
   <script src="scenarios.js"></script>
   <script src="scenarios-i18n.js"></script>

@@ -82,8 +82,9 @@ const I18N = {
     btn_next_short: 'Дальше',
     kpi_loot: 'Собранный лут',
     prof_fio_lbl: 'ФИО ученика',
-    prof_fio_hint: 'Подставится автоматически в именной сертификат.',
+    prof_fio_hint: 'Подставится в сертификат и автоматически подберёт напарника.',
     prof_grade_lbl: 'Класс',
+    prof_hero_lbl: 'Твой напарник',
     opt_grade_1_4: '1–4 классы',
     opt_grade_5_7: '5–7 классы',
     opt_grade_8_11: '8–11 классы',
@@ -242,8 +243,9 @@ const I18N = {
     btn_next_short: 'Next',
     kpi_loot: 'Loot Collected',
     prof_fio_lbl: 'Full Name',
-    prof_fio_hint: 'Automatically added to your certificate.',
+    prof_fio_hint: 'Added to your certificate and auto-picks your cyber buddy.',
     prof_grade_lbl: 'Grade',
+    prof_hero_lbl: 'Your Cyber Buddy',
     opt_grade_1_4: 'Grades 1–4',
     opt_grade_5_7: 'Grades 5–7',
     opt_grade_8_11: 'Grades 8–11',
@@ -398,6 +400,7 @@ const I18N = {
     prof_fio_lbl: 'Нємєн (ФИО)',
     prof_fio_hint: 'Сертификата хӑншӆ.',
     prof_grade_lbl: 'Класс',
+    prof_hero_lbl: 'Нӑӊ юрєн',
     opt_grade_1_4: '1–4 классат',
     opt_grade_5_7: '5–7 классат',
     opt_grade_8_11: '8–11 классат',
@@ -504,6 +507,7 @@ const state = {
   lang: 'ru',
   activeTab: 'cards',         // 'cards' | 'chat' | 'blitz' | 'results'
   heroSkin: 'steve',          // 'steve' | 'alex'
+  heroSkinManual: false,      // true, если ученик вручную переключил героя в профиле
   blitzBest: 0,
   profile: {
     fio: '',
@@ -627,7 +631,19 @@ function applyUrlParams() {
     const langParam = params.get('lang');
     if (['ru', 'en', 'kca'].includes(langParam)) state.lang = langParam;
     const fioParam = params.get('fio');
-    if (fioParam && fioParam.trim()) state.profile.fio = fioParam.trim();
+    if (fioParam && fioParam.trim()) {
+      state.profile.fio = fioParam.trim();
+      const autoSkin = window.FioGender ? window.FioGender.detectHeroSkin(state.profile.fio) : null;
+      if (autoSkin) {
+        state.heroSkin = autoSkin;
+        state.heroSkinManual = false;
+      }
+    }
+    const heroParam = params.get('hero');
+    if (heroParam === 'steve' || heroParam === 'alex') {
+      state.heroSkin = heroParam;
+      state.heroSkinManual = true;
+    }
     const classParam = params.get('grade');
     if (['1-4', '5-7', '8-11'].includes(classParam)) {
       state.profile.gradeClass = classParam;
@@ -680,6 +696,7 @@ function loadState() {
     const p = JSON.parse(raw);
     if (['ru', 'en', 'kca'].includes(p.lang)) state.lang = p.lang;
     if (p.heroSkin === 'steve' || p.heroSkin === 'alex') state.heroSkin = p.heroSkin;
+    if (typeof p.heroSkinManual === 'boolean') state.heroSkinManual = p.heroSkinManual;
     if (typeof p.blitzBest === 'number') state.blitzBest = p.blitzBest;
     if (p.profile) state.profile = { ...state.profile, ...p.profile };
     if (p.currentCardId) state.currentCardId = p.currentCardId;
@@ -706,6 +723,7 @@ function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       lang: state.lang,
       heroSkin: state.heroSkin,
+      heroSkinManual: state.heroSkinManual,
       blitzBest: state.blitzBest,
       profile: state.profile,
       currentCardId: state.currentCardId,
@@ -740,12 +758,25 @@ function init() {
     state.currentCardId = CARDS[0].id;
   }
 
+  // Если ФИО уже задано (и скин не закреплён вручную), подбираем Стива/Алекс автоматически
+  if (state.profile.fio && !state.heroSkinManual && window.FioGender) {
+    const autoSkin = window.FioGender.detectHeroSkin(state.profile.fio);
+    if (autoSkin) state.heroSkin = autoSkin;
+  }
+
   // Привязка поля ФИО на вкладке результатов
   const certInp = document.getElementById('cert-name-input');
   if (certInp) {
     certInp.value = state.profile.fio || '';
     certInp.addEventListener('input', () => {
       state.profile.fio = certInp.value;
+      if (!state.heroSkinManual && window.FioGender) {
+        const autoSkin = window.FioGender.detectHeroSkin(state.profile.fio);
+        if (autoSkin && autoSkin !== state.heroSkin) {
+          state.heroSkin = autoSkin;
+          updateMascot('idle', null, false);
+        }
+      }
       saveState();
       updateHeaderProfileUI();
       updateCertFormUI();
@@ -889,18 +920,119 @@ function applyLanguageUI() {
   updateHeaderProfileUI();
 }
 
-// ==================== ПРОФИЛЬ УЧЕНИКА ====================
+// ==================== ПРОФИЛЬ УЧЕНИКА И АВТОВЫБОР ГЕРОЯ ====================
+
+let modalHeroDraft = 'steve';
+let modalHeroManual = false;
+
+function renderHeaderHeroMini() {
+  const mini = document.getElementById('header-hero-mini');
+  if (!mini) return;
+  const stars = getCardStatsSummary().correct;
+  mini.innerHTML = getYugorkaSvg('idle', stars, state.heroSkin);
+}
 
 function updateHeaderProfileUI() {
   const shortName = (state.profile.fio || '').trim().split(/\s+/)[0] || t('student_default');
   document.getElementById('header-profile-label').textContent = `${shortName} • ${state.profile.gradeClass} ${t('class_suffix')}`;
   const pill = document.getElementById('cert-class-pill');
   if (pill) pill.textContent = `${t('grade_word')}: ${state.profile.gradeClass} ${t('class_suffix')}`;
+  renderHeaderHeroMini();
+}
+
+function updateProfileHeroPickerUI(statusKind = 'auto') {
+  const stars = getCardStatsSummary().correct;
+  const prevSteve = document.getElementById('prof-hero-preview-steve');
+  const prevAlex = document.getElementById('prof-hero-preview-alex');
+  if (prevSteve) prevSteve.innerHTML = getYugorkaSvg('idle', stars, 'steve');
+  if (prevAlex) prevAlex.innerHTML = getYugorkaSvg('idle', stars, 'alex');
+
+  const cardSteve = document.getElementById('prof-hero-card-steve');
+  const cardAlex = document.getElementById('prof-hero-card-alex');
+  const isEn = state.lang === 'en';
+  if (cardSteve) {
+    const active = modalHeroDraft === 'steve';
+    cardSteve.className = active
+      ? 'flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-cgy-accent bg-[#eef5ff] text-left transition shadow-sm'
+      : 'flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-cgy-border bg-white hover:bg-cgy-bg text-left transition';
+    const titleEl = cardSteve.querySelector('.font-bold');
+    const subEl = cardSteve.querySelector('.text-\\[11px\\]');
+    if (titleEl) titleEl.textContent = isEn ? 'Cyber-Steve' : 'Кибер-Стив';
+    if (subEl) subEl.textContent = isEn ? 'Male buddy' : 'Напарник';
+  }
+  if (cardAlex) {
+    const active = modalHeroDraft === 'alex';
+    cardAlex.className = active
+      ? 'flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-[#16a34a] bg-[#ecfdf5] text-left transition shadow-sm'
+      : 'flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-cgy-border bg-white hover:bg-cgy-bg text-left transition';
+    const titleEl = cardAlex.querySelector('.font-bold');
+    const subEl = cardAlex.querySelector('.text-\\[11px\\]');
+    if (titleEl) titleEl.textContent = isEn ? 'Cyber-Alex' : 'Кибер-Алекс';
+    if (subEl) subEl.textContent = isEn ? 'Female buddy' : 'Напарница';
+  }
+
+  const badge = document.getElementById('prof-hero-auto-badge');
+  if (badge) {
+    if (statusKind === 'manual') {
+      badge.textContent = isEn ? 'Picked manually' : 'Выбрано вручную';
+      badge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-cgy-text border border-slate-300';
+    } else if (statusKind === 'androgynous') {
+      badge.textContent = isEn ? 'Unisex name — pick one' : 'Подходит обоим — выбери сам';
+      badge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e] border border-[#f59e0b]/60';
+    } else if (statusKind === 'detected') {
+      badge.textContent = isEn ? 'Auto-matched by name' : 'Подобрано по имени';
+      badge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#ecfdf5] text-[#15803d] border border-[#86efac]';
+    } else {
+      badge.textContent = isEn ? 'Auto by name' : 'Автовыбор по имени';
+      badge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#eef5ff] text-cgy-accent border border-[#bfd7f5]';
+    }
+  }
+}
+
+function onProfileFioInput() {
+  const val = (document.getElementById('prof-fio-input')?.value || '').trim();
+  if (!window.FioGender || !val) {
+    updateProfileHeroPickerUI(modalHeroManual ? 'manual' : 'idle');
+    return;
+  }
+  const gender = window.FioGender.detect(val);
+  if (gender === 'female') {
+    modalHeroDraft = 'alex';
+    modalHeroManual = false;
+    updateProfileHeroPickerUI('detected');
+  } else if (gender === 'male') {
+    modalHeroDraft = 'steve';
+    modalHeroManual = false;
+    updateProfileHeroPickerUI('detected');
+  } else if (gender === 'androgynous') {
+    updateProfileHeroPickerUI('androgynous');
+  } else {
+    updateProfileHeroPickerUI(modalHeroManual ? 'manual' : 'idle');
+  }
+}
+
+function selectProfileHero(skin) {
+  if (skin !== 'steve' && skin !== 'alex') return;
+  modalHeroDraft = skin;
+  modalHeroManual = true;
+  SoundFX.playPick();
+  updateProfileHeroPickerUI('manual');
 }
 
 function openStudentProfileModal() {
   document.getElementById('prof-fio-input').value = state.profile.fio || '';
   document.getElementById('prof-class-select').value = state.profile.gradeClass || '5-7';
+  modalHeroDraft = state.heroSkin || 'steve';
+  modalHeroManual = !!state.heroSkinManual;
+
+  let statusKind = modalHeroManual ? 'manual' : 'idle';
+  if (!modalHeroManual && state.profile.fio && window.FioGender) {
+    const g = window.FioGender.detect(state.profile.fio);
+    if (g === 'female') { modalHeroDraft = 'alex'; statusKind = 'detected'; }
+    else if (g === 'male') { modalHeroDraft = 'steve'; statusKind = 'detected'; }
+    else if (g === 'androgynous') { statusKind = 'androgynous'; }
+  }
+  updateProfileHeroPickerUI(statusKind);
   document.getElementById('student-profile-modal').classList.remove('hidden');
   refreshIcons();
 }
@@ -911,9 +1043,12 @@ function closeStudentProfileModal() {
 
 function saveStudentProfile(e) {
   e.preventDefault();
+  const prevSkin = state.heroSkin;
   state.profile.fio = document.getElementById('prof-fio-input').value.trim();
   state.profile.gradeClass = document.getElementById('prof-class-select').value;
   state.chatGradeMode = state.profile.gradeClass === '8-11' ? '8-11' : '5-7';
+  state.heroSkin = modalHeroDraft === 'alex' ? 'alex' : 'steve';
+  state.heroSkinManual = modalHeroManual;
   saveState();
 
   const certInp = document.getElementById('cert-name-input');
@@ -925,6 +1060,18 @@ function saveStudentProfile(e) {
   updateAllProgressBadges();
   renderChatList();
   closeStudentProfileModal();
+
+  if (state.heroSkin !== prevSkin) {
+    SoundFX.playConnect();
+    const isAlex = state.heroSkin === 'alex';
+    const greet = state.lang === 'en'
+      ? (isAlex ? 'Hey! I am Cyber-Alex — ready to catch scammers together!' : 'Hey! Cyber-Steve is on patrol with you!')
+      : (isAlex ? 'Привет! Я Кибер-Алекс — погнали ловить мошенников вместе!' : 'Привет! Я Кибер-Стив — погнали ловить мошенников!');
+    updateMascot('happy', greet, true);
+  } else {
+    updateMascot('idle', null, false);
+  }
+
   showToast(state.lang === 'en' ? 'Profile saved' : 'Профиль ученика сохранён', 'success');
 }
 
@@ -1197,14 +1344,14 @@ function renderCurrentCard(animateEntrance = false) {
 
 let isReadingAloud = false;
 
-function getYugorkaSvg(mood = 'idle', stars = 0) {
-  // Аутентичный пиксель-арт Кибер-Стив (в стиле Minecraft, crispEdges, 100% офлайн!)
+function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
+  // Аутентичный пиксель-арт Кибер-Стив / Кибер-Алекс (в стиле Minecraft, crispEdges, 100% офлайн!)
   // За собранные звёзды прокачивается экипировка: 2+ — пиксельные очки, 4+ — алмазный щит, 6+ — алмазный шлем!
   const hasGlasses = stars >= 2 && mood !== 'oops';
   const hasDiamondHelmet = stars >= 6;
   const hasShield = stars >= 4 || mood === 'happy';
 
-  const isAlex = state.heroSkin === 'alex';
+  const isAlex = (skinOverride || state.heroSkin) === 'alex';
   const skinMain = isAlex ? '#f3cfb3' : '#c69272';
   const skinShade = isAlex ? '#e2b796' : '#bd8867';
   const skinDark = isAlex ? '#c79774' : '#9c6a4d';
@@ -1402,16 +1549,12 @@ function updateMascot(mood = 'idle', speechText = '', animate = true) {
   const heroLabel = state.lang === 'en'
     ? (isAlex ? 'Cyber-Alex' : 'Cyber-Steve')
     : (isAlex ? 'Кибер-Алекс' : 'Кибер-Стив');
-  const otherShort = state.lang === 'en'
-    ? (isAlex ? '⇄ Steve' : '⇄ Alex')
-    : (isAlex ? '⇄ Стив' : '⇄ Алекс');
 
   avatar.innerHTML = getYugorkaSvg(mood, stars);
   if (nameBadge) nameBadge.textContent = heroLabel;
   if (roleTag) roleTag.textContent = heroLabel;
-  const skinBtn = document.getElementById('btn-hero-skin');
-  if (skinBtn) skinBtn.textContent = otherShort;
   if (speechText) speech.textContent = speechText;
+  renderHeaderHeroMini();
 
   // Цвет рамки облачка под настроение
   if (bubble) {
@@ -1455,17 +1598,6 @@ function petYugorka() {
   const list = t('yugorka_pet');
   const msg = list[Math.floor(Math.random() * list.length)];
   updateMascot('happy', msg, true);
-}
-
-function toggleHeroSkin() {
-  state.heroSkin = state.heroSkin === 'alex' ? 'steve' : 'alex';
-  saveState();
-  SoundFX.playConnect();
-  const isAlex = state.heroSkin === 'alex';
-  const greet = state.lang === 'en'
-    ? (isAlex ? 'Hey! I am Cyber-Alex — ready to catch scammers!' : 'Hey! Cyber-Steve is back on patrol!')
-    : (isAlex ? 'Привет! Я Кибер-Алекс — погнали ловить мошенников!' : 'Привет! Кибер-Стив снова на страже!');
-  updateMascot('happy', greet, true);
 }
 
 function toggleSteveBubble() {
