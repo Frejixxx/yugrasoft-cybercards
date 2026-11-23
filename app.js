@@ -43,17 +43,17 @@ const I18N = {
     detective_done: 'Все улики найдены! Молодец, кибердетектив!',
     clue_xp: '+15 XP • Улика!',
     yugorka_idle: [
-      'Привет! Я Кибер-Стив. Давай вместе разберём эту ситуацию и не дадим гриферам-мошенникам шанса!',
+      'Привет! Я {HERO}. Давай вместе разберём эту ситуацию и не дадим гриферам-мошенникам шанса!',
       'Не спеши кликать! Если сомневаешься — жми «Подсказка» или проверяй улики лупой.',
       'Настоящий профи сначала проверяет, потом нажимает. Выбери самый безопасный шаг!'
     ],
     yugorka_win: [
       'Отлично! +100 XP! Мошенник остался ни с чем!',
       'Точно в цель! Твой Кибер-щит Югры стал ещё крепче!',
-      'Супер! Ты раскусил уловку как настоящий кибердетектив!'
+      'Супер! Уловка раскрыта — работа настоящего кибердетектива!'
     ],
     yugorka_oops: [
-      'Ой, попал в ловушку! Ничего страшного — давай посмотрим, в чём подвох, и попробуем ещё раз!',
+      'Ой, хитрая ловушка! Ничего страшного — давай посмотрим, в чём подвох, и попробуем ещё раз!',
       'Не переживай! Даже у профи бывают фейлы. Читай разбор ниже и бери реванш!'
     ],
     yugorka_pet: [
@@ -204,7 +204,7 @@ const I18N = {
     detective_done: 'All clues found! Awesome detective work!',
     clue_xp: '+15 XP • Clue!',
     yugorka_idle: [
-      'Hey! I am Cyber-Steve. Let’s outsmart the scammers and griefers together!',
+      'Hey! I am {HERO}. Let’s outsmart the scammers and griefers together!',
       'Stay sharp! Need help? Tap "Hint" or inspect glowing clues with the magnifier.',
       'A true pro checks twice before clicking. Pick the safest move!'
     ],
@@ -365,7 +365,7 @@ const I18N = {
     detective_done: 'Иса уликайт кӑншсыйт! Ёмӑщ вєр!',
     clue_xp: '+15 XP • Улика!',
     yugorka_idle: [
-      'Вўща! Ма Кибер-Стив. Ияха мошенникӑт эвӑӆт ӆавӑӆӆўв!',
+      'Вўща! Ма {HERO}. Ияха мошенникӑт эвӑӆт ӆавӑӆӆўв!',
       'Вәньщэ! Нётты мӑсӆ ки — «Нётты ясӑӊ» пириэ!'
     ],
     yugorka_win: [
@@ -1554,7 +1554,7 @@ function updateMascot(mood = 'idle', speechText = '', animate = true) {
   avatar.innerHTML = getYugorkaSvg(mood, stars);
   if (nameBadge) nameBadge.textContent = heroLabel;
   if (roleTag) roleTag.textContent = heroLabel;
-  if (speechText) speech.textContent = speechText;
+  if (speechText) speech.textContent = String(speechText).replace(/\{HERO\}/g, heroLabel);
   renderHeaderHeroMini();
 
   // Цвет рамки облачка под настроение
