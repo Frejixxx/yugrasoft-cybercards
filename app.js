@@ -1244,14 +1244,18 @@ function getYugorkaSvg(mood = 'idle', stars = 0) {
     `;
   }
 
-  // Стильные прозрачные кибер-очки (глаза, взгляд за мышкой и моргание отлично видны!)
+  // Брутальные пиксельные тёмные очки с живым бликом (блик сдвигается за мышкой!)
   const glassesSvg = hasGlasses ? `
     <g>
-      <rect x="27" y="31" width="18" height="12" fill="rgba(224,242,254,0.22)" stroke="#1e5aa8" stroke-width="2.5"/>
-      <rect x="45" y="35" width="6" height="2.5" fill="#1e5aa8"/>
-      <rect x="51" y="31" width="18" height="12" fill="rgba(224,242,254,0.22)" stroke="#1e5aa8" stroke-width="2.5"/>
-      <rect x="29" y="33" width="3" height="2" fill="#ffffff" fill-opacity="0.8"/>
-      <rect x="53" y="33" width="3" height="2" fill="#ffffff" fill-opacity="0.8"/>
+      <rect x="27" y="32" width="18" height="10" fill="#0f172a"/>
+      <rect x="45" y="34" width="6" height="3" fill="#0f172a"/>
+      <rect x="51" y="32" width="18" height="10" fill="#0f172a"/>
+      <g class="steve-glint">
+        <rect x="29" y="34" width="4" height="3" fill="#38bdf8"/>
+        <rect x="33" y="37" width="3" height="2" fill="#93c5fd"/>
+        <rect x="53" y="34" width="4" height="3" fill="#38bdf8"/>
+        <rect x="57" y="37" width="3" height="2" fill="#93c5fd"/>
+      </g>
     </g>
   ` : '';
 
@@ -1463,18 +1467,29 @@ function initDraggableSteve() {
   handle.addEventListener('pointerup', endDrag);
   handle.addEventListener('pointercancel', endDrag);
 
-  // Стив следит глазами за мышкой + периодически моргает (живой персонаж!)
+  // Живой 3D-поворот Стива к курсору мышки + сдвиг блика на крутых очках (видно в любом настроении!)
   window.addEventListener('mousemove', (e) => {
     const avatar = document.getElementById('yugorka-avatar');
-    if (!avatar) return;
-    const pupils = avatar.querySelector('.steve-pupils');
-    if (!pupils) return;
-    const r = avatar.getBoundingClientRect();
+    const cardBox = handle.firstElementChild;
+    if (!avatar || !cardBox || dragging) return;
+    const r = cardBox.getBoundingClientRect();
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
-    const dx = Math.max(-2.4, Math.min(2.4, (e.clientX - cx) / 90));
-    const dy = Math.max(-1.4, Math.min(1.4, (e.clientY - cy) / 110));
-    pupils.setAttribute('transform', `translate(${dx.toFixed(1)}, ${dy.toFixed(1)})`);
+    const rx = Math.max(-14, Math.min(14, (cy - e.clientY) / 28));
+    const ry = Math.max(-16, Math.min(16, (e.clientX - cx) / 28));
+    cardBox.style.transform = `perspective(360px) rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg)`;
+
+    const glint = avatar.querySelector('.steve-glint');
+    if (glint) {
+      const gx = Math.max(-2, Math.min(6, (e.clientX - cx) / 70));
+      glint.setAttribute('transform', `translate(${gx.toFixed(1)}, 0)`);
+    }
+    const pupils = avatar.querySelector('.steve-pupils');
+    if (pupils) {
+      const dx = Math.max(-2.4, Math.min(2.4, (e.clientX - cx) / 90));
+      const dy = Math.max(-1.4, Math.min(1.4, (e.clientY - cy) / 110));
+      pupils.setAttribute('transform', `translate(${dx.toFixed(1)}, ${dy.toFixed(1)})`);
+    }
   }, { passive: true });
 
   setInterval(() => {
