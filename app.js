@@ -1463,7 +1463,7 @@ function renderLootHotbar() {
 
     const slot = document.createElement('button');
     slot.type = 'button';
-    slot.className = `mc-slot relative h-12 sm:h-14 rounded-xl flex items-center justify-center ${unlocked ? 'unlocked' : ''} ${isCurr ? 'current-slot' : ''}`;
+    slot.className = `mc-slot relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 ${unlocked ? 'unlocked' : ''} ${isCurr ? 'current-slot' : ''}`;
     slot.title = unlocked ? `${L(loot.name)} — ${L(loot.desc)}` : `#${idx + 1} (${L(card.title)})`;
     slot.innerHTML = `
       <span class="absolute top-1 left-1.5 font-pixel text-[10px] font-bold ${unlocked ? 'text-cgy-accent' : 'text-slate-400'}">${idx + 1}</span>
