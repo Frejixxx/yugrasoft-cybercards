@@ -1549,10 +1549,15 @@ function applyClueHotspots(text, card) {
     const phrase = L(cl.match);
     if (!phrase || !html.includes(phrase)) return;
     const isFound = found.includes(cl.id);
-    const badge = `<button type="button" onclick="inspectClue('${cl.id}')" class="clue-hotspot ${isFound ? 'clue-found' : ''}" title="${isFound ? 'Улика раскрыта!' : 'Нажми лупой, чтобы исследовать!'}">
-      <span class="clue-lens-dot"><i data-lucide="${isFound ? 'check' : 'search'}" class="w-3 h-3" stroke-width="3"></i></span>
-      <span>${phrase}</span>
-    </button>`;
+    const badge = isFound
+      ? `<span class="clue-hotspot clue-found">
+          <span class="clue-lens-dot"><i data-lucide="check" class="w-3 h-3" stroke-width="3"></i></span>
+          <span>${phrase}</span>
+        </span>`
+      : `<button type="button" onclick="inspectClue('${cl.id}')" class="clue-hotspot" title="Нажми лупой, чтобы исследовать!">
+          <span class="clue-lens-dot"><i data-lucide="search" class="w-3 h-3" stroke-width="3"></i></span>
+          <span>${phrase}</span>
+        </button>`;
     html = html.replace(phrase, badge);
   });
   return html;
@@ -1565,15 +1570,12 @@ function inspectClue(clueId) {
   if (!clue) return;
 
   if (!Array.isArray(state.cardDraft.foundClues)) state.cardDraft.foundClues = [];
-  const isNew = !state.cardDraft.foundClues.includes(clueId);
-  if (isNew) {
-    state.cardDraft.foundClues.push(clueId);
-    SoundFX.playConnect();
-    burstConfetti('small');
-    showFloatingXp(t('clue_xp'), true);
-  } else {
-    SoundFX.playPick();
-  }
+  if (state.cardDraft.foundClues.includes(clueId)) return;
+
+  state.cardDraft.foundClues.push(clueId);
+  SoundFX.playConnect();
+  burstConfetti('small');
+  showFloatingXp(t('clue_xp'), true);
 
   updateMascot('detective', L(clue.note), true);
   renderCardVisual(card);

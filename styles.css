@@ -300,7 +300,11 @@ body {
   border-bottom-color: #15803d;
   color: #14532d;
   animation: none;
-  cursor: pointer;
+  cursor: default;
+  pointer-events: none;
+}
+.clue-hotspot.clue-found:hover {
+  transform: none;
 }
 .clue-hotspot.clue-found .clue-lens-dot {
   background: #16a34a;
