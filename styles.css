@@ -26,6 +26,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 body {
   background-color: #cde4ff;
   background-image: linear-gradient(180deg, #b8dcff 0%, #dceeff 52%, #d2f2e4 100%);
@@ -34,6 +39,16 @@ body {
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 16px;
   line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  body {
+    background-attachment: scroll;
+    font-size: 15px;
+  }
+  .steve-speech-top::after {
+    right: 24px;
+  }
 }
 
 .font-pixel, h1, h2, h3 {

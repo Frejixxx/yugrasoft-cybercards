@@ -71,14 +71,14 @@
 
   <!-- OFFICIAL PORTAL HEADER («Цифровой гражданин Югры») -->
   <header class="bg-white/95 backdrop-blur-md border-b-2 border-[#c5daf4] sticky top-0 z-30 shadow-sm">
-    <div id="portal-brand-row" class="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3">
+    <div id="portal-brand-row" class="max-w-6xl mx-auto px-3 sm:px-6 py-2 sm:py-0 sm:h-16 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
       <!-- Brand / Portal Mark -->
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 rounded-lg bg-cgy-accent text-white flex items-center justify-center shrink-0 shadow-sm">
-          <i data-lucide="shield-check" class="w-6 h-6"></i>
+      <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-cgy-accent text-white flex items-center justify-center shrink-0 shadow-sm">
+          <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </div>
         <div class="min-w-0">
-          <div class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-cgy-accent truncate" data-i18n="portal_name">
+          <div class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-cgy-accent truncate" data-i18n="portal_name">
             Цифровой гражданин Югры
           </div>
           <h1 class="font-bold text-sm sm:text-lg text-cgy-text leading-tight truncate" data-i18n="app_title">
@@ -88,68 +88,80 @@
       </div>
 
       <!-- Right Controls -->
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <div class="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 w-full sm:w-auto shrink-0">
         <!-- Student Profile Pill -->
-        <button onclick="openStudentProfileModal()" class="flex items-center gap-2 pl-1.5 pr-2.5 sm:pr-3 py-1 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-xs sm:text-sm font-medium text-cgy-text transition">
+        <button onclick="openStudentProfileModal()" class="flex items-center gap-1.5 sm:gap-2 pl-1.5 pr-2.5 sm:pr-3 py-1 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-xs sm:text-sm font-medium text-cgy-text transition min-w-0">
           <span id="header-hero-mini" class="w-6 h-6 rounded-md bg-white border border-[#b6d0f2] overflow-hidden flex items-center justify-center shrink-0"></span>
-          <span id="header-profile-label" class="max-w-[110px] sm:max-w-[170px] truncate">Ученик • 5–7 кл.</span>
+          <span id="header-profile-label" class="max-w-[125px] sm:max-w-[170px] truncate">Ученик • 5–7 кл.</span>
         </button>
 
-        <!-- Language Switcher (RU / ХАН / EN — Expert Track: Язык народов Югры!) -->
-        <div class="inline-flex items-center bg-cgy-bg rounded-lg p-0.5 border border-cgy-border text-xs font-bold" title="Выбор языка: Русский / Хантыйский / English">
-          <button id="lang-ru" onclick="setLang('ru')" class="px-2 py-1 rounded-md bg-cgy-accent text-white transition" title="Русский язык">RU</button>
-          <button id="lang-kca" onclick="setLang('kca')" class="px-2 py-1 rounded-md text-cgy-muted hover:text-cgy-text transition" title="Хантыйский язык (Ханты ясӑӊ)">ХАН</button>
-          <button id="lang-en" onclick="setLang('en')" class="px-2 py-1 rounded-md text-cgy-muted hover:text-cgy-text transition" title="English">EN</button>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <!-- Language Switcher (RU / ХАН / EN — Expert Track: Язык народов Югры!) -->
+          <div class="inline-flex items-center bg-cgy-bg rounded-lg p-0.5 border border-cgy-border text-[11px] sm:text-xs font-bold" title="Выбор языка: Русский / Хантыйский / English">
+            <button id="lang-ru" onclick="setLang('ru')" class="px-1.5 sm:px-2 py-1 rounded-md bg-cgy-accent text-white transition" title="Русский язык">RU</button>
+            <button id="lang-kca" onclick="setLang('kca')" class="px-1.5 sm:px-2 py-1 rounded-md text-cgy-muted hover:text-cgy-text transition" title="Хантыйский язык (Ханты ясӑӊ)">ХАН</button>
+            <button id="lang-en" onclick="setLang('en')" class="px-1.5 sm:px-2 py-1 rounded-md text-cgy-muted hover:text-cgy-text transition" title="English">EN</button>
+          </div>
+
+          <!-- SMS Inbox Button -->
+          <button id="btn-sms-inbox" onclick="openSmsModal()" title="Входящие SMS"
+            class="relative flex items-center gap-1 h-8 sm:h-9 px-2 sm:px-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-cgy-text transition">
+            <i data-lucide="smartphone" class="w-4 h-4 text-cgy-accent"></i>
+            <span class="hidden md:inline text-xs font-semibold">SMS</span>
+            <span id="sms-unread-badge" class="hidden min-w-[18px] h-[18px] px-1 rounded-full bg-cgy-ok text-[10px] font-bold text-white items-center justify-center">0</span>
+          </button>
+
+          <!-- Sound Toggle -->
+          <button onclick="toggleSound()" title="Звук" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-cgy-muted hover:text-cgy-text flex items-center justify-center transition">
+            <span id="sound-icon-on"><i data-lucide="volume-2" class="w-4 h-4"></i></span>
+            <span id="sound-icon-off" class="hidden"><i data-lucide="volume-x" class="w-4 h-4"></i></span>
+          </button>
         </div>
-
-        <!-- SMS Inbox Button -->
-        <button id="btn-sms-inbox" onclick="openSmsModal()" title="Входящие SMS"
-          class="relative flex items-center gap-1 h-9 px-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-cgy-text transition">
-          <i data-lucide="smartphone" class="w-4 h-4 text-cgy-accent"></i>
-          <span class="hidden md:inline text-xs font-semibold">SMS</span>
-          <span id="sms-unread-badge" class="hidden min-w-[18px] h-[18px] px-1 rounded-full bg-cgy-ok text-[10px] font-bold text-white items-center justify-center">0</span>
-        </button>
-
-        <!-- Sound Toggle -->
-        <button onclick="toggleSound()" title="Звук" class="w-9 h-9 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-cgy-muted hover:text-cgy-text flex items-center justify-center transition">
-          <span id="sound-icon-on"><i data-lucide="volume-2" class="w-4 h-4"></i></span>
-          <span id="sound-icon-off" class="hidden"><i data-lucide="volume-x" class="w-4 h-4"></i></span>
-        </button>
       </div>
     </div>
 
-    <!-- MODULE SUB-NAV TABS -->
+    <!-- MODULE SUB-NAV TABS (без горизонтальной прокрутки на ПК, планшете и мобиле!) -->
     <div class="border-t border-[#dce8f8] bg-[#f4f8ff]">
-      <div class="max-w-6xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-4 overflow-x-auto">
-        <nav class="flex items-center gap-1 sm:gap-2 shrink-0">
-          <button id="nav-tab-cards" onclick="switchMainTab('cards')" class="nav-tab active px-3 sm:px-4 py-3 text-sm sm:text-[15px] flex items-center gap-2 whitespace-nowrap">
-            <i data-lucide="layout-grid" class="w-4 h-4"></i>
-            <span data-i18n="tab_cards">Кибер-карточки</span>
-            <span id="badge-cards-progress" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-cgy-soft text-cgy-accent tabular-nums">0/8</span>
+      <div class="max-w-6xl mx-auto px-1.5 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
+        <nav class="grid grid-cols-4 md:flex md:items-center gap-0.5 sm:gap-1 lg:gap-1.5 w-full md:w-auto">
+          <button id="nav-tab-cards" onclick="switchMainTab('cards')" class="nav-tab active px-1 sm:px-2.5 lg:px-3.5 py-2 md:py-2.5 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
+            <span class="flex items-center gap-1 md:contents">
+              <i data-lucide="layout-grid" class="w-4 h-4 shrink-0 md:order-1"></i>
+              <span id="badge-cards-progress" class="px-1.5 py-0.5 rounded-full text-[10px] lg:text-[11px] font-bold bg-cgy-soft text-cgy-accent tabular-nums leading-none md:order-3">0/8</span>
+            </span>
+            <span class="md:hidden font-semibold leading-tight" data-i18n="tab_cards_mob">Карточки</span>
+            <span class="hidden md:inline font-semibold whitespace-nowrap md:order-2" data-i18n="tab_cards">Кибер-карточки</span>
           </button>
 
-          <button id="nav-tab-chat" onclick="switchMainTab('chat')" class="nav-tab px-3 sm:px-4 py-3 text-sm sm:text-[15px] flex items-center gap-2 whitespace-nowrap">
-            <i data-lucide="messages-square" class="w-4 h-4"></i>
-            <span data-i18n="tab_chat">Симулятор чатов</span>
-            <span id="badge-chat-progress" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-cgy-bg text-cgy-muted border border-cgy-border tabular-nums">0/7</span>
+          <button id="nav-tab-chat" onclick="switchMainTab('chat')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-2 md:py-2.5 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
+            <span class="flex items-center gap-1 md:contents">
+              <i data-lucide="messages-square" class="w-4 h-4 shrink-0 md:order-1"></i>
+              <span id="badge-chat-progress" class="px-1.5 py-0.5 rounded-full text-[10px] lg:text-[11px] font-bold bg-cgy-bg text-cgy-muted border border-cgy-border tabular-nums leading-none md:order-3">0/7</span>
+            </span>
+            <span class="md:hidden font-semibold leading-tight" data-i18n="tab_chat_mob">Чаты</span>
+            <span class="hidden md:inline font-semibold whitespace-nowrap md:order-2" data-i18n="tab_chat">Симулятор чатов</span>
           </button>
 
-          <button id="nav-tab-blitz" onclick="switchMainTab('blitz')" class="nav-tab px-3 sm:px-4 py-3 text-sm sm:text-[15px] flex items-center gap-2 whitespace-nowrap">
-            <i data-lucide="zap" class="w-4 h-4 text-[#d97706]"></i>
-            <span data-i18n="tab_blitz">Блиц-атака</span>
-            <span id="badge-blitz-best" class="px-2 py-0.5 rounded-full text-xs font-bold bg-[#fef3c7] text-[#92400e] border border-[#f59e0b]/60 tabular-nums">60с</span>
+          <button id="nav-tab-blitz" onclick="switchMainTab('blitz')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-2 md:py-2.5 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
+            <span class="flex items-center gap-1 md:contents">
+              <i data-lucide="zap" class="w-4 h-4 text-[#d97706] shrink-0 md:order-1"></i>
+              <span id="badge-blitz-best" class="px-1.5 py-0.5 rounded-full text-[10px] lg:text-[11px] font-bold bg-[#fef3c7] text-[#92400e] border border-[#f59e0b]/60 tabular-nums leading-none md:order-3">60с</span>
+            </span>
+            <span class="md:hidden font-semibold leading-tight" data-i18n="tab_blitz_mob">Блиц</span>
+            <span class="hidden md:inline font-semibold whitespace-nowrap md:order-2" data-i18n="tab_blitz">Блиц-атака</span>
           </button>
 
-          <button id="nav-tab-results" onclick="switchMainTab('results')" class="nav-tab px-3 sm:px-4 py-3 text-sm sm:text-[15px] flex items-center gap-2 whitespace-nowrap">
-            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-            <span data-i18n="tab_results">Аналитика и сертификат</span>
+          <button id="nav-tab-results" onclick="switchMainTab('results')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-2 md:py-2.5 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0"></i>
+            <span class="md:hidden font-semibold leading-tight" data-i18n="tab_results_mob">Итоги</span>
+            <span class="hidden md:inline font-semibold whitespace-nowrap" data-i18n="tab_results">Аналитика и сертификат</span>
           </button>
         </nav>
 
-        <!-- Overall Armor Progress Mini Bar (Desktop) -->
-        <div class="hidden lg:flex items-center gap-2.5 shrink-0">
-          <span class="text-xs font-medium text-cgy-muted" data-i18n="overall_progress">Общий прогресс:</span>
-          <div class="w-28 h-2 bg-cgy-bg rounded-full overflow-hidden border border-cgy-border">
+        <!-- Overall Progress Compact Bar (только на широких экранах xl+, никогда не вызывает скролл!) -->
+        <div class="hidden xl:flex items-center gap-2 shrink-0 pl-2" title="Общий прогресс по карточкам и чатам">
+          <span class="text-xs font-semibold text-cgy-muted whitespace-nowrap" data-i18n="overall_progress">Прогресс:</span>
+          <div class="w-24 h-2 bg-cgy-bg rounded-full overflow-hidden border border-cgy-border">
             <div id="overall-bar" class="h-full progress-fill-animated transition-all duration-500" style="width: 0%"></div>
           </div>
           <span id="overall-pct" class="text-xs font-bold text-cgy-accent tabular-nums">0%</span>
@@ -164,7 +176,7 @@
     <!-- ========================================================== -->
     <!-- VIEW 1: КИБЕР-КАРТОЧКИ (ИГРОВОЙ РЕЖИМ С ПЕРЕТАСКИВАЕМЫМ СТИВОМ И ХОТБАРОМ) -->
     <!-- ========================================================== -->
-    <section id="view-cards" class="flex-1 flex flex-col gap-4 pb-20 sm:pb-6">
+    <section id="view-cards" class="flex-1 flex flex-col gap-4 pb-28 sm:pb-10">
       <!-- Top Mission Map Bar (цветная шапка-панель миссий без серой скуки!) -->
       <div class="bg-gradient-to-r from-[#dfeeff] via-[#edf5ff] to-[#e7f7ee] border-2 border-[#b5d0f2] border-b-4 rounded-2xl p-3.5 sm:p-4 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
         <div class="flex flex-wrap items-center gap-2.5">
@@ -197,7 +209,7 @@
         </div>
 
         <!-- Playful Circular Star Mission Map -->
-        <div id="cards-stepper" class="flex items-center gap-2 flex-wrap"></div>
+        <div id="cards-stepper" class="flex items-center gap-1.5 sm:gap-2 flex-wrap"></div>
       </div>
 
       <!-- Active Interactive Card Container -->
@@ -262,23 +274,23 @@
           </div>
 
           <!-- Card Action Footer -->
-          <div class="pt-3.5 border-t border-[#e5edf7] flex flex-wrap items-center justify-between gap-3">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#fef7e0] border-2 border-[#f6d57a] text-sm text-[#92400e] font-bold">
+          <div class="pt-3.5 border-t border-[#e5edf7] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="inline-flex items-center justify-center sm:justify-start gap-2 px-3 py-1.5 rounded-xl bg-[#fef7e0] border-2 border-[#f6d57a] text-sm text-[#92400e] font-bold self-start">
               <i data-lucide="star" class="w-4 h-4 text-[#d97706] fill-[#f59e0b]"></i>
               <span data-i18n="score_now">Звёзды:</span>
               <strong id="cards-live-score" class="font-pixel text-base text-[#1e7e34] tabular-nums">0 / 8</strong>
             </div>
 
-            <div class="flex items-center gap-2.5 ml-auto">
-              <button id="btn-card-check" onclick="submitCurrentCard()" class="hidden btn-3d px-6 py-3 rounded-xl bg-cgy-accent hover:bg-cgy-accentHover border-b-[#133b72] text-white font-extrabold text-base shadow-sm">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:ml-auto w-full sm:w-auto">
+              <button id="btn-card-check" onclick="submitCurrentCard()" class="hidden btn-3d w-full sm:w-auto px-6 py-3 rounded-xl bg-cgy-accent hover:bg-cgy-accentHover border-b-[#133b72] text-white font-extrabold text-base shadow-sm text-center">
                 Проверить ответ
               </button>
-              <button id="btn-card-retry" onclick="retryCurrentCard()" class="hidden btn-3d px-5 py-3 rounded-xl bg-white hover:bg-cgy-bg border-2 border-cgy-border border-b-[#94a3b8] text-cgy-text font-bold text-base">
+              <button id="btn-card-retry" onclick="retryCurrentCard()" class="hidden btn-3d w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-cgy-bg border-2 border-cgy-border border-b-[#94a3b8] text-cgy-text font-bold text-base text-center">
                 Попробовать ещё раз
               </button>
-              <button id="btn-card-next" onclick="goNextCard()" class="hidden btn-3d px-6 py-3 rounded-xl bg-cgy-ok border-b-[#14532d] text-white font-extrabold text-base shadow-sm flex items-center gap-2">
+              <button id="btn-card-next" onclick="goNextCard()" class="hidden btn-3d w-full sm:w-auto px-5 sm:px-6 py-3 rounded-xl bg-cgy-ok border-b-[#14532d] text-white font-extrabold text-sm sm:text-base shadow-sm flex items-center justify-center gap-2">
                 <span id="btn-card-next-label">Следующая миссия</span>
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <i data-lucide="arrow-right" class="w-4 h-4 shrink-0"></i>
               </button>
             </div>
           </div>
@@ -296,7 +308,7 @@
             <div class="text-xs font-semibold text-cgy-muted" data-i18n="hotbar_sub">Решай карточки и собирай защиту!</div>
           </div>
         </div>
-        <div id="mc-loot-slots" class="grid grid-cols-4 sm:grid-cols-8 gap-2 shrink-0"></div>
+        <div id="mc-loot-slots" class="grid grid-cols-4 sm:grid-cols-8 gap-2 justify-items-center shrink-0"></div>
       </div>
 
       <!-- Cards Finished Summary Banner (shows when all 8 cards are completed) -->
@@ -574,7 +586,7 @@
     <!-- ========================================================== -->
     <!-- VIEW 3: АНАЛИТИКА С ГРАФИКАМИ, АЧИВКИ И СЕРТИФИКАТ         -->
     <!-- ========================================================== -->
-    <section id="view-results" class="hidden flex-1 flex flex-col gap-5 pb-20 sm:pb-6">
+    <section id="view-results" class="hidden flex-1 flex flex-col gap-5 pb-28 sm:pb-10">
       <!-- Row 1: Summary KPIs (живые, цветные и понятные школьнику — без «ложных тревог»!) -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="bg-gradient-to-br from-[#eaf3ff] to-white border-2 border-[#b8d1f0] border-b-4 rounded-2xl p-4 shadow-sm">
@@ -1045,10 +1057,10 @@
     </div>
   </div>
 
-  <!-- FLOATING DRAGGABLE CYBER-STEVE BUDDY -->
-  <div id="floating-steve" class="fixed bottom-4 right-4 z-[48] flex flex-col items-end pointer-events-none" style="max-width: 290px;">
-    <!-- Speech Bubble ABOVE Steve's Head -->
-    <div id="yugorka-bubble" class="steve-speech-top pointer-events-auto mb-2.5 w-[260px] sm:w-[285px] bg-white border-2 border-[#1e5aa8] rounded-2xl px-3.5 py-2.5 shadow-xl transition-all">
+  <!-- FLOATING DRAGGABLE CYBER-STEVE / ALEX BUDDY -->
+  <div id="floating-steve" class="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-[48] flex flex-col items-end pointer-events-none" style="max-width: min(290px, calc(100vw - 24px));">
+    <!-- Speech Bubble ABOVE Hero's Head (на мобиле по умолчанию свёрнуто, чтобы не перекрывать кнопки!) -->
+    <div id="yugorka-bubble" class="steve-speech-top pointer-events-auto mb-2.5 w-[min(275px,calc(100vw-24px))] sm:w-[285px] bg-white border-2 border-[#1e5aa8] rounded-2xl px-3.5 py-2.5 shadow-xl transition-all">
       <div class="flex items-center justify-between gap-1.5 mb-1">
         <span id="yugorka-status-tag" class="font-pixel text-xs font-bold text-cgy-accent uppercase tracking-wide truncate">Кибер-Стив</span>
         <div class="flex items-center gap-1 shrink-0">
@@ -1068,13 +1080,13 @@
       </p>
     </div>
 
-    <!-- Draggable Steve Character -->
+    <!-- Draggable Hero Character -->
     <div id="steve-drag-handle" title="Потяни меня по экрану или кликни!"
       class="steve-body-btn pointer-events-auto cursor-grab active:cursor-grabbing flex flex-col items-center transition-transform">
-      <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white border-[3px] border-[#1e5aa8] border-b-[6px] shadow-xl overflow-hidden flex items-center justify-center">
+      <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-white border-[3px] border-[#1e5aa8] border-b-[5px] sm:border-b-[6px] shadow-xl overflow-hidden flex items-center justify-center">
         <div id="yugorka-avatar" class="w-full h-full flex items-center justify-center yugorka-float"></div>
       </div>
-      <span id="yugorka-name-badge" class="-mt-2 px-2.5 py-0.5 rounded-lg bg-[#1e5aa8] border-2 border-white text-white font-pixel text-[11px] font-bold shadow-md">
+      <span id="yugorka-name-badge" class="-mt-2 px-2 sm:px-2.5 py-0.5 rounded-lg bg-[#1e5aa8] border-2 border-white text-white font-pixel text-[10px] sm:text-[11px] font-bold shadow-md">
         Кибер-Стив
       </span>
     </div>

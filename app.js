@@ -18,6 +18,10 @@ const I18N = {
     tab_cards: 'Кибер-карточки',
     tab_chat: 'Симулятор чатов',
     tab_blitz: 'Блиц-атака',
+    tab_cards_mob: 'Карточки',
+    tab_chat_mob: 'Чаты',
+    tab_blitz_mob: 'Блиц',
+    tab_results_mob: 'Итоги',
     blitz_title: 'Блиц: отбей атаку скамеров!',
     blitz_sub: '60 секунд • 3 сердечка • комбо за скорость',
     blitz_record_lbl: 'Рекорд',
@@ -179,6 +183,10 @@ const I18N = {
     tab_cards: 'Cyber-Cards',
     tab_chat: 'Chat Simulator',
     tab_blitz: '60s Blitz',
+    tab_cards_mob: 'Cards',
+    tab_chat_mob: 'Chats',
+    tab_blitz_mob: 'Blitz',
+    tab_results_mob: 'Stats',
     blitz_title: '60s Blitz: Stop the Scammers!',
     blitz_sub: '60 seconds • 3 hearts • speed combo',
     blitz_record_lbl: 'Best',
@@ -340,6 +348,10 @@ const I18N = {
     tab_cards: 'Кибер-карточкат',
     tab_chat: 'Потӑр симулятор',
     tab_blitz: 'Блиц 60с',
+    tab_cards_mob: 'Карточкат',
+    tab_chat_mob: 'Потӑр',
+    tab_blitz_mob: 'Блиц',
+    tab_results_mob: 'Итоги',
     blitz_title: 'Блиц: мошенникӑт пӑнтэ!',
     blitz_sub: '60 секунда • 3 сӑм • комбо',
     blitz_record_lbl: 'Рекорд',
@@ -856,6 +868,12 @@ function switchMainTab(tab, announce = true) {
     if (n) n.classList.toggle('active', name === tab);
   });
 
+  // Прячем плавающего героя на «Чатах» и «Блице», чтобы не перекрывал кнопки ответов (особенно на мобиле!)
+  const floatingHero = document.getElementById('floating-steve');
+  if (floatingHero) {
+    floatingHero.classList.toggle('hidden', tab === 'chat' || tab === 'blitz');
+  }
+
   // Для вкладки «Симулятор чатов» фиксируем высоту ровно под экран — никаких прокруток всей страницы!
   const mainEl = document.getElementById('app-main');
   if (tab === 'chat') {
@@ -1155,7 +1173,7 @@ function renderCardsStepper() {
     }
 
     const btn = document.createElement('button');
-    btn.className = `mission-node w-9 h-9 rounded-full border-2 text-xs flex items-center justify-center ${cls}`;
+    btn.className = `mission-node w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 text-xs flex items-center justify-center ${cls}`;
     btn.innerHTML = inner;
     btn.title = `${idx + 1}. ${L(c.title)} (${t('types')[c.type]})`;
     btn.onclick = () => selectCardById(c.id);
@@ -1732,7 +1750,7 @@ function updateMascot(mood = 'idle', speechText = '', animate = true) {
   }
 
   if (animate) {
-    if (bubble) bubble.classList.remove('hidden');
+    if (bubble && window.innerWidth >= 640) bubble.classList.remove('hidden');
     avatar.classList.remove('yugorka-float', 'yugorka-jump', 'yugorka-oops');
     void avatar.offsetWidth;
     if (mood === 'happy') {
@@ -1777,7 +1795,25 @@ function toggleSteveBubble() {
 function initDraggableSteve() {
   const host = document.getElementById('floating-steve');
   const handle = document.getElementById('steve-drag-handle');
+  const bubble = document.getElementById('yugorka-bubble');
   if (!host || !handle) return;
+
+  // На мобильных экранах облачко свёрнуто по умолчанию — не перекрывает контент, открывается по клику на героя!
+  if (bubble && window.innerWidth < 640) {
+    bubble.classList.add('hidden');
+  }
+
+  // При ресайзе окна возвращаем перетащенного героя в видимую область
+  window.addEventListener('resize', () => {
+    if (host.style.left && host.style.top) {
+      const maxL = Math.max(8, window.innerWidth - host.offsetWidth - 8);
+      const maxT = Math.max(8, window.innerHeight - host.offsetHeight - 8);
+      const curL = parseFloat(host.style.left) || 8;
+      const curT = parseFloat(host.style.top) || 8;
+      host.style.left = Math.max(8, Math.min(maxL, curL)) + 'px';
+      host.style.top = Math.max(8, Math.min(maxT, curT)) + 'px';
+    }
+  });
 
   let dragging = false;
   let moved = false;
