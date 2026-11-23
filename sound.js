@@ -1,5 +1,6 @@
-// Студийный процедурный звуковой движок на Web Audio API (без внешних SFX-файлов)
-// Мягкие акустические звуки: тактильные клики, деревянный «тук», маримба, калимба, реалистичные уведомления
+// Звуковой движок «Кибер-карточек Югры» на Web Audio API (100% офлайн, без сторонних копирайт-файлов)
+// Звуки в узнаваемой стилистике Minecraft: каменный клик меню, стук установки блока,
+// подбор предмета (pop), перезвон сферы опыта (orb), Level Up и фанфара достижения (Advancement)
 
 const SoundFX = (() => {
   let ctx = null;
@@ -19,14 +20,13 @@ const SoundFX = (() => {
   }
 
   function buildImpulseBuffer(c) {
-    // Короткий мягкий комнатный хвост (0.28 сек), чтобы ноты звучали живо, а не «сухой пищалкой»
-    const len = Math.floor(c.sampleRate * 0.28);
+    const len = Math.floor(c.sampleRate * 0.24);
     const buf = c.createBuffer(2, len, c.sampleRate);
     for (let ch = 0; ch < 2; ch++) {
       const data = buf.getChannelData(ch);
       for (let i = 0; i < len; i++) {
-        const decay = Math.pow(1 - i / len, 2.8);
-        data[i] = (Math.random() * 2 - 1) * decay * 0.45;
+        const decay = Math.pow(1 - i / len, 3.0);
+        data[i] = (Math.random() * 2 - 1) * decay * 0.4;
       }
     }
     return buf;
@@ -38,26 +38,24 @@ const SoundFX = (() => {
       if (!AudioCtx) return null;
       ctx = new AudioCtx();
 
-      // Мастер-компрессор + мягкий гейн, чтобы никогда не было перегруза и резких щелчков
       const comp = ctx.createDynamicsCompressor();
       comp.threshold.value = -16;
       comp.knee.value = 18;
       comp.ratio.value = 4;
-      comp.attack.value = 0.004;
-      comp.release.value = 0.14;
+      comp.attack.value = 0.003;
+      comp.release.value = 0.12;
 
       const outGain = ctx.createGain();
-      outGain.gain.value = 0.88;
+      outGain.gain.value = 0.9;
 
       comp.connect(outGain);
       outGain.connect(ctx.destination);
       masterBus = comp;
 
-      // Лёгкий комнатный реверб для музыкальных нот (победа, ачивка, SMS)
       const convolver = ctx.createConvolver();
       convolver.buffer = buildImpulseBuffer(ctx);
       const revGain = ctx.createGain();
-      revGain.gain.value = 0.22;
+      revGain.gain.value = 0.2;
       convolver.connect(revGain);
       revGain.connect(masterBus);
       reverbBus = convolver;
@@ -76,8 +74,7 @@ const SoundFX = (() => {
     if (!enabled) stopSpeech();
   }
 
-  // Короткий фильтрованный шумовой импульс (тактильный клик / удар палочки / воздушный свайп)
-  function playNoiseBurst({ start = 0, duration = 0.018, bandFreq = 1800, q = 1.4, volume = 0.06, highpass = false }) {
+  function playNoise({ start = 0, duration = 0.02, freq = 1400, q = 1.4, volume = 0.08, type = 'bandpass' }) {
     if (!enabled) return;
     const c = getContext();
     if (!c || !noiseBuffer) return;
@@ -87,8 +84,8 @@ const SoundFX = (() => {
     src.buffer = noiseBuffer;
 
     const filter = c.createBiquadFilter();
-    filter.type = highpass ? 'highpass' : 'bandpass';
-    filter.frequency.setValueAtTime(bandFreq, t);
+    filter.type = type;
+    filter.frequency.setValueAtTime(freq, t);
     filter.Q.setValueAtTime(q, t);
 
     const gain = c.createGain();
@@ -104,185 +101,129 @@ const SoundFX = (() => {
     src.stop(t + duration + 0.01);
   }
 
-  // Акустическая нота маримбы / калимбы / колокольчика (основной тон + быстрый обертон + лёгкий реверб)
-  function playMarimbaNote({
+  function playOsc({
     freq,
     endFreq = null,
+    wave = 'sine',
     start = 0,
-    duration = 0.26,
-    volume = 0.11,
-    overtoneRatio = 2.0,
-    overtoneGain = 0.18,
+    duration = 0.18,
+    volume = 0.1,
+    attack = 0.004,
     filterFreq = 3200,
-    reverb = true
+    reverb = false
   }) {
     if (!enabled) return;
     const c = getContext();
     if (!c) return;
     const t = c.currentTime + start;
 
-    const osc1 = c.createOscillator();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(freq, t);
+    const osc = c.createOscillator();
+    osc.type = wave;
+    osc.frequency.setValueAtTime(freq, t);
     if (endFreq !== null) {
-      osc1.frequency.exponentialRampToValueAtTime(Math.max(30, endFreq), t + duration * 0.65);
+      osc.frequency.exponentialRampToValueAtTime(Math.max(25, endFreq), t + duration * 0.78);
     }
-
-    const osc2 = c.createOscillator();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(freq * overtoneRatio, t);
-
-    const g1 = c.createGain();
-    g1.gain.setValueAtTime(0.0001, t);
-    g1.gain.linearRampToValueAtTime(volume, t + 0.006);
-    g1.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-
-    const g2 = c.createGain();
-    g2.gain.setValueAtTime(0.0001, t);
-    g2.gain.linearRampToValueAtTime(volume * overtoneGain, t + 0.004);
-    g2.gain.exponentialRampToValueAtTime(0.0001, t + duration * 0.42);
 
     const lp = c.createBiquadFilter();
     lp.type = 'lowpass';
     lp.frequency.setValueAtTime(filterFreq, t);
-    lp.frequency.exponentialRampToValueAtTime(Math.max(400, filterFreq * 0.45), t + duration);
 
-    osc1.connect(g1);
-    osc2.connect(g2);
-    g1.connect(lp);
-    g2.connect(lp);
-    lp.connect(masterBus);
-    if (reverb && reverbBus) lp.connect(reverbBus);
+    const gain = c.createGain();
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(volume, t + attack);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
 
-    osc1.start(t);
-    osc2.start(t);
-    osc1.stop(t + duration + 0.03);
-    osc2.stop(t + duration + 0.03);
+    osc.connect(lp);
+    lp.connect(gain);
+    gain.connect(masterBus);
+    if (reverb && reverbBus) gain.connect(reverbBus);
+
+    osc.start(t);
+    osc.stop(t + duration + 0.02);
   }
 
-  // 1. Ультра-чистый тактильный клик (как мягкий переключатель UI — не пищит)
+  // 1. Minecraft Stone UI Button Click (сухой каменный «клац» меню Minecraft!)
   function playPick() {
-    playNoiseBurst({ duration: 0.012, bandFreq: 2400, q: 2.0, volume: 0.045 });
-    playMarimbaNote({
-      freq: 640,
-      endFreq: 760,
-      duration: 0.045,
-      volume: 0.055,
-      overtoneRatio: 2.5,
-      overtoneGain: 0.1,
-      filterFreq: 2000,
-      reverb: false
-    });
+    playNoise({ duration: 0.016, freq: 1850, q: 1.9, volume: 0.085 });
+    playOsc({ freq: 720, endFreq: 310, wave: 'triangle', duration: 0.032, volume: 0.08, attack: 0.002, filterFreq: 1900 });
   }
 
-  // 2. Тёплый деревянный «тук» при перетаскивании карточки / установке блока
+  // 2. Minecraft Wood/Stone Block Place (плотный глухой стук установки блока + лёгкий хруст!)
   function playDrop() {
-    playNoiseBurst({ duration: 0.015, bandFreq: 950, q: 1.6, volume: 0.065 });
-    playMarimbaNote({
-      freq: 330,
-      endFreq: 210,
-      duration: 0.08,
-      volume: 0.095,
-      overtoneRatio: 2.7,
-      overtoneGain: 0.14,
-      filterFreq: 1400,
-      reverb: false
-    });
+    playNoise({ duration: 0.028, freq: 720, q: 1.2, volume: 0.11 });
+    playNoise({ start: 0.006, duration: 0.02, freq: 2100, q: 1.5, volume: 0.035 });
+    playOsc({ freq: 195, endFreq: 88, wave: 'triangle', duration: 0.078, volume: 0.14, attack: 0.002, filterFreq: 850 });
   }
 
-  // 3. Нежная калимба при соединении пары или выборе героя
+  // 3. Minecraft Item Pickup Pop («чпок» подбора предмета в инвентарь!)
   function playConnect() {
-    playNoiseBurst({ duration: 0.01, bandFreq: 2600, q: 1.8, volume: 0.03 });
-    playMarimbaNote({ freq: 587.33, start: 0, duration: 0.17, volume: 0.085, overtoneRatio: 3.0, overtoneGain: 0.14, filterFreq: 2800 });
-    playMarimbaNote({ freq: 880.0, start: 0.055, duration: 0.24, volume: 0.08, overtoneRatio: 2.0, overtoneGain: 0.16, filterFreq: 3200 });
+    playNoise({ duration: 0.01, freq: 2600, q: 1.8, volume: 0.035 });
+    playOsc({ freq: 410, endFreq: 1080, wave: 'sine', duration: 0.062, volume: 0.11, attack: 0.003, filterFreq: 3200 });
+    playOsc({ freq: 820, endFreq: 1560, wave: 'triangle', start: 0.015, duration: 0.055, volume: 0.045, attack: 0.003, filterFreq: 3600 });
   }
 
-  // 4. Яркий и тёплый аккорд маримбы при правильном ответе (короткий, не мешает голосу героя!)
+  // 4. Minecraft XP Orb Chime (знаменитый высокий хрустальный звон сфер опыта — для улик и трофеев!)
+  function playXpOrb() {
+    const pitches = [1396.91, 1567.98, 1760.0, 1975.53]; // F6, G6, A6, B6
+    const base = pitches[Math.floor(Math.random() * pitches.length)] * (0.97 + Math.random() * 0.06);
+    playOsc({ freq: base, endFreq: base * 1.03, wave: 'sine', start: 0, duration: 0.24, volume: 0.095, attack: 0.003, filterFreq: 5200, reverb: true });
+    playOsc({ freq: base * 1.5, wave: 'sine', start: 0.025, duration: 0.19, volume: 0.04, attack: 0.004, filterFreq: 5800, reverb: true });
+  }
+
+  // 5. Minecraft Level Up / Orb Win Chime (звонкий хрустально-пиксельный перелив победы!)
   function playWin(streak = 1) {
     const semis = Math.min(Math.max(0, streak - 1), 4);
-    const mult = Math.pow(2, semis / 12); // музыкальный сдвиг по полутонам на комбо!
-    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 - E5 - G5 - C6
+    const mult = Math.pow(2, semis / 12);
+    // Узнаваемый майнкрафтовский восходящий звон колокольчиков + лёгкая квадратная подложка
+    const notes = [587.33, 739.99, 880.0, 1174.66]; // D5 - F#5 - A5 - D6
     notes.forEach((f, i) => {
-      playNoiseBurst({ start: i * 0.05, duration: 0.008, bandFreq: 3200, q: 1.5, volume: 0.022 });
-      playMarimbaNote({
-        freq: f * mult,
-        start: i * 0.05,
-        duration: i === notes.length - 1 ? 0.34 : 0.22,
-        volume: i === notes.length - 1 ? 0.095 : 0.08,
-        overtoneRatio: 2.0,
-        overtoneGain: 0.22,
-        filterFreq: 3800,
-        reverb: true
-      });
+      const st = i * 0.055;
+      playOsc({ freq: f * mult, wave: 'sine', start: st, duration: i === 3 ? 0.36 : 0.2, volume: 0.095, attack: 0.004, filterFreq: 4800, reverb: true });
+      playOsc({ freq: f * mult * 2, wave: 'sine', start: st + 0.006, duration: 0.16, volume: 0.032, attack: 0.004, filterFreq: 5600, reverb: true });
+      playOsc({ freq: f * mult * 0.5, wave: 'triangle', start: st, duration: 0.18, volume: 0.045, attack: 0.005, filterFreq: 1400 });
     });
   }
 
-  // 5. Праздничный перебор челесты/арфы при ачивке или рекорде
+  // 6. Minecraft Advancement / Challenge Complete (торжественная 5-нотная фанфара!)
   function playAchievement() {
-    const notes = [523.25, 659.25, 783.99, 987.77, 1046.5, 1318.51];
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51]; // C5 E5 G5 C6 E6
     notes.forEach((f, i) => {
-      playMarimbaNote({
-        freq: f,
-        start: i * 0.062,
-        duration: i === notes.length - 1 ? 0.52 : 0.32,
-        volume: 0.082,
-        overtoneRatio: 3.0,
-        overtoneGain: 0.18,
-        filterFreq: 4200,
-        reverb: true
-      });
+      const st = i * 0.075;
+      const dur = i === notes.length - 1 ? 0.55 : 0.28;
+      playOsc({ freq: f, wave: 'triangle', start: st, duration: dur, volume: 0.09, attack: 0.006, filterFreq: 3800, reverb: true });
+      playOsc({ freq: f * 2, wave: 'sine', start: st + 0.008, duration: dur * 0.75, volume: 0.038, attack: 0.006, filterFreq: 5200, reverb: true });
     });
   }
 
-  // 6. Мягкий приглушённый деревянный двойной стук при ошибке (дружелюбный, не режет слух)
+  // 7. Minecraft Soft Block Miss / Thud (мягкий глухой стук промаха — не режет уши!)
   function playFail() {
-    playNoiseBurst({ start: 0, duration: 0.016, bandFreq: 650, q: 1.2, volume: 0.055 });
-    playMarimbaNote({
-      freq: 261.63,
-      endFreq: 233.08,
-      start: 0,
-      duration: 0.13,
-      volume: 0.095,
-      overtoneRatio: 1.5,
-      overtoneGain: 0.1,
-      filterFreq: 850,
-      reverb: false
-    });
-    playNoiseBurst({ start: 0.11, duration: 0.018, bandFreq: 520, q: 1.2, volume: 0.05 });
-    playMarimbaNote({
-      freq: 207.65,
-      endFreq: 174.61,
-      start: 0.11,
-      duration: 0.2,
-      volume: 0.09,
-      overtoneRatio: 1.5,
-      overtoneGain: 0.08,
-      filterFreq: 700,
-      reverb: false
-    });
+    playNoise({ start: 0, duration: 0.025, freq: 520, q: 1.1, volume: 0.09 });
+    playOsc({ freq: 210, endFreq: 145, wave: 'triangle', start: 0, duration: 0.12, volume: 0.11, attack: 0.003, filterFreq: 680 });
+    playNoise({ start: 0.11, duration: 0.026, freq: 420, q: 1.1, volume: 0.08 });
+    playOsc({ freq: 165, endFreq: 112, wave: 'triangle', start: 0.11, duration: 0.18, volume: 0.105, attack: 0.003, filterFreq: 560 });
   }
 
-  // 7. Мессенджер: современное кристальное уведомление входящего сообщения
+  // 8. Мессенджер: входящее сообщение (чистый pop-звон)
   function playIncoming() {
-    playNoiseBurst({ duration: 0.008, bandFreq: 3000, q: 2.0, volume: 0.025 });
-    playMarimbaNote({ freq: 698.46, start: 0, duration: 0.11, volume: 0.07, overtoneRatio: 2.0, overtoneGain: 0.15, filterFreq: 3000 });
-    playMarimbaNote({ freq: 1046.5, start: 0.045, duration: 0.16, volume: 0.065, overtoneRatio: 2.0, overtoneGain: 0.12, filterFreq: 3400 });
+    playNoise({ duration: 0.008, freq: 3000, q: 2.0, volume: 0.022 });
+    playOsc({ freq: 698.46, wave: 'sine', start: 0, duration: 0.1, volume: 0.07, filterFreq: 3000, reverb: true });
+    playOsc({ freq: 1046.5, wave: 'sine', start: 0.045, duration: 0.15, volume: 0.065, filterFreq: 3400, reverb: true });
   }
 
-  // 8. Мессенджер: мягкий воздушный «вжух-поп» отправки сообщения
+  // 9. Мессенджер: отправка сообщения (лёгкий pop)
   function playOutgoing() {
-    playNoiseBurst({ duration: 0.032, bandFreq: 1500, q: 0.9, volume: 0.038 });
-    playMarimbaNote({ freq: 440, endFreq: 620, duration: 0.055, volume: 0.045, overtoneRatio: 2.0, overtoneGain: 0.08, filterFreq: 1800, reverb: false });
+    playNoise({ duration: 0.022, freq: 1600, q: 1.0, volume: 0.035 });
+    playOsc({ freq: 440, endFreq: 660, wave: 'sine', duration: 0.05, volume: 0.05, filterFreq: 1900 });
   }
 
-  // 9. Реалистичный стеклянный тройной перезвон входящего SMS
+  // 10. Входящее SMS (тройной стеклянный перезвон)
   function playSms() {
-    playMarimbaNote({ freq: 880.0, start: 0, duration: 0.18, volume: 0.08, overtoneRatio: 2.756, overtoneGain: 0.16, filterFreq: 3800 });
-    playMarimbaNote({ freq: 1108.73, start: 0.085, duration: 0.2, volume: 0.08, overtoneRatio: 2.756, overtoneGain: 0.16, filterFreq: 4000 });
-    playMarimbaNote({ freq: 1318.51, start: 0.17, duration: 0.34, volume: 0.085, overtoneRatio: 2.756, overtoneGain: 0.18, filterFreq: 4200 });
+    playOsc({ freq: 880.0, wave: 'sine', start: 0, duration: 0.18, volume: 0.08, filterFreq: 3800, reverb: true });
+    playOsc({ freq: 1108.73, wave: 'sine', start: 0.085, duration: 0.2, volume: 0.08, filterFreq: 4000, reverb: true });
+    playOsc({ freq: 1318.51, wave: 'sine', start: 0.17, duration: 0.34, volume: 0.085, filterFreq: 4200, reverb: true });
   }
 
-  // 10. Реалистичный телефонный гудок (425 Гц через телефонный полосовой фильтр 300–3400 Гц)
+  // 11. Телефонный гудок 425 Гц через полосовой фильтр
   function playPhonePulse(offset, dur, vol) {
     const c = getContext();
     if (!c) return;
@@ -324,9 +265,6 @@ const SoundFX = (() => {
     const pref = langPrefix.toLowerCase().slice(0, 2);
     const matching = voices.filter(v => (v.lang || '').toLowerCase().startsWith(pref));
     if (!matching.length) return null;
-
-    // Выбираем ТОЛЬКО естественные нейросетевые голоса (Edge Natural/Online, Google, Apple Siri)
-    // Исключаем роботизированные стандартные голоса Windows (Irina, Pavel, David, Zira)
     const neural = matching.find(v => /natural|online|google|siri|milena|yuri/i.test(v.name) && !/irina|pavel|david|zira/i.test(v.name));
     return neural || null;
   }
@@ -413,7 +351,7 @@ const SoundFX = (() => {
 
   return {
     isEnabled, setEnabled,
-    playPick, playDrop, playConnect,
+    playPick, playDrop, playConnect, playXpOrb,
     playIncoming, playSms, playOutgoing,
     playDialTone, playBusyTone, playFail, playWin, playAchievement,
     hasNeuralVoice, onVoicesReady, speakVoice, playAudioFile, stopAudioFile, stopSpeech

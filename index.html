@@ -40,9 +40,9 @@
   <!-- INTERACTIVE MINECRAFT-STYLE YUGRA DAYLIGHT SKY & VOXEL TAIGA BACKGROUND -->
   <canvas id="bg-voxel-world" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
 
-  <!-- GLOBAL CELEBRATION CONFETTI & FLOATING XP LAYER -->
+  <!-- GLOBAL CONFETTI & MINECRAFT-STYLE ADVANCEMENT TOAST LAYER -->
   <canvas id="fx-confetti" class="fixed inset-0 pointer-events-none z-[70]"></canvas>
-  <div id="fx-xp-layer" class="fixed inset-0 pointer-events-none z-[75] overflow-hidden"></div>
+  <div id="fx-xp-layer" class="fixed top-20 right-3 sm:right-5 pointer-events-none z-[75] flex flex-col items-end gap-2 max-w-[calc(100vw-24px)]"></div>
 
   <!-- INCOMING SMS PUSH NOTIFICATION (for Messenger Simulator tab) -->
   <div id="sms-push-banner" onclick="openSmsModalFromPush()" role="button" tabindex="0"
@@ -511,7 +511,7 @@
             <div class="flex items-center gap-2">
               <span id="blitz-combo-pill" class="px-2.5 py-1 rounded-xl bg-[#fef3c7] border border-[#f59e0b] text-xs font-extrabold text-[#92400e]">x1</span>
               <span class="px-3 py-1 rounded-xl bg-[#ecfdf5] border border-[#86efac] font-extrabold text-[#15803d] text-sm tabular-nums">
-                <span id="blitz-score-text">0</span> XP
+                <span id="blitz-score-text">0</span> <span data-i18n="blitz_pts_short">очк.</span>
               </span>
             </div>
           </div>

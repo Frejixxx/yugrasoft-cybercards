@@ -25,6 +25,7 @@ const I18N = {
     blitz_title: 'Блиц: отбей атаку скамеров!',
     blitz_sub: '60 секунд • 3 сердечка • комбо за скорость',
     blitz_record_lbl: 'Рекорд',
+    blitz_pts_short: 'очк.',
     blitz_rules: 'На экран летят сообщения от друзей, учителей и мошенников. Успей за 60 секунд решить: пропустить безопасное сообщение или отправить скамера в БАН!',
     blitz_btn_safe: 'Безопасно',
     blitz_btn_ban: 'В БАН! (Скам)',
@@ -45,14 +46,14 @@ const I18N = {
     yugorka_role: 'Кибер-герой Югры',
     detective_bar: 'Лупа детектива: нажми на подозрительные места на картинке!',
     detective_done: 'Все улики найдены! Молодец, кибердетектив!',
-    clue_xp: '+15 XP • Улика!',
+    clue_xp: 'Улика раскрыта!',
     yugorka_idle: [
       'Привет! Я {HERO}. Давай вместе разберём эту ситуацию и не дадим гриферам-мошенникам шанса!',
       'Не спеши кликать! Если сомневаешься — жми «Подсказка» или проверяй улики лупой.',
       'Настоящий профи сначала проверяет, потом нажимает. Выбери самый безопасный шаг!'
     ],
     yugorka_win: [
-      'Отлично! +100 XP! Очень умное и безопасное решение!',
+      'Отлично! Очень умное и безопасное решение!',
       'Точно в цель! Твой Кибер-щит Югры стал ещё крепче!',
       'Супер! Всё верно — работа настоящего кибердетектива!'
     ],
@@ -227,6 +228,7 @@ const I18N = {
     blitz_title: '60s Blitz: Stop the Scammers!',
     blitz_sub: '60 seconds • 3 hearts • speed combo',
     blitz_record_lbl: 'Best',
+    blitz_pts_short: 'pts',
     blitz_rules: 'Messages from friends, teachers, and scammers fly onto the screen. Decide fast: let safe messages pass or BAN the scammer!',
     blitz_btn_safe: 'Safe',
     blitz_btn_ban: 'BAN! (Scam)',
@@ -247,7 +249,7 @@ const I18N = {
     yugorka_role: 'Yugra Cyber-Hero',
     detective_bar: 'Detective Magnifier: click suspicious clues in the picture!',
     detective_done: 'All clues found! Awesome detective work!',
-    clue_xp: '+15 XP • Clue!',
+    clue_xp: 'Clue spotted!',
     yugorka_idle: [
       'Hey! I am {HERO}. Let’s outsmart the scammers and griefers together!',
       'Stay sharp! Need help? Tap "Hint" or inspect glowing clues with the magnifier.',
@@ -429,6 +431,7 @@ const I18N = {
     blitz_title: 'Блиц: мошенникӑт пӑнтэ!',
     blitz_sub: '60 секунда • 3 сӑм • комбо',
     blitz_record_lbl: 'Рекорд',
+    blitz_pts_short: 'очк.',
     blitz_rules: '60 секундайн пириэ: тәса нєпек аӆпа мошенник!',
     blitz_btn_safe: 'Тәса',
     blitz_btn_ban: 'БАН! (Мошенник)',
@@ -449,7 +452,7 @@ const I18N = {
     yugorka_role: 'Югра кибер-герой',
     detective_bar: 'Детектив лупа: картинкайн ӑн тәса тӑхет пириэ!',
     detective_done: 'Иса уликайт кӑншсыйт! Ёмӑщ вєр!',
-    clue_xp: '+15 XP • Улика!',
+    clue_xp: 'Улика кӑншсы!',
     yugorka_idle: [
       'Вўща! Ма {HERO}. Ияха мошенникӑт эвӑӆт ӆавӑӆӆўв!',
       'Вәньщэ! Нётты мӑсӆ ки — «Нётты ясӑӊ» пириэ!'
@@ -2449,9 +2452,17 @@ function inspectClue(clueId) {
   if (state.cardDraft.foundClues.includes(clueId)) return;
 
   state.cardDraft.foundClues.push(clueId);
-  SoundFX.playConnect();
-  burstConfetti('small');
-  showFloatingXp(t('clue_xp'), true);
+  if (SoundFX.playXpOrb) SoundFX.playXpOrb();
+  else SoundFX.playConnect();
+  const totalClues = card.clues.length;
+  const foundNow = state.cardDraft.foundClues.length;
+  const isEn = state.lang === 'en';
+  showMcAdvancement(
+    isEn ? 'Clue Found!' : (state.lang === 'kca' ? 'Улика кӑншсы!' : 'Улика найдена!'),
+    isEn ? `Evidence logged (${foundNow}/${totalClues})` : `Добавлено в журнал (${foundNow} из ${totalClues})`,
+    'search',
+    'amber'
+  );
 
   updateMascot('detective', L(clue.note), true);
   renderCardVisual(card);
@@ -3244,8 +3255,14 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
     state.streak = (state.streak || 0) + 1;
     state.supportMode = false;
     SoundFX.playWin(state.streak);
-    burstConfetti('small');
-    showFloatingXp(state.streak >= 2 ? `+100 XP • ${t('streak_label')} x${state.streak}` : '+100 XP', true);
+    const lootName = card.loot && card.loot.name ? L(card.loot.name) : L(card.title);
+    const streakTxt = state.streak >= 2 ? ` • ${t('streak_label')} x${state.streak}` : '';
+    showMcAdvancement(
+      state.lang === 'en' ? `Trophy Unlocked!${streakTxt}` : `Трофей получен!${streakTxt}`,
+      lootName,
+      'trophy',
+      'green'
+    );
     if (state.adaptiveLevel < 3) {
       state.adaptiveLevel += 1;
     }
@@ -4200,10 +4217,13 @@ function completeChatScenario(sc, customNote) {
   renderCompletedChatChoices(sc);
 
   SoundFX.playWin(2);
-  burstConfetti('small');
-  showFloatingXp('+150 XP', true);
+  showMcAdvancement(
+    state.lang === 'en' ? 'Chat Completed!' : 'Чат пройден!',
+    sc.achievement.title,
+    'shield-check',
+    'green'
+  );
   checkNewlyUnlockedAchievements();
-  showToast(`Сценарий пройден: ${sc.achievement.title}`, 'success');
 
   document.getElementById('win-badge-icon').innerHTML = `<i data-lucide="${sc.achievement.icon || 'shield-check'}" class="w-7 h-7"></i>`;
   document.getElementById('win-badge-title').textContent = sc.achievement.title;
@@ -5299,26 +5319,44 @@ function checkNewlyUnlockedAchievements() {
     state.unlockedAchIds.push(a.id);
     setTimeout(() => {
       SoundFX.playAchievement();
-      burstConfetti('big');
-      const prefix = state.lang === 'en' ? 'Achievement unlocked' : (state.lang === 'kca' ? 'Ачивка вўсы' : 'Новая ачивка');
-      showToast(`${prefix}: ${L(a.title)}`, 'success', 3400);
-    }, 450 + idx * 550);
+      const prefix = state.lang === 'en' ? 'Achievement Unlocked!' : (state.lang === 'kca' ? 'Ачивка вўсы!' : 'Достижение открыто!');
+      showMcAdvancement(prefix, L(a.title), 'award', 'blue');
+    }, 450 + idx * 650);
   });
   saveState();
 }
 
-function showFloatingXp(label, isPositive = true) {
+// Пиксельная плашка в стиле Minecraft Advancement (правый верхний угол, без центрового +XP)
+function showMcAdvancement(title, subtitle = '', iconName = 'trophy', tone = 'green') {
   const layer = document.getElementById('fx-xp-layer');
   if (!layer) return;
+
+  const palettes = {
+    green: { box: 'bg-white border-[#16a34a] border-b-[#15803d]', iconBg: 'bg-[#ecfdf5] border-[#86efac] text-[#15803d]', title: 'text-[#15803d]' },
+    amber: { box: 'bg-white border-[#f59e0b] border-b-[#b45309]', iconBg: 'bg-[#fffbeb] border-[#fcd34d] text-[#b45309]', title: 'text-[#b45309]' },
+    blue:  { box: 'bg-white border-[#1e5aa8] border-b-[#133b72]', iconBg: 'bg-[#eff6ff] border-[#93c5fd] text-[#1e5aa8]', title: 'text-[#1e5aa8]' }
+  };
+  const pal = palettes[tone] || palettes.green;
+
+  // Не копим больше 2 плашек одновременно
+  while (layer.children.length >= 2) {
+    layer.firstElementChild.remove();
+  }
+
   const el = document.createElement('div');
-  el.className = `xp-float fixed left-1/2 top-[38%] px-4 py-1.5 rounded-full font-extrabold text-sm sm:text-base shadow-lg border ${
-    isPositive
-      ? 'bg-[#e9f6ec] text-cgy-ok border-cgy-ok'
-      : 'bg-[#fdecec] text-cgy-err border-cgy-err'
-  }`;
-  el.textContent = label;
+  el.className = `mc-adv-toast ${pal.box} px-3 py-2.5 flex items-center gap-2.5 min-w-[210px] max-w-[300px]`;
+  el.innerHTML = `
+    <div class="w-9 h-9 rounded-lg border-2 ${pal.iconBg} flex items-center justify-center shrink-0">
+      <i data-lucide="${iconName}" class="w-5 h-5"></i>
+    </div>
+    <div class="min-w-0 leading-tight">
+      <div class="font-pixel text-[11px] font-extrabold uppercase tracking-wide ${pal.title} truncate">${title}</div>
+      ${subtitle ? `<div class="text-xs sm:text-[13px] font-bold text-cgy-text truncate mt-0.5">${subtitle}</div>` : ''}
+    </div>
+  `;
   layer.appendChild(el);
-  setTimeout(() => el.remove(), 1200);
+  refreshIcons();
+  setTimeout(() => el.remove(), 2650);
 }
 
 let confettiAnimId = null;
@@ -5531,7 +5569,7 @@ function answerBlitz(pickedSafe) {
     blitzState.score += gain;
     SoundFX.playWin(Math.min(5, blitzState.combo));
     fb.className = 'rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold border-2 bg-[#ecfdf5] border-[#86efac] text-[#14532d]';
-    fb.textContent = `+${gain} XP! ${L(c.why)}`;
+    fb.textContent = `+${gain} ${t('blitz_pts_short')}! ${L(c.why)}`;
     if (blitzState.combo % 4 === 0) updateMascot('happy', `${blitzState.combo} подряд! Так держать!`, true);
   } else {
     blitzState.combo = 0;

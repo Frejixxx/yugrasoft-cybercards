@@ -519,6 +519,21 @@ body {
   animation: floatUpFade 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Minecraft-style Advancement Plaque (правый верхний угол, без центрового ИИ-спама) */
+@keyframes mcAdvSlide {
+  0% { opacity: 0; transform: translateX(36px) scale(0.96); }
+  12% { opacity: 1; transform: translateX(0) scale(1); }
+  84% { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(28px) scale(0.97); }
+}
+.mc-adv-toast {
+  border-radius: 14px;
+  border-width: 2px;
+  border-bottom-width: 5px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  animation: mcAdvSlide 2.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 /* Gentle bounce on correct pop */
 @keyframes successPop {
   0% { transform: scale(0.94); }
