@@ -1244,13 +1244,14 @@ function getYugorkaSvg(mood = 'idle', stars = 0) {
     `;
   }
 
+  // Стильные прозрачные кибер-очки (глаза, взгляд за мышкой и моргание отлично видны!)
   const glassesSvg = hasGlasses ? `
     <g>
-      <rect x="28" y="32" width="16" height="10" fill="#0f172a" fill-opacity="0.82"/>
-      <rect x="30" y="34" width="4" height="3" fill="#60a5fa"/>
-      <rect x="44" y="34" width="8" height="3" fill="#0f172a"/>
-      <rect x="52" y="32" width="16" height="10" fill="#0f172a" fill-opacity="0.82"/>
-      <rect x="54" y="34" width="4" height="3" fill="#60a5fa"/>
+      <rect x="27" y="31" width="18" height="12" fill="rgba(224,242,254,0.22)" stroke="#1e5aa8" stroke-width="2.5"/>
+      <rect x="45" y="35" width="6" height="2.5" fill="#1e5aa8"/>
+      <rect x="51" y="31" width="18" height="12" fill="rgba(224,242,254,0.22)" stroke="#1e5aa8" stroke-width="2.5"/>
+      <rect x="29" y="33" width="3" height="2" fill="#ffffff" fill-opacity="0.8"/>
+      <rect x="53" y="33" width="3" height="2" fill="#ffffff" fill-opacity="0.8"/>
     </g>
   ` : '';
 
@@ -4810,6 +4811,51 @@ function initVoxelBackground() {
     ctx.strokeRect(cx - half + 0.75, cy - half + 0.75, sz - 1.5, sz - 1.5);
   }
 
+  // Пиксельная ветряная мельница на холме (крутится сама + ускоряется при клике!)
+  let millAngle = 0;
+  let millSpeed = 0.014;
+
+  function drawVoxelWindmill(mx, baseY, scale = 1) {
+    const u = 8 * scale;
+    // Башня мельницы (дерево + камень)
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.55)';
+    ctx.fillRect(mx - u * 1.6, baseY - u * 2.2, u * 3.2, u * 2.2);
+    ctx.fillStyle = 'rgba(217, 179, 130, 0.68)';
+    ctx.fillRect(mx - u * 1.3, baseY - u * 6.0, u * 2.6, u * 3.8);
+    ctx.fillStyle = 'rgba(180, 123, 78, 0.55)';
+    ctx.fillRect(mx + u * 0.7, baseY - u * 6.0, u * 0.6, u * 3.8);
+    // Крыша синяя (в цвет Югры)
+    ctx.fillStyle = 'rgba(30, 90, 168, 0.62)';
+    ctx.fillRect(mx - u * 1.6, baseY - u * 7.0, u * 3.2, u * 1.1);
+    ctx.fillRect(mx - u * 0.9, baseY - u * 7.9, u * 1.8, u * 1.0);
+    // Окошко
+    ctx.fillStyle = 'rgba(254, 240, 138, 0.85)';
+    ctx.fillRect(mx - u * 0.4, baseY - u * 4.2, u * 0.8, u * 1.0);
+
+    // Вращающиеся 4 лопасти
+    const hubX = mx;
+    const hubY = baseY - u * 6.0;
+    ctx.save();
+    ctx.translate(hubX, hubY);
+    ctx.rotate(millAngle);
+    for (let k = 0; k < 4; k++) {
+      ctx.rotate(Math.PI / 2);
+      // Деревянная балка
+      ctx.fillStyle = 'rgba(120, 74, 34, 0.72)';
+      ctx.fillRect(-u * 0.18, 0, u * 0.36, u * 4.4);
+      // Парус лопасти (светлый пиксельный)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.84)';
+      ctx.fillRect(u * 0.18, u * 0.9, u * 1.25, u * 3.3);
+      ctx.strokeStyle = 'rgba(30, 90, 168, 0.32)';
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(u * 0.18, u * 0.9, u * 1.25, u * 3.3);
+    }
+    // Центральная ось
+    ctx.fillStyle = '#1e5aa8';
+    ctx.fillRect(-u * 0.45, -u * 0.45, u * 0.9, u * 0.9);
+    ctx.restore();
+  }
+
   function drawVoxelTree(x, baseY, scale = 1) {
     const u = 10 * scale;
     // Ствол
@@ -4838,6 +4884,16 @@ function initVoxelBackground() {
     const cx = e.clientX;
     const cy = e.clientY;
     let hit = false;
+
+    // Клик по мельнице раскручивает её в турбо-режим!
+    const millX = 96;
+    const millHubY = H - 78;
+    if (W >= 820 && Math.hypot(cx - millX, cy - millHubY) <= 58) {
+      millSpeed = Math.min(0.22, millSpeed + 0.085);
+      SoundFX.playConnect();
+      spawnMineParticles(millX, millHubY, { top: '#ffffff', front: '#93c5fd', side: '#1e5aa8', speck: '#fde047' }, 10);
+      return;
+    }
 
     for (let i = 0; i < floatingBlocks.length; i++) {
       const b = floatingBlocks[i];
@@ -4911,13 +4967,18 @@ function initVoxelBackground() {
         ctx.fillRect(x, H - h1, hillStep + 1, 8);
       }
 
-      // Несколько милых пиксельных ёлочек Югры по краям
-      drawVoxelTree(48, H - 22, 1.15);
-      drawVoxelTree(106, H - 16, 0.85);
+      // Несколько милых пиксельных ёлочек Югры + крутящаяся ветряная мельница!
+      millAngle += millSpeed;
+      if (millSpeed > 0.014) millSpeed += (0.014 - millSpeed) * 0.018;
+      if (W >= 820) {
+        drawVoxelWindmill(96, H - 24, 1.12);
+      }
+      drawVoxelTree(38, H - 20, 0.95);
+      drawVoxelTree(164, H - 16, 0.82);
       drawVoxelTree(W - 64, H - 20, 1.2);
       drawVoxelTree(W - 128, H - 14, 0.9);
 
-      // 5. Летающие кликабельные 3D-блоки по бокам (плавный респавн внутри canvas без setTimeout и лагов)
+      // 5. Летающие кликабельные 3D-блоки по бокам (крутятся и плавно качаются!)
       if (W >= 820) {
         floatingBlocks.forEach(b => {
           if (!b.alive) {
@@ -4933,7 +4994,11 @@ function initVoxelBackground() {
           else b.scale = 1;
           const bx = b.x + (smoothMx - 0.5) * -18;
           const by = b.y + (smoothMy - 0.5) * -12;
-          drawVoxelCube(bx, by, b.size, b.type, b.scale);
+          ctx.save();
+          ctx.translate(bx, by);
+          ctx.rotate(Math.sin(b.phase * 0.85) * 0.16);
+          drawVoxelCube(0, 0, b.size, b.type, b.scale);
+          ctx.restore();
         });
       }
 
