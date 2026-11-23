@@ -97,6 +97,15 @@ const I18N = {
     chat_safe_done: 'Пройдено! Контакт безопасен',
     chat_scam_done: 'Пройдено! Мошенник заблокирован',
     chat_no_sms: 'Пока нет входящих SMS. Они приходят в ходе диалогов в «Симуляторе чатов».',
+    btn_pass_lab: 'Тест пароля',
+    pass_lab_title: 'Взломают ли твой пароль?',
+    pass_lab_sub: 'Придумай тестовый пароль — проверь защиту!',
+    pass_lab_gen: 'Супер-пароль',
+    pass_lab_time_lbl: 'Время взлома хакером:',
+    pl_len: 'От 10 символов',
+    pl_case: 'Большие и малые буквы',
+    pl_num: 'Есть цифры',
+    pl_sym: 'Спецсимвол (! @ # $)',
     cards_done_title: 'Все кибер-карточки пройдены!',
     sim_inbox: 'Входящие чаты',
     kpi_cards: 'Кибер-карточки',
@@ -237,6 +246,15 @@ const I18N = {
     chat_safe_done: 'Done! Safe contact',
     chat_scam_done: 'Done! Scammer blocked',
     chat_no_sms: 'No incoming SMS yet. They arrive during chats in the Chat Simulator.',
+    btn_pass_lab: 'Password Lab',
+    pass_lab_title: 'Can Hackers Crack Your Password?',
+    pass_lab_sub: 'Type a test password to check its shield!',
+    pass_lab_gen: 'Super Password',
+    pass_lab_time_lbl: 'Estimated crack time:',
+    pl_len: '10+ characters',
+    pl_case: 'UPPER & lowercase',
+    pl_num: 'Includes numbers',
+    pl_sym: 'Special symbol (! @ # $)',
     cards_done_title: 'All Cyber-Cards Completed!',
     sim_inbox: 'Incoming Chats',
     kpi_cards: 'Cyber-Cards',
@@ -371,6 +389,15 @@ const I18N = {
     chat_safe_done: 'Вєрсы! Тәса хоят',
     chat_scam_done: 'Вєрсы! Мошенник пӑнтсы',
     chat_no_sms: 'SMS ӑнтєм. Ӆыв «Потӑр симулятор» чатӑтн юхӑтӆӑт.',
+    btn_pass_lab: 'Пароль вәньщты',
+    pass_lab_title: 'Парольэн тӑк аӆпа ӑн?',
+    pass_lab_sub: 'Йиӆуп пароль хӑншэ па вәньщэ!',
+    pass_lab_gen: 'Тӑк пароль',
+    pass_lab_time_lbl: 'Взлом время:',
+    pl_len: '10 знак эвӑӆт',
+    pl_case: 'Вән па ай буквайт',
+    pl_num: 'Цифрайт вәӆӆӑт',
+    pl_sym: 'Знак (! @ # $)',
     cards_done_title: 'Иса кибер-карточкат вєрӑн!',
     sim_inbox: 'Юхтӑм потӑрӑт',
     kpi_cards: 'Кибер-карточкат',
@@ -714,6 +741,7 @@ function init() {
       closeReportModal();
       closeFalseAlarmModal();
       closeCallModal();
+      closePasswordLab();
     }
   });
 
@@ -1460,8 +1488,10 @@ function inspectLootItem(cardId, unlocked, loot) {
 function updateReadAloudAvailability() {
   const btn = document.getElementById('btn-read-aloud');
   if (!btn) return;
+  const card = getCardById(state.currentCardId);
+  const isDefaultCard = Boolean(card && !String(card.id).startsWith('custom_'));
   const langPref = state.lang === 'en' ? 'en' : 'ru';
-  const hasGoodVoice = SoundFX.hasNeuralVoice && SoundFX.hasNeuralVoice(langPref);
+  const hasGoodVoice = isDefaultCard || (SoundFX.hasNeuralVoice && SoundFX.hasNeuralVoice(langPref));
   btn.classList.toggle('hidden', !hasGoodVoice);
 }
 
@@ -1489,25 +1519,193 @@ function toggleReadAloud() {
 
   const res = state.cardResults[card.id];
   const isEvaluated = Boolean(res && res.answered && !state.cardDraft.retrying);
-  let toRead = `${L(card.title)}. ${L(card.prompt)}`;
-  if (isEvaluated && card.explanation) {
-    toRead = `${res.correct ? t('correct_title') : t('wrong_title')}. ${L(card.explanation)}`;
-  }
-
-  const speechLang = state.lang === 'en' ? 'en-US' : 'ru-RU';
-  const started = SoundFX.speakVoice(toRead, { lang: speechLang, neuralOnly: true, rate: 1.0, pitch: 1.0 }, () => {
-    stopReadAloud();
-  });
-
-  if (started) {
-    isReadingAloud = true;
+  const setSpeakingUI = (active) => {
+    isReadingAloud = active;
     const btn = document.getElementById('btn-read-aloud');
     const lbl = document.getElementById('btn-read-aloud-label');
-    if (btn) btn.classList.add('btn-speaking');
-    if (lbl) lbl.textContent = t('btn_stop_aloud');
-  } else {
-    updateReadAloudAvailability();
+    if (btn) btn.classList.toggle('btn-speaking', active);
+    if (lbl) lbl.textContent = active ? t('btn_stop_aloud') : t('btn_read_aloud');
+  };
+
+  const playTtsFallback = () => {
+    let toRead = `${L(card.title)}. ${L(card.prompt)}`;
+    if (isEvaluated && card.explanation) {
+      toRead = `${res.correct ? t('correct_title') : t('wrong_title')}. ${L(card.explanation)}`;
+    }
+    const speechLang = state.lang === 'en' ? 'en-US' : 'ru-RU';
+    const started = SoundFX.speakVoice(toRead, { lang: speechLang, neuralOnly: true, rate: 1.0, pitch: 1.0 }, () => stopReadAloud());
+    if (started) setSpeakingUI(true);
+    else stopReadAloud();
+  };
+
+  // Играем готовую естественную MP3-озвучку (работает в ЛЮБОМ браузере офлайн, без робота Ирины!)
+  const isDefaultCard = !String(card.id).startsWith('custom_');
+  if (isDefaultCard && SoundFX.playAudioFile) {
+    const audioLang = state.lang === 'en' ? 'en' : 'ru';
+    const audioUrl = `audio/${card.id}_${isEvaluated ? 'e' : 'q'}_${audioLang}.mp3`;
+    setSpeakingUI(true);
+    SoundFX.playAudioFile(audioUrl, () => stopReadAloud(), () => {
+      setSpeakingUI(false);
+      playTtsFallback();
+    });
+    return;
   }
+
+  playTtsFallback();
+}
+
+// ==================== ПЕСОЧНИЦА «ВЗЛОМАЮТ ЛИ ТВОЙ ПАРОЛЬ?» ====================
+
+let passLabCelebrated = false;
+
+function openPasswordLab() {
+  const modal = document.getElementById('password-lab-modal');
+  if (!modal) return;
+  passLabCelebrated = false;
+  modal.classList.remove('hidden');
+  const inp = document.getElementById('pass-lab-input');
+  if (inp) {
+    inp.value = '';
+    setTimeout(() => inp.focus(), 50);
+  }
+  evaluatePasswordLab();
+  refreshIcons();
+}
+
+function closePasswordLab() {
+  const modal = document.getElementById('password-lab-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function generateSuperPassword() {
+  const samples = [
+    'YugraShield#2026!',
+    'CyberBear!86Pro',
+    'DiamondLock$2026',
+    'TaigaGuard@77!',
+    'SteveCraft#86!'
+  ];
+  const inp = document.getElementById('pass-lab-input');
+  if (!inp) return;
+  const current = inp.value;
+  const pick = samples.find(s => s !== current) || samples[0];
+  inp.value = samples[Math.floor(Math.random() * samples.length)];
+  if (inp.value === current) inp.value = pick;
+  SoundFX.playPick();
+  evaluatePasswordLab();
+}
+
+function evaluatePasswordLab() {
+  const inp = document.getElementById('pass-lab-input');
+  const timeEl = document.getElementById('pass-lab-time');
+  const barEl = document.getElementById('pass-lab-bar');
+  const badgeEl = document.getElementById('pass-lab-level-badge');
+  const commentEl = document.getElementById('pass-lab-comment');
+  if (!inp || !timeEl) return;
+
+  const val = inp.value || '';
+  const isEn = state.lang === 'en';
+
+  const hasLen = val.length >= 10;
+  const hasCase = /[a-zа-яё]/i.test(val) && /[A-ZА-ЯЁ]/.test(val) && /[a-zа-яё]/.test(val);
+  const hasNum = /\d/.test(val);
+  const hasSym = /[^a-zA-Zа-яА-ЯёЁ0-9\s]/.test(val);
+
+  const setCheck = (id, ok) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = ok
+      ? 'flex items-center gap-2 px-3 py-2 rounded-xl bg-[#ecfdf5] text-[#14532d] border-2 border-[#86efac]'
+      : 'flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 text-slate-500 border border-slate-200';
+    const ic = el.querySelector('svg, i');
+    if (ic) ic.outerHTML = `<i data-lucide="${ok ? 'check-circle-2' : 'circle'}" class="w-4 h-4 shrink-0 ${ok ? 'text-[#16a34a]' : ''}"></i>`;
+  };
+  setCheck('pl-chk-len', hasLen);
+  setCheck('pl-chk-case', hasCase);
+  setCheck('pl-chk-num', hasNum);
+  setCheck('pl-chk-sym', hasSym);
+  refreshIcons();
+
+  if (!val) {
+    timeEl.textContent = isEn ? 'Type a password above' : 'Введи пароль выше';
+    barEl.style.width = '4%';
+    barEl.className = 'h-full rounded-full transition-all duration-300 bg-slate-300';
+    badgeEl.textContent = '—';
+    badgeEl.className = 'px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-600 font-extrabold';
+    commentEl.textContent = isEn
+      ? 'Don’t type your real password — just test what makes a password unbreakable!'
+      : 'Не вводи сюда свой настоящий пароль — просто проверь, какие пароли самые крепкие!';
+    return;
+  }
+
+  // Проверяем самые популярные словарные пароли
+  const lower = val.toLowerCase();
+  const commonList = ['123456', '12345678', '123456789', 'qwerty', 'password', 'admin', 'minecraft', 'roblox', 'standoff', '000000', '111111', 'йцукен'];
+  const isCommon = commonList.some(w => lower === w || (val.length <= 8 && lower.includes(w)));
+
+  // Расчёт энтропии и скорости перебора (10 млрд попыток/сек — современный GPU-кластер)
+  let pool = 0;
+  if (/[a-z]/.test(val)) pool += 26;
+  if (/[A-Z]/.test(val)) pool += 26;
+  if (/[а-яё]/.test(val)) pool += 33;
+  if (/[А-ЯЁ]/.test(val)) pool += 33;
+  if (/\d/.test(val)) pool += 10;
+  if (hasSym) pool += 32;
+  if (pool === 0) pool = 10;
+
+  const combos = Math.pow(pool, val.length);
+  const seconds = isCommon ? 0.001 : (combos / 1e10);
+
+  let timeTxt = '', lvlTxt = '', commentTxt = '', pct = 15, barCls = 'danger-meter-bar', badgeCls = 'bg-[#fee2e2] text-cgy-err';
+  if (seconds < 1) {
+    timeTxt = isEn ? 'Instantly (0.01 sec)' : 'Мгновенно (0.01 сек)';
+    lvlTxt = isEn ? 'Very Weak' : 'Очень слабый';
+    commentTxt = isEn ? 'Hacker bots crack this before you blink! Add length, numbers, and symbols.' : 'Такой пароль программы подбирают быстрее, чем ты моргнёшь! Добавь длину, буквы и символы.';
+    pct = 15;
+  } else if (seconds < 3600) {
+    const mins = Math.max(1, Math.round(seconds / 60));
+    timeTxt = isEn ? `~${mins} minutes` : `Около ${mins} мин.`;
+    lvlTxt = isEn ? 'Weak' : 'Слабый';
+    commentTxt = isEn ? 'Too easy! Add UPPERCASE letters and a symbol like ! or #.' : 'Маловато! Сделай длиннее и добавь заглавные буквы или знак вроде ! или #.';
+    pct = 36;
+    barCls = 'bg-[#f97316]';
+    badgeCls = 'bg-[#ffedd5] text-[#c2410c]';
+  } else if (seconds < 86400 * 365) {
+    const days = Math.max(1, Math.round(seconds / 86400));
+    timeTxt = isEn ? `~${days} days` : `Около ${days} дн.`;
+    lvlTxt = isEn ? 'Medium' : 'Неплохо';
+    commentTxt = isEn ? 'Getting better! Add 2–3 more characters to reach Diamond level.' : 'Уже неплохо! Добавь ещё пару символов и спецзнак — и будет алмазная защита.';
+    pct = 66;
+    barCls = 'bg-[#f59e0b]';
+    badgeCls = 'bg-[#fef3c7] text-[#b45309]';
+  } else if (seconds < 86400 * 365 * 500) {
+    const yrs = Math.max(1, Math.round(seconds / (86400 * 365)));
+    timeTxt = isEn ? `~${yrs} years!` : `Около ${yrs} лет!`;
+    lvlTxt = isEn ? 'Strong' : 'Надёжный';
+    commentTxt = isEn ? 'Awesome password! Almost impossible to guess.' : 'Отличный надёжный пароль — взломщикам не по зубам!';
+    pct = 86;
+    barCls = 'bg-[#22c55e]';
+    badgeCls = 'bg-[#dcfce7] text-[#15803d]';
+  } else {
+    timeTxt = isEn ? 'Centuries! Unbreakable' : 'Сотни лет! Не взломать';
+    lvlTxt = isEn ? 'Diamond Shield' : 'Алмазная защита';
+    commentTxt = isEn ? 'Even a supercomputer would give up! That’s a true Cyber-Hero password.' : 'Даже суперкомпьютер сдастся! Вот это настоящий пароль кибергероя.';
+    pct = 100;
+    barCls = 'bg-gradient-to-r from-[#1e5aa8] via-[#06b6d4] to-[#16a34a]';
+    badgeCls = 'bg-[#cffafe] text-[#0e7490]';
+    if (!passLabCelebrated) {
+      passLabCelebrated = true;
+      SoundFX.playWin(2);
+      burstConfetti('small');
+    }
+  }
+
+  timeEl.textContent = timeTxt;
+  barEl.style.width = `${pct}%`;
+  barEl.className = `h-full rounded-full transition-all duration-300 ${barCls}`;
+  badgeEl.textContent = lvlTxt;
+  badgeEl.className = `px-2.5 py-0.5 rounded-full font-extrabold ${badgeCls}`;
+  commentEl.textContent = commentTxt;
 }
 
 if (SoundFX.onVoicesReady) {

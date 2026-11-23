@@ -202,7 +202,48 @@ const SoundFX = (() => {
     }
   }
 
+  let activeAudioEl = null;
+
+  function playAudioFile(url, onEnd = null, onError = null) {
+    if (!enabled) return false;
+    stopAudioFile();
+    try {
+      const audio = new Audio(url);
+      activeAudioEl = audio;
+      audio.onended = () => {
+        if (activeAudioEl === audio) activeAudioEl = null;
+        if (onEnd) onEnd();
+      };
+      audio.onerror = () => {
+        if (activeAudioEl === audio) activeAudioEl = null;
+        if (onError) onError();
+      };
+      const p = audio.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => {
+          if (activeAudioEl === audio) activeAudioEl = null;
+          if (onError) onError();
+        });
+      }
+      return true;
+    } catch (e) {
+      if (onError) onError();
+      return false;
+    }
+  }
+
+  function stopAudioFile() {
+    if (activeAudioEl) {
+      try {
+        activeAudioEl.pause();
+        activeAudioEl.currentTime = 0;
+      } catch (e) {}
+      activeAudioEl = null;
+    }
+  }
+
   function stopSpeech() {
+    stopAudioFile();
     if ('speechSynthesis' in window) {
       try { window.speechSynthesis.cancel(); } catch (e) {}
     }
@@ -213,6 +254,6 @@ const SoundFX = (() => {
     playPick, playDrop, playConnect,
     playIncoming, playSms, playOutgoing,
     playDialTone, playBusyTone, playFail, playWin, playAchievement,
-    hasNeuralVoice, onVoicesReady, speakVoice, stopSpeech
+    hasNeuralVoice, onVoicesReady, speakVoice, playAudioFile, stopAudioFile, stopSpeech
   };
 })();
