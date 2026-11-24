@@ -2369,17 +2369,17 @@ function initDraggableSteve() {
   handle.addEventListener('pointerup', endDrag);
   handle.addEventListener('pointercancel', endDrag);
 
-  // легкий поворот персонажа за курсором и блик на очках
+  // легкий поворот всей карточки персонажа (рамка + имя вместе) за курсором и блик на очках
   window.addEventListener('mousemove', (e) => {
     const avatar = document.getElementById('yugorka-avatar');
     const cardBox = handle.firstElementChild;
     if (!avatar || !cardBox || dragging) return;
-    const r = cardBox.getBoundingClientRect();
+    const r = handle.getBoundingClientRect();
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
-    const rx = Math.max(-14, Math.min(14, (cy - e.clientY) / 28));
-    const ry = Math.max(-16, Math.min(16, (e.clientX - cx) / 28));
-    cardBox.style.transform = `perspective(360px) rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg)`;
+    const rx = Math.max(-9, Math.min(9, (cy - e.clientY) / 42));
+    const ry = Math.max(-11, Math.min(11, (e.clientX - cx) / 42));
+    handle.style.transform = `perspective(520px) rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg)`;
 
     const glint = avatar.querySelector('.steve-glint');
     if (glint) {
