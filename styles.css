@@ -900,6 +900,16 @@ body.mc-theme .fixed.inset-0 > div {
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.35);
 }
+.biome-tab.is-locked {
+  background: #e9eef5;
+  border-color: #94a3b8;
+  color: #64748b;
+  opacity: 0.82;
+}
+.biome-tab.is-locked:hover {
+  transform: none;
+  border-color: #64748b;
+}
 
 /* стили 6-й механики: кибер-верстак 3x3 точь-в-точь как в майнкрафте */
 .craft-bench {
@@ -1057,6 +1067,21 @@ body.mc-theme .fixed.inset-0 > div {
   background: linear-gradient(180deg, #38bdf8 0%, #1e5aa8 100%);
   border-color: #0f2e59;
   color: #ffffff;
+}
+.path-node-locked {
+  background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+  border-color: #475569;
+  color: #334155;
+  opacity: 0.84;
+  cursor: not-allowed;
+}
+.path-node-locked:hover {
+  transform: none;
+  filter: none;
+}
+.path-node-locked:active {
+  transform: none;
+  border-bottom-width: 7px;
 }
 
 /* подпрыгивающая табличка ИГРАТЬ! над текущим узлом */

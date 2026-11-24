@@ -76,6 +76,7 @@ const I18N = {
     prof_fio_hint: 'Для сертификата и выбора напарника',
     prof_grade_lbl: 'Класс',
     prof_hero_lbl: 'Твой напарник',
+    prof_freenav_lbl: 'Открыть все миссии на карте (режим учителя / жюри)',
     opt_grade_1_4: '1–4 классы',
     opt_grade_5_7: '5–7 классы',
     opt_grade_8_11: '8–11 классы',
@@ -268,6 +269,7 @@ const I18N = {
     prof_fio_hint: 'For your certificate and buddy',
     prof_grade_lbl: 'Grade',
     prof_hero_lbl: 'Your Cyber Buddy',
+    prof_freenav_lbl: 'Unlock all map missions (teacher / jury mode)',
     opt_grade_1_4: 'Grades 1–4',
     opt_grade_5_7: 'Grades 5–7',
     opt_grade_8_11: 'Grades 8–11',
@@ -454,6 +456,7 @@ const I18N = {
     prof_fio_hint: 'Сертификата хӑншӆ.',
     prof_grade_lbl: 'Класс',
     prof_hero_lbl: 'Нӑӊ юрєн',
+    prof_freenav_lbl: 'Иса миссият пуншты (утӆты хоят / жюри режим)',
     opt_grade_1_4: '1–4 классат',
     opt_grade_5_7: '5–7 классат',
     opt_grade_8_11: '8–11 классат',
@@ -609,6 +612,7 @@ const state = {
   currentCardId: null,
   cardsViewMode: 'map',       // map (карта-тропинка биома) | play (режим урока)
   lessonHearts: 3,            // 3 пиксельных сердечка в уроке
+  freeNavMode: false,         // если true — открыты все миссии без замков (режим учителя/жюри)
   adaptiveLevel: 1,           // уровень сложности 1..3
   supportMode: false,         // если true — немного помогаем с заданием (50/50, примеры, 1-й шаг)
   streak: 0,
@@ -752,6 +756,9 @@ function applyUrlParams() {
     if (['cards', 'chat', 'results'].includes(tabParam)) {
       state.activeTab = tabParam;
     }
+    if (params.get('demo') === '1' || params.get('unlock') === '1') {
+      state.freeNavMode = true;
+    }
   } catch (e) {}
 }
 
@@ -800,6 +807,7 @@ function loadState() {
     if (p.currentCardId) state.currentCardId = p.currentCardId;
     if (typeof p.adaptiveLevel === 'number') state.adaptiveLevel = p.adaptiveLevel;
     if (typeof p.supportMode === 'boolean') state.supportMode = p.supportMode;
+    if (typeof p.freeNavMode === 'boolean') state.freeNavMode = p.freeNavMode;
     if (typeof p.streak === 'number') state.streak = p.streak;
     if (Array.isArray(p.unlockedAchIds)) state.unlockedAchIds = p.unlockedAchIds;
     if (p.cardResults) state.cardResults = p.cardResults;
@@ -827,6 +835,7 @@ function saveState() {
       currentCardId: state.currentCardId,
       adaptiveLevel: state.adaptiveLevel,
       supportMode: state.supportMode,
+      freeNavMode: state.freeNavMode,
       streak: state.streak,
       unlockedAchIds: state.unlockedAchIds,
       cardResults: state.cardResults,
@@ -1114,6 +1123,8 @@ function selectProfileHero(skin) {
 function openStudentProfileModal() {
   document.getElementById('prof-fio-input').value = state.profile.fio || '';
   document.getElementById('prof-class-select').value = state.profile.gradeClass || '5-7';
+  const freeNavEl = document.getElementById('prof-freenav-toggle');
+  if (freeNavEl) freeNavEl.checked = Boolean(state.freeNavMode);
   modalHeroDraft = state.heroSkin || 'steve';
   modalHeroManual = !!state.heroSkinManual;
 
@@ -1142,6 +1153,8 @@ function saveStudentProfile(e) {
   state.chatGradeMode = state.profile.gradeClass === '8-11' ? '8-11' : '5-7';
   state.heroSkin = modalHeroDraft === 'alex' ? 'alex' : 'steve';
   state.heroSkinManual = modalHeroManual;
+  const freeNavEl = document.getElementById('prof-freenav-toggle');
+  if (freeNavEl) state.freeNavMode = Boolean(freeNavEl.checked);
 
   if (state.profile.gradeClass !== prevGrade) {
     let targetCh = 1;
@@ -1235,6 +1248,49 @@ function getChapterCards(chId) {
   return CARDS.filter(c => (c.chapter || 1) === chId);
 }
 
+// проверка, открыта ли глава-биом (замки + динамическая сложность по ТЗ)
+function isChapterUnlocked(chId) {
+  if (state.freeNavMode) return true;
+  if (chId <= 1) return true;
+  const prevCards = getChapterCards(chId - 1);
+  const prevDone = prevCards.length > 0 && prevCards.every(c => state.cardResults[c.id] && state.cardResults[c.id].correct);
+  if (prevDone) return true;
+  if (chId === 2) {
+    return state.profile.gradeClass === '5-7' || state.profile.gradeClass === '8-11' || state.adaptiveLevel >= 2;
+  }
+  if (chId === 3) {
+    return state.profile.gradeClass === '8-11' || (state.adaptiveLevel >= 3 && getCardStatsSummary().correct >= 3);
+  }
+  return false;
+}
+
+// проверка, открыта ли конкретная миссия на карте (строго по очереди внутри главы, как в Duolingo)
+function isCardUnlocked(card) {
+  if (!card) return false;
+  if (state.freeNavMode) return true;
+  const chId = card.chapter || 1;
+  if (!isChapterUnlocked(chId)) return false;
+  const res = state.cardResults[card.id];
+  if (res && res.answered) return true;
+  const chCards = getChapterCards(chId);
+  const idx = chCards.findIndex(c => c.id === card.id);
+  if (idx <= 0) return true;
+  const prevCard = chCards[idx - 1];
+  const prevRes = prevCard ? state.cardResults[prevCard.id] : null;
+  return Boolean(prevRes && prevRes.answered && prevRes.correct);
+}
+
+function notifyLockedMission(prevNum) {
+  SoundFX.playFail();
+  const isEn = state.lang === 'en';
+  showToast(
+    isEn
+      ? `Complete Mission #${prevNum} first to unlock this level!`
+      : `Сначала пройди миссию #${prevNum}, чтобы открыть этот уровень!`,
+    'warn'
+  );
+}
+
 function renderBiomeTabs() {
   const bar = document.getElementById('biome-tabs-bar');
   if (!bar || typeof CARD_CHAPTERS === 'undefined') return;
@@ -1245,14 +1301,17 @@ function renderBiomeTabs() {
     const doneCount = chCards.filter(c => state.cardResults[c.id] && state.cardResults[c.id].correct).length;
     const isAct = ch.id === activeCh;
     const allOk = chCards.length > 0 && doneCount === chCards.length;
+    const unlocked = isChapterUnlocked(ch.id);
     return `
       <button type="button" onclick="selectBiomeChapter(${ch.id})"
-        class="biome-tab ${isAct ? 'active' : ''} px-3 py-2.5 text-left flex items-center justify-between gap-2.5">
+        class="biome-tab ${isAct ? 'active' : ''} ${!unlocked ? 'is-locked' : ''} px-3 py-2.5 text-left flex items-center justify-between gap-2.5">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-8 h-8 rounded-[3px] flex items-center justify-center shrink-0 border-2 ${
-            isAct ? 'bg-white/20 border-white/40 text-white' : (allOk ? 'bg-[#e9f6ec] border-[#1e7e34] text-[#1e7e34]' : 'bg-[#eef5ff] border-[#93c5fd] text-cgy-accent')
+            !unlocked
+              ? 'bg-slate-200 border-slate-400 text-slate-500'
+              : (isAct ? 'bg-white/20 border-white/40 text-white' : (allOk ? 'bg-[#e9f6ec] border-[#1e7e34] text-[#1e7e34]' : 'bg-[#eef5ff] border-[#93c5fd] text-cgy-accent'))
           }">
-            <i data-lucide="${allOk ? 'check-circle-2' : ch.icon}" class="w-4 h-4"></i>
+            <i data-lucide="${!unlocked ? 'lock' : (allOk ? 'check-circle-2' : ch.icon)}" class="w-4 h-4"></i>
           </div>
           <div class="min-w-0">
             <div class="font-pixel text-xs sm:text-sm font-bold leading-tight truncate">${ch.id}. ${L(ch.title)}</div>
@@ -1260,8 +1319,10 @@ function renderBiomeTabs() {
           </div>
         </div>
         <span class="biome-pill px-2 py-0.5 rounded-[3px] text-xs font-pixel font-bold border tabular-nums shrink-0 ${
-          allOk ? 'bg-[#e9f6ec] text-[#1e7e34] border-[#86efac]' : 'bg-[#f1f5f9] text-cgy-accent border-[#cbd5e1]'
-        }">${doneCount}/${chCards.length}</span>
+          !unlocked
+            ? 'bg-slate-200 text-slate-500 border-slate-300'
+            : (allOk ? 'bg-[#e9f6ec] text-[#1e7e34] border-[#86efac]' : 'bg-[#f1f5f9] text-cgy-accent border-[#cbd5e1]')
+        }">${unlocked ? `${doneCount}/${chCards.length}` : '🔒'}</span>
       </button>
     `;
   }).join('');
@@ -1300,9 +1361,22 @@ function renderBiomePathMap() {
   const isEn = state.lang === 'en';
   const isKca = state.lang === 'kca';
 
-  // обновляем верхнюю полоску карты (звёзды, серия, ошибки, кнопка старта)
+  // обновляем верхнюю полоску карты (звёзды, динамический уровень, серия, ошибки, кнопка старта)
   const mapStars = document.getElementById('map-stars-text');
   if (mapStars) mapStars.textContent = `${stats.correct} / ${stats.total}`;
+
+  const lvlPill = document.getElementById('map-level-pill');
+  const lvlText = document.getElementById('map-level-text');
+  if (lvlPill && lvlText) {
+    const aLvl = Math.max(1, Math.min(3, state.adaptiveLevel || 1));
+    const starsStr = '★'.repeat(aLvl) + '☆'.repeat(3 - aLvl);
+    const lbls = t('levels');
+    lvlText.textContent = `${starsStr} ${lbls[aLvl] || `Уровень ${aLvl}`}`;
+    const pillTone = aLvl === 3
+      ? 'bg-[#ede9fe] border-[#6d28d9] text-[#5b21b6]'
+      : (aLvl === 2 ? 'bg-[#eef5ff] border-[#1e5aa8] text-cgy-accent' : 'bg-[#ecfdf5] border-[#16a34a] text-[#15803d]');
+    lvlPill.className = `inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[3px] border-2 text-xs font-extrabold ${pillTone}`;
+  }
 
   const mapStreakPill = document.getElementById('map-streak-pill');
   const mapStreakText = document.getElementById('map-streak-text');
@@ -1358,7 +1432,8 @@ function renderBiomePathMap() {
     const res = state.cardResults[c.id];
     const isDone = Boolean(res && res.answered && res.correct);
     const isWrong = Boolean(res && res.answered && !res.correct);
-    const isNext = c.id === nextTodoId && !isDone;
+    const unlocked = isCardUnlocked(c);
+    const isNext = unlocked && c.id === nextTodoId && !isDone;
     const isBoss = c.type === 'craft';
     const lootIcon = (c.loot && c.loot.icon) || 'shield';
 
@@ -1379,9 +1454,10 @@ function renderBiomePathMap() {
     const row = document.createElement('div');
     row.className = `relative flex items-center justify-center gap-3 sm:gap-4 py-1.5 w-full max-w-[520px] path-row-${idx % 6}`;
 
-    // класс кубического блока-узла
+    // класс кубического блока-узла (закрытые — каменный блок с замком)
     let nodeCls = 'path-node-idle';
-    if (isDone) nodeCls = 'path-node-done';
+    if (!unlocked) nodeCls = 'path-node-locked';
+    else if (isDone) nodeCls = 'path-node-done';
     else if (isWrong) nodeCls = 'path-node-wrong';
     else if (isNext) nodeCls = 'path-node-current';
     else if (isBoss) nodeCls = 'path-node-boss';
@@ -1397,41 +1473,55 @@ function renderBiomePathMap() {
       ? `<span class="path-play-tag">${isEn ? 'PLAY!' : (isKca ? 'ВЄРТЫ!' : 'ИГРАТЬ!')}</span>`
       : '';
 
-    const nodeInner = isDone
-      ? `${getLootPixelSvg(lootIcon, 'w-9 h-9 sm:w-10 sm:h-10')}<span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-[3px] bg-[#16a34a] border-2 border-[#14532d] text-white flex items-center justify-center shadow-sm"><i data-lucide="check" class="w-3.5 h-3.5" stroke-width="3"></i></span>`
-      : (isWrong
-        ? `<i data-lucide="rotate-ccw" class="w-7 h-7 sm:w-8 sm:h-8"></i>`
-        : (isBoss
-          ? `${getLootPixelSvg(lootIcon, 'w-9 h-9 sm:w-10 sm:h-10')}<span class="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-[2px] bg-[#facc15] border border-[#854d0e] text-[#713f12] font-pixel text-[9px] font-bold">3×3</span>`
-          : (isNext
-            ? `<i data-lucide="play" class="w-7 h-7 sm:w-8 sm:h-8 fill-white"></i>`
-            : `<span class="font-pixel text-xl sm:text-2xl font-bold">${idx + 1}</span>`)));
+    const nodeInner = !unlocked
+      ? `${getLootPixelSvg('lock', 'w-7 h-7 sm:w-8 sm:h-8')}`
+      : (isDone
+        ? `${getLootPixelSvg(lootIcon, 'w-9 h-9 sm:w-10 sm:h-10')}<span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-[3px] bg-[#16a34a] border-2 border-[#14532d] text-white flex items-center justify-center shadow-sm"><i data-lucide="check" class="w-3.5 h-3.5" stroke-width="3"></i></span>`
+        : (isWrong
+          ? `<i data-lucide="rotate-ccw" class="w-7 h-7 sm:w-8 sm:h-8"></i>`
+          : (isBoss
+            ? `${getLootPixelSvg(lootIcon, 'w-9 h-9 sm:w-10 sm:h-10')}<span class="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-[2px] bg-[#facc15] border border-[#854d0e] text-[#713f12] font-pixel text-[9px] font-bold">3×3</span>`
+            : (isNext
+              ? `<i data-lucide="play" class="w-7 h-7 sm:w-8 sm:h-8 fill-white"></i>`
+              : `<span class="font-pixel text-xl sm:text-2xl font-bold">${idx + 1}</span>`))));
 
-    const badgeTone = isDone
-      ? 'bg-[#fef3c7] border-[#d97706] text-[#92400e]'
-      : (isWrong
-        ? 'bg-[#fdecec] border-[#c62828] text-[#991b1b]'
-        : (isNext
-          ? 'bg-[#dcfce7] border-[#16a34a] text-[#14532d]'
-          : (isBoss ? 'bg-[#e0f2fe] border-[#0284c7] text-[#075985]' : 'bg-[#f1f5f9] border-[#cbd5e1] text-cgy-muted')));
+    const badgeTone = !unlocked
+      ? 'bg-slate-200 border-slate-300 text-slate-500'
+      : (isDone
+        ? 'bg-[#fef3c7] border-[#d97706] text-[#92400e]'
+        : (isWrong
+          ? 'bg-[#fdecec] border-[#c62828] text-[#991b1b]'
+          : (isNext
+            ? 'bg-[#dcfce7] border-[#16a34a] text-[#14532d]'
+            : (isBoss ? 'bg-[#e0f2fe] border-[#0284c7] text-[#075985]' : 'bg-[#f1f5f9] border-[#cbd5e1] text-cgy-muted'))));
+
+    const clickAttr = unlocked
+      ? `openMissionFromMap('${c.id}')`
+      : `notifyLockedMission(${idx})`;
+
+    const lvlStars = '★'.repeat(c.level || 1) + '☆'.repeat(Math.max(0, 3 - (c.level || 1)));
 
     row.innerHTML = `
       ${heroHtml}
-      <button type="button" onclick="openMissionFromMap('${c.id}')"
-        class="path-node-btn ${nodeCls} w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 cursor-pointer"
-        title="${idx + 1}. ${L(c.title)}">
+      <button type="button" onclick="${clickAttr}"
+        class="path-node-btn ${nodeCls} w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 ${unlocked ? 'cursor-pointer' : 'cursor-not-allowed'}"
+        title="${unlocked ? `${idx + 1}. ${L(c.title)}` : (isEn ? `Locked: finish Mission #${idx} first` : `Закрыто: сначала пройди миссию #${idx}`)}">
         ${playTag}
         ${nodeInner}
       </button>
-      <button type="button" onclick="openMissionFromMap('${c.id}')"
-        class="flex-1 max-w-[260px] sm:max-w-[300px] text-left bg-white/95 hover:bg-white border-2 ${isNext ? 'border-[#4a9603] shadow-md' : (isDone ? 'border-[#d97706]/70' : 'border-[#bfd4ec]')} rounded-[4px] px-3 py-2 transition cursor-pointer">
-        <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="font-pixel text-[10px] font-bold px-1.5 py-0.5 rounded-[2px] border ${badgeTone}">
-            #${idx + 1} • ${t('typesShort')[c.type] || c.type}
-          </span>
-          ${isDone ? `<span class="text-[11px] font-extrabold text-[#16a34a]">★ ${isEn ? 'Done' : (isKca ? 'Вєрсы' : 'Пройдено')}</span>` : ''}
+      <button type="button" onclick="${clickAttr}"
+        class="flex-1 max-w-[260px] sm:max-w-[300px] text-left ${unlocked ? 'bg-white/95 hover:bg-white cursor-pointer' : 'bg-slate-100/80 opacity-75 cursor-not-allowed'} border-2 ${!unlocked ? 'border-slate-300' : (isNext ? 'border-[#4a9603] shadow-md' : (isDone ? 'border-[#d97706]/70' : 'border-[#bfd4ec]'))} rounded-[4px] px-3 py-2 transition">
+        <div class="flex items-center justify-between gap-1.5 flex-wrap">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="font-pixel text-[10px] font-bold px-1.5 py-0.5 rounded-[2px] border ${badgeTone}">
+              #${idx + 1} • ${t('typesShort')[c.type] || c.type}
+            </span>
+            ${!unlocked ? `<span class="text-[11px] font-bold text-slate-500">🔒</span>` : ''}
+            ${isDone ? `<span class="text-[11px] font-extrabold text-[#16a34a]">★ ${isEn ? 'Done' : (isKca ? 'Вєрсы' : 'Пройдено')}</span>` : ''}
+          </div>
+          <span class="text-[10px] font-bold text-[#b45309]">${lvlStars}</span>
         </div>
-        <div class="font-bold text-xs sm:text-sm text-cgy-text leading-snug mt-1 line-clamp-2">${L(c.title)}</div>
+        <div class="font-bold text-xs sm:text-sm ${unlocked ? 'text-cgy-text' : 'text-slate-500'} leading-snug mt-1 line-clamp-2">${L(c.title)}</div>
       </button>
     `;
 
@@ -1440,6 +1530,13 @@ function renderBiomePathMap() {
 }
 
 function openMissionFromMap(cardId) {
+  const card = getCardById(cardId);
+  if (card && !isCardUnlocked(card)) {
+    const chCards = getChapterCards(card.chapter || 1);
+    const idx = Math.max(1, chCards.findIndex(c => c.id === card.id));
+    notifyLockedMission(idx);
+    return;
+  }
   stopReadAloud();
   state.currentCardId = cardId;
   state.cardsViewMode = 'play';
@@ -1454,9 +1551,16 @@ function openMissionFromMap(cardId) {
 function openNextMissionFromMap() {
   const activeCh = getActiveChapterId();
   const chCards = getChapterCards(activeCh);
-  let target = chCards.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct));
+  let target = chCards.find(c => isCardUnlocked(c) && !(state.cardResults[c.id] && state.cardResults[c.id].correct));
   if (!target) {
-    target = CARDS.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || chCards[0] || CARDS[0];
+    // подбираем открытую непройденную миссию, ближайшую к текущему адаптивному уровню
+    const openUnfinished = CARDS.filter(c => isCardUnlocked(c) && !(state.cardResults[c.id] && state.cardResults[c.id].correct));
+    if (openUnfinished.length > 0) {
+      openUnfinished.sort((a, b) => Math.abs((a.level || 1) - state.adaptiveLevel) - Math.abs((b.level || 1) - state.adaptiveLevel));
+      target = openUnfinished[0];
+    } else {
+      target = chCards[0] || CARDS[0];
+    }
   }
   if (target) openMissionFromMap(target.id);
 }
@@ -1470,9 +1574,21 @@ function backToBiomeMap() {
 }
 
 function selectBiomeChapter(chId) {
+  if (!isChapterUnlocked(chId)) {
+    SoundFX.playFail();
+    const isEn = state.lang === 'en';
+    showToast(
+      isEn
+        ? `Chapter ${chId} is locked! Pass Chapter ${chId - 1} or raise your adaptive level with correct answers.`
+        : `Глава ${chId} пока закрыта! Пройди Главу ${chId - 1} или отвечай верно подряд, чтобы поднять уровень сложности.`,
+      'warn',
+      3400
+    );
+    return;
+  }
   const chCards = getChapterCards(chId);
   if (!chCards.length) return;
-  const target = chCards.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || chCards[0];
+  const target = chCards.find(c => isCardUnlocked(c) && !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || chCards[0];
   stopReadAloud();
   state.currentCardId = target.id;
   state.cardsViewMode = 'map';
@@ -1552,16 +1668,21 @@ function isSupportModeActive(card) {
 }
 
 function getNextAdaptiveTarget() {
+  // 1. ищем открытые непройденные в текущей главе
   const chCards = getChapterCards(getActiveChapterId());
-  const chUnanswered = chCards.filter(c => !(state.cardResults[c.id] && state.cardResults[c.id].answered));
-  if (chUnanswered.length > 0) {
-    return { card: chUnanswered[0], reason: 'adaptive' };
+  const chOpenNext = chCards.filter(c => isCardUnlocked(c) && !(state.cardResults[c.id] && state.cardResults[c.id].correct) && c.id !== state.currentCardId);
+  if (chOpenNext.length > 0) {
+    // сортируем по близости к текущему адаптивному уровню сложности (верно -> сложнее, ошибка -> проще)
+    chOpenNext.sort((a, b) => Math.abs((a.level || 1) - state.adaptiveLevel) - Math.abs((b.level || 1) - state.adaptiveLevel));
+    return { card: chOpenNext[0], reason: 'adaptive' };
   }
-  const unanswered = CARDS.filter(c => !(state.cardResults[c.id] && state.cardResults[c.id].answered));
-  if (unanswered.length > 0) {
-    unanswered.sort((a, b) => Math.abs((a.level || 1) - state.adaptiveLevel) - Math.abs((b.level || 1) - state.adaptiveLevel));
-    return { card: unanswered[0], reason: 'adaptive' };
+  // 2. ищем среди всех открытых непройденных карточек по уровню сложности
+  const allOpenNext = CARDS.filter(c => isCardUnlocked(c) && !(state.cardResults[c.id] && state.cardResults[c.id].correct) && c.id !== state.currentCardId);
+  if (allOpenNext.length > 0) {
+    allOpenNext.sort((a, b) => Math.abs((a.level || 1) - state.adaptiveLevel) - Math.abs((b.level || 1) - state.adaptiveLevel));
+    return { card: allOpenNext[0], reason: 'adaptive' };
   }
+  // 3. если остались ошибки — отправляем на закрепление
   const wrongCards = CARDS.filter(c => {
     const r = state.cardResults[c.id];
     return r && r.answered && !r.correct && c.id !== state.currentCardId;
@@ -1714,6 +1835,22 @@ function renderCurrentCard(animateEntrance = false) {
   const lvl = card.level || 1;
   document.getElementById('card-diff-pill').textContent = `${'★'.repeat(lvl)}${'☆'.repeat(Math.max(0, 3 - lvl))}`;
 
+  // живой бейдж динамической сложности (видно когда включилась помощь или режим профи)
+  const adaptBadge = document.getElementById('card-adapt-badge');
+  if (adaptBadge) {
+    const isEn = state.lang === 'en';
+    if (supportApplied) {
+      adaptBadge.className = 'inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-[3px] bg-[#ecfdf5] border-2 border-[#16a34a] text-[#15803d] text-[11px] sm:text-xs font-bold';
+      adaptBadge.textContent = isEn ? '↓ Adaptive Help ON' : '↓ Помощь (проще)';
+    } else if (state.adaptiveLevel >= 3) {
+      adaptBadge.className = 'inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-[3px] bg-[#ede9fe] border-2 border-[#7c3aed] text-[#5b21b6] text-[11px] sm:text-xs font-bold';
+      adaptBadge.textContent = isEn ? '↑ Pro Mode (3/3)' : '↑ Уровень Профи (3/3)';
+    } else {
+      adaptBadge.className = 'hidden';
+      adaptBadge.textContent = '';
+    }
+  }
+
   // меняем цвет шапки карточки в зависимости от темы
   const topicThemes = {
     game:     { banner: 'from-[#dbeafe] via-[#e0f2fe] to-[#eff6ff] border-[#93c5fd]', stage: 'border-[#93c5fd]' },
@@ -1846,7 +1983,9 @@ function renderCurrentCard(animateEntrance = false) {
     showCardFeedbackUI(card, res.correct);
     checkBtn.classList.add('hidden');
     retryBtn.classList.toggle('hidden', res.correct);
-    nextBtn.classList.remove('hidden');
+    // если ошибся и следующая миссия под замком — оставляем главным «Попробовать ещё раз» (с включённой помощью)
+    const canGoNext = Boolean(res.correct || nextTarget);
+    nextBtn.classList.toggle('hidden', !canGoNext);
   } else {
     fb.classList.add('hidden');
     retryBtn.classList.add('hidden');
@@ -2355,8 +2494,15 @@ function inspectLootItem(cardId, unlocked, loot) {
     SoundFX.playConnect();
     updateMascot('happy', `${L(loot.name)}: ${L(loot.desc)}`, true);
   } else {
+    const card = getCardById(cardId);
+    if (card && !isCardUnlocked(card)) {
+      const chCards = getChapterCards(card.chapter || 1);
+      const idx = Math.max(1, chCards.findIndex(c => c.id === card.id));
+      notifyLockedMission(idx);
+      return;
+    }
     SoundFX.playPick();
-    selectCardById(cardId);
+    openMissionFromMap(cardId);
   }
 }
 
@@ -3835,8 +3981,11 @@ function submitCurrentCard() {
 function evaluateCardResult(card, isCorrect, extra = {}) {
   const prev = state.cardResults[card.id];
   const isFirstAttempt = !prev || !prev.answered;
+  const prevLevel = state.adaptiveLevel || 1;
+  const wasCh2Open = isChapterUnlocked(2);
+  const wasCh3Open = isChapterUnlocked(3);
 
-  // обновляем серию и сложность после ответа
+  // обновляем серию и динамическую сложность по ТЗ (верно -> сложнее, ошибка -> проще)
   if (isCorrect) {
     state.streak = (state.streak || 0) + 1;
     state.supportMode = false;
@@ -3870,6 +4019,31 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
     ...extra
   };
   state.cardDraft.retrying = false;
+
+  // сообщаем о срабатывании динамической сложности и открытии новых биомов
+  const isEn = state.lang === 'en';
+  if (isCorrect && state.adaptiveLevel > prevLevel) {
+    showToast(
+      isEn
+        ? `Adaptive difficulty ↑ Level ${state.adaptiveLevel}/3!`
+        : `Сложность повышена ↑ Уровень ${state.adaptiveLevel}/3!`,
+      'success',
+      2800
+    );
+  } else if (!isCorrect) {
+    showToast(
+      isEn
+        ? `Difficulty lowered ↓ Level ${state.adaptiveLevel}/3 + Adaptive Help enabled!`
+        : `Сложность снижена ↓ Уровень ${state.adaptiveLevel}/3 — включена адаптивная помощь!`,
+      'warn',
+      3200
+    );
+  }
+  if (!wasCh2Open && isChapterUnlocked(2)) {
+    setTimeout(() => showToast(isEn ? 'Biome Unlocked: Phishing Cave!' : 'Открыта Глава 2: Пещера Фишинга!', 'success', 3200), 600);
+  } else if (!wasCh3Open && isChapterUnlocked(3)) {
+    setTimeout(() => showToast(isEn ? 'Biome Unlocked: Pro Citadel!' : 'Открыта Глава 3: Цитадель Профи!', 'success', 3200), 600);
+  }
 
   // сохраняем точку в историю когда пройдены все карточки
   const summary = getCardStatsSummary();
@@ -5400,13 +5574,19 @@ function jumpToWeakestTopic() {
     switchMainTab('chat');
     return;
   }
-  if (weakestSkillTarget.firstTargetCard) {
-    state.currentCardId = weakestSkillTarget.firstTargetCard;
+  const targetCard = weakestSkillTarget.firstTargetCard ? getCardById(weakestSkillTarget.firstTargetCard) : null;
+  if (targetCard && isCardUnlocked(targetCard)) {
+    state.currentCardId = targetCard.id;
     state.cardsViewMode = 'play';
     state.lessonHearts = 3;
     state.cardDraft = {};
     switchMainTab('cards');
     renderCurrentCard(true);
+  } else {
+    // если целевая миссия этой темы ещё под замком — открываем карту на ближайшей открытой миссии
+    state.cardsViewMode = 'map';
+    switchMainTab('cards');
+    openNextMissionFromMap();
   }
 }
 
