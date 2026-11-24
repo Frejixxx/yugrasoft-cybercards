@@ -2521,73 +2521,110 @@ function closePasswordLab() {
 }
 
 function generateSuperPassword() {
-  const samples = [
-    'YugraShield#2026!',
-    'CyberBear!86Pro',
-    'DiamondLock$2026',
-    'TaigaGuard@77!',
-    'StepaShield#86!',
-    'AlenaTaiga@94!',
-    'Khanty!K9#mP2x'
+  const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const lower = 'abcdefghijkmnopqrstuvwxyz';
+  const digits = '23456789';
+  const syms = '!@#$%^&*?-_';
+  const all = upper + lower + digits + syms;
+
+  const randIdx = (max) => {
+    if (window.crypto && window.crypto.getRandomValues) {
+      const buf = new Uint32Array(1);
+      window.crypto.getRandomValues(buf);
+      return buf[0] % max;
+    }
+    return Math.floor(Math.random() * max);
+  };
+
+  // гарантируем все 4 класса символов и длину 15
+  const chars = [
+    upper[randIdx(upper.length)],
+    upper[randIdx(upper.length)],
+    lower[randIdx(lower.length)],
+    lower[randIdx(lower.length)],
+    digits[randIdx(digits.length)],
+    digits[randIdx(digits.length)],
+    syms[randIdx(syms.length)],
+    syms[randIdx(syms.length)]
   ];
+  while (chars.length < 15) {
+    chars.push(all[randIdx(all.length)]);
+  }
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = randIdx(i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+
   const inp = document.getElementById('pass-lab-input');
   if (!inp) return;
-  const current = inp.value;
-  const pick = samples.find(s => s !== current) || samples[0];
-  inp.value = samples[Math.floor(Math.random() * samples.length)];
-  if (inp.value === current) inp.value = pick;
+  inp.value = chars.join('');
   SoundFX.playPick();
   evaluatePasswordLab();
 }
 
-function normalizePasswordLeet(str) {
-  return String(str || '')
-    .toLowerCase()
-    .replace(/@/g, 'a')
-    .replace(/0/g, 'o')
-    .replace(/[1!|]/g, 'i')
-    .replace(/3/g, 'e')
-    .replace(/[$5]/g, 's')
-    .replace(/7/g, 't')
-    .replace(/4/g, 'a');
-}
-
-function detectWeakPasswordPattern(val) {
-  const lower = val.toLowerCase();
-  const leet = normalizePasswordLeet(val);
-  // убираем типичные хвосты вроде 123, 2026, !@#
-  const stripped = leet.replace(/[\d!@#$%^&*()_+\-=.,?]+$/g, '').replace(/^[\d!@#$%^&*()_+\-=.,?]+/g, '');
-  const dict = [
-    'password', 'pass', 'qwerty', 'qwertyuiop', 'asdfgh', 'zxcvbn', 'admin', 'root', 'login',
-    'welcome', 'monkey', 'dragon', 'football', 'iloveyou', 'master', 'letmein', 'sunshine',
-    'minecraft', 'roblox', 'standoff', 'brawl', 'fortnit', 'cyber', 'yugra', 'russia', 'school',
-    'пароль', 'йцукен', 'фывапр', 'ячсмит', 'привет', 'админ', 'майнкрафт', 'роблокс', 'югра', 'школа', 'любовь', 'котик'
-  ];
-  const matchedWord = dict.find(w => stripped === w || (w.length >= 5 && leet.includes(w)));
-  const isOnlySeq = /^(?:0123|1234|2345|3456|4567|5678|6789|9876|8765|abcd|qwer|йцук)/.test(lower) || /^(.)\1+$/.test(lower);
-  const hasPredictableTail = /(123|1234|12345|321|000|111|202\d|199\d|200\d|201\d)[!@#$%^&*]*$/.test(lower);
-  if (matchedWord) {
-    return { weak: true, reasonRu: `Словарное слово («${matchedWord}») — даже с цифрами и «!» в конце его взламывают по словарю за секунды!`, reasonEn: `Dictionary word ("${matchedWord}") — adding digits or "!" at the end still gets cracked in seconds!` };
-  }
-  if (isOnlySeq) {
-    return { weak: true, reasonRu: 'Клавиатурный ряд или повтор символов — боты проверяют это в первую секунду!', reasonEn: 'Keyboard walk or repeated characters — bots guess this instantly!' };
-  }
-  if (hasPredictableTail && val.length <= 12) {
-    return { weak: true, reasonRu: 'Предсказуемый хвост (123 или год) в конце легко подбирается словарями!', reasonEn: 'Predictable ending (123 or a year) is easily cracked by wordlists!' };
-  }
-  return { weak: false };
-}
+// словарь популярных русских и школьных слов для второго аргумента zxcvbn(password, userInputs)
+const ZXCVBN_RU_WORDS = [
+  'пароль', 'привет', 'админ', 'йцукен', 'фывапр', 'ячсмит', 'майнкрафт', 'роблокс',
+  'югра', 'школа', 'любовь', 'котик', 'солнце', 'футбол', 'дракон', 'супер', 'мама',
+  'папа', 'россия', 'москва', 'кибер', 'тест', 'логин', 'qwerty', 'йцукенг',
+  'стёпа', 'степа', 'алёна', 'алена', 'standoff', 'brawl', 'minecraft', 'roblox'
+];
 
 function formatCrackSeconds(seconds, isEn) {
-  if (seconds < 1) return isEn ? 'Instantly (< 1 sec)' : 'Мгновенно (< 1 сек)';
+  if (!Number.isFinite(seconds) || seconds < 1) return isEn ? 'Instantly (< 1 sec)' : 'Мгновенно (< 1 сек)';
   if (seconds < 60) return isEn ? `~${Math.max(1, Math.round(seconds))} sec` : `Около ${Math.max(1, Math.round(seconds))} сек.`;
   if (seconds < 3600) return isEn ? `~${Math.max(1, Math.round(seconds / 60))} min` : `Около ${Math.max(1, Math.round(seconds / 60))} мин.`;
   if (seconds < 86400) return isEn ? `~${Math.max(1, Math.round(seconds / 3600))} hours` : `Около ${Math.max(1, Math.round(seconds / 3600))} ч.`;
   if (seconds < 86400 * 30) return isEn ? `~${Math.max(1, Math.round(seconds / 86400))} days` : `Около ${Math.max(1, Math.round(seconds / 86400))} дн.`;
   if (seconds < 86400 * 365) return isEn ? `~${Math.max(1, Math.round(seconds / (86400 * 30)))} months` : `Около ${Math.max(1, Math.round(seconds / (86400 * 30)))} мес.`;
   const yrs = seconds / (86400 * 365);
-  if (yrs < 1000) return isEn ? `~${Math.max(1, Math.round(yrs))} years` : `Около ${Math.max(1, Math.round(yrs))} лет`;
+  if (yrs < 100) return isEn ? `~${Math.max(1, Math.round(yrs))} years` : `Около ${Math.max(1, Math.round(yrs))} лет`;
   return isEn ? 'Centuries! Unbreakable' : 'Сотни лет! Не взломать';
+}
+
+function translateZxcvbnFeedback(z, isEn) {
+  if (!z || !z.feedback) return '';
+  if (isEn) {
+    return z.feedback.warning || (z.feedback.suggestions && z.feedback.suggestions[0]) || '';
+  }
+  const warnMap = {
+    'This is a top-10 common password': 'Это пароль из топ-10 самых взламываемых в мире!',
+    'This is a top-100 common password': 'Это пароль из топ-100 самых популярных — боты подберут его мгновенно!',
+    'This is a very common password': 'Очень популярный пароль — в базах взломщиков на первом месте!',
+    'This is similar to a commonly used password': 'Слишком похож на популярный пароль из словаря — его быстро подберут по базе утечек.',
+    'A word by itself is easy to guess': 'Одно обычное слово легко подобрать по словарю.',
+    'Names and surnames by themselves are easy to guess': 'Имя или фамилию очень легко угадать по словарю.',
+    'Common names and surnames are easy to guess': 'Популярные имена и фамилии быстро перебираются по базе.',
+    'Dates are often easy to guess': 'Даты и годы рождения перебираются очень быстро.',
+    'Straight rows of keys are easy to guess': 'Ряды клавиш на клавиатуре (qwerty / 12345) подбираются за секунды.',
+    'Short keyboard patterns are easy to guess': 'Короткие комбинации с клавиатуры легко угадать.',
+    'Repeats like "aaa" are easy to guess': 'Повторяющиеся символы почти не добавляют стойкости.',
+    'Repeats like "abcabcabc" are only slightly harder to guess than "abc"': 'Повторяющиеся куски вроде «abcabc» легко угадываются.',
+    'Sequences like abc or 6543 are easy to guess': 'Последовательности вроде abc или 1234 не добавляют надёжности.',
+    'Recent years are easy to guess': 'Недавние годы (2020–2026) хакеры проверяют в первую очередь.',
+    'Capitalization doesn\'t help very much': 'Одна заглавная буква в начале почти не усложняет взлом.',
+    'All-uppercase is almost as easy to guess as all-lowercase': 'Сплошные ЗАГЛАВНЫЕ буквы взламываются почти так же быстро, как строчные.',
+    'Reversed words aren\'t much harder to guess': 'Слова задом наперёд словари тоже проверяют.',
+    'Predictable substitutions like \'@\' instead of \'a\' don\'t help very much': 'Типичные замены вроде «@» вместо «a» или «0» вместо «o» словари знают.'
+  };
+  const sugMap = {
+    'Use a few words, avoid common phrases': 'Используй 3–4 несвязанных слова или длинную случайную комбинацию.',
+    'No need for symbols, digits, or uppercase letters': 'Длина пароля важнее, чем один знак «!» в конце.',
+    'Add another word or two. Uncommon words are better.': 'Добавь ещё одно-два необычных слова или пару случайных символов.',
+    'Avoid dates and years that are associated with you': 'Не используй даты рождения и годы.',
+    'Avoid repeated words and characters': 'Избегай повторов одинаковых символов и кусков.',
+    'Avoid sequences': 'Убери простые последовательности вроде 123 или abc.',
+    'Use a longer keyboard pattern with more turns': 'Не используй соседние клавиши на клавиатуре подряд.',
+    'Capitalization doesn\'t help very much': 'Одна заглавная буква в начале слабо спасает — лучше увеличить длину.',
+    'Predictable substitutions like \'@\' instead of \'a\' don\'t help very much': 'Простая замена букв на @/0/1 уже давно есть в словарях взломщиков.'
+  };
+  if (z.feedback.warning) {
+    return warnMap[z.feedback.warning] || z.feedback.warning;
+  }
+  if (z.feedback.suggestions && z.feedback.suggestions.length > 0) {
+    return sugMap[z.feedback.suggestions[0]] || '';
+  }
+  return '';
 }
 
 function evaluatePasswordLab() {
@@ -2633,43 +2670,21 @@ function evaluatePasswordLab() {
     return;
   }
 
-  // реальная проверка библиотекой zxcvbn (от Dropbox) + офлайн-анализ русских слов и leet-замен
-  const customWeak = detectWeakPasswordPattern(val);
+  // честная оценка библиотекой zxcvbn (от Dropbox — стандарт оценки паролей)
   let score = 0; // 0..4
   let seconds = 0.01;
   let extraWarning = '';
 
   if (typeof window.zxcvbn === 'function') {
-    const z = window.zxcvbn(val, ['yugra', 'югра', 'cyber', 'кибер', 'stepa', 'alena', 'стёпа', 'алёна', 'minecraft', 'roblox', 'school', 'школа']);
+    const z = window.zxcvbn(val, ZXCVBN_RU_WORDS);
     score = z.score;
-    seconds = (z.crack_times_seconds && typeof z.crack_times_seconds.offline_fast_hashing_1e10_per_second === 'number')
-      ? z.crack_times_seconds.offline_fast_hashing_1e10_per_second
+    // используем offline_slow_hashing_1e4_per_second (bcrypt/Argon2) — именно по ней zxcvbn считает score 0..4
+    seconds = (z.crack_times_seconds && typeof z.crack_times_seconds.offline_slow_hashing_1e4_per_second === 'number')
+      ? z.crack_times_seconds.offline_slow_hashing_1e4_per_second
       : 0.01;
-    if (customWeak.weak && score > 1) {
-      score = 1;
-      seconds = Math.min(seconds, 5);
-    }
-    if (customWeak.weak) {
-      extraWarning = isEn ? customWeak.reasonEn : customWeak.reasonRu;
-    } else if (z.feedback && z.feedback.warning) {
-      const warnMap = {
-        'This is a top-10 common password': 'Это пароль из топ-10 самых взламываемых в мире!',
-        'This is a top-100 common password': 'Это пароль из топ-100 самых популярных — боты подберут его мгновенно!',
-        'This is a very common password': 'Очень популярный пароль — в базах взломщиков на первом месте!',
-        'This is similar to a commonly used password': 'Слишком похож на популярный пароль из словаря (заглавные буквы и «123!» не спасают)!',
-        'A word by itself is easy to guess': 'Одно обычное слово легко подобрать по словарю!',
-        'Names and surnames by themselves are easy to guess': 'Имя или фамилию очень легко угадать!',
-        'Common names and surnames are easy to guess': 'Популярные имена и фамилии быстро перебираются по словарю!',
-        'Dates are often easy to guess': 'Даты и годы рождения перебираются за секунды!',
-        'Straight rows of keys are easy to guess': 'Ряды клавиш (qwerty / 12345) подбираются мгновенно!',
-        'Short keyboard patterns are easy to guess': 'Короткие комбинации с клавиатуры легко взломать!',
-        'Repeats like "aaa" are easy to guess': 'Повторяющиеся символы почти не дают защиты!',
-        'Sequences like abc or 6543 are easy to guess': 'Последовательности вроде abc или 1234 легко угадать!'
-      };
-      extraWarning = isEn ? z.feedback.warning : (warnMap[z.feedback.warning] || 'Есть предсказуемый шаблон — замени слова на случайный набор букв и знаков.');
-    }
+    extraWarning = translateZxcvbnFeedback(z, isEn);
   } else {
-    // офлайн-фолбэк если cdn zxcvbn недоступен
+    // офлайн-фолбэк если cdn zxcvbn недоступен (честная энтропия без грубых запретов)
     let pool = 0;
     if (/[a-z]/.test(val)) pool += 26;
     if (/[A-Z]/.test(val)) pool += 26;
@@ -2680,14 +2695,12 @@ function evaluatePasswordLab() {
     if (pool === 0) pool = 10;
     const uniqueRatio = new Set(val.toLowerCase()).size / Math.max(1, val.length);
     const effLen = Math.max(1, val.length * (0.55 + 0.45 * uniqueRatio));
-    seconds = customWeak.weak ? 0.05 : (Math.pow(pool, effLen) / 1e10);
-    if (customWeak.weak) {
-      score = 0;
-      extraWarning = isEn ? customWeak.reasonEn : customWeak.reasonRu;
-    } else if (seconds < 10) score = 0;
-    else if (seconds < 3600) score = 1;
-    else if (seconds < 86400 * 30) score = 2;
-    else if (seconds < 86400 * 365 * 50) score = 3;
+    const guesses = Math.pow(pool, effLen);
+    seconds = guesses / 1e4;
+    if (guesses < 1e3) score = 0;
+    else if (guesses < 1e6) score = 1;
+    else if (guesses < 1e8) score = 2;
+    else if (guesses < 1e10) score = 3;
     else score = 4;
   }
 
@@ -2695,30 +2708,30 @@ function evaluatePasswordLab() {
   let lvlTxt = '', commentTxt = '', pct = 15, barCls = 'danger-meter-bar', badgeCls = 'bg-[#fee2e2] text-cgy-err';
 
   if (score <= 0) {
-    lvlTxt = isEn ? 'Very Weak (0/4)' : 'Очень слабый';
-    commentTxt = extraWarning || (isEn ? 'Cracked in a blink! Avoid dictionary words and simple numbers.' : 'Взломают мгновенно! Убери популярные слова, 123 и добавь случайные символы.');
+    lvlTxt = isEn ? 'Very Weak (0/4)' : 'Очень слабый (0/4)';
+    commentTxt = extraWarning || (isEn ? 'Cracked almost instantly! Try a longer combination without common words.' : 'Взломают почти мгновенно! Сделай пароль длиннее и без простых слов.');
     pct = 14;
   } else if (score === 1) {
-    lvlTxt = isEn ? 'Weak (1/4)' : 'Слабый';
-    commentTxt = extraWarning || (isEn ? 'Still easy for wordlists! Mix unrelated words + random digits and symbols.' : 'Всё ещё легко подобрать по словарю! Смешай необычные слова, цифры и спецзнаки в середине.');
+    lvlTxt = isEn ? 'Weak (1/4)' : 'Слабый (1/4)';
+    commentTxt = extraWarning || (isEn ? 'Too easy for modern wordlists. Add length and unpredictable characters.' : 'Слишком лёгкий для словарей взломщиков. Увеличь длину и убери частые слова.');
     pct = 34;
     barCls = 'bg-[#f97316]';
     badgeCls = 'bg-[#ffedd5] text-[#c2410c]';
   } else if (score === 2) {
-    lvlTxt = isEn ? 'Fair (2/4)' : 'Средний';
-    commentTxt = extraWarning || (isEn ? 'Decent start, but add 2–3 random symbols to reach Diamond level.' : 'Уже лучше, но для алмазной защиты добавь ещё 2–3 случайных символа.');
-    pct = 60;
+    lvlTxt = isEn ? 'Fair (2/4)' : 'Средний (2/4)';
+    commentTxt = extraWarning || (isEn ? 'Okay for minor sites, but add 2–3 random symbols to make it strong.' : 'Неплохо, но для важного аккаунта добавь ещё 2–3 случайных символа или слово.');
+    pct = 58;
     barCls = 'bg-[#f59e0b]';
     badgeCls = 'bg-[#fef3c7] text-[#b45309]';
   } else if (score === 3) {
-    lvlTxt = isEn ? 'Strong (3/4)' : 'Надёжный';
-    commentTxt = extraWarning || (isEn ? 'Strong password! Hard to crack even with modern hardware.' : 'Надёжный пароль — обычным перебором его не взять!');
-    pct = 84;
+    lvlTxt = isEn ? 'Strong (3/4)' : 'Надёжный (3/4)';
+    commentTxt = extraWarning || (isEn ? 'Strong password! Hard to crack even with offline brute-force.' : 'Надёжный пароль — обычным подбором его уже не взять!');
+    pct = 82;
     barCls = 'bg-[#22c55e]';
     badgeCls = 'bg-[#dcfce7] text-[#15803d]';
   } else {
-    lvlTxt = isEn ? 'Diamond Shield (4/4)' : 'Алмазная защита';
-    commentTxt = isEn ? 'Passed zxcvbn check! Even a GPU cluster would spend centuries.' : 'Прошёл проверку zxcvbn! Даже мощный кластер будет подбирать его столетиями.';
+    lvlTxt = isEn ? 'Diamond Shield (4/4)' : 'Алмазная защита (4/4)';
+    commentTxt = extraWarning || (isEn ? 'Top zxcvbn score! Very resistant to both dictionary and brute-force attacks.' : 'Максимальная оценка zxcvbn (4/4)! Отлично держит и словари, и перебор.');
     pct = 100;
     barCls = 'bg-gradient-to-r from-[#1e5aa8] via-[#06b6d4] to-[#16a34a]';
     badgeCls = 'bg-[#cffafe] text-[#0e7490]';
