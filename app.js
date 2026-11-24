@@ -1,7 +1,7 @@
-// Кибер-карточки Югры — Полный движок тренажёра для платформы «Цифровой гражданин Югры»
-// Включает: 5 типов карточек, адаптивную сложность, мультиязычность RU/EN,
-// графики аналитики (Canvas), профиль ученика, ачивки, PNG-сертификат,
-// симулятор мессенджера (SMS, дипфейк, звонки, фейк-галочка) и postMessage API.
+// основной скрипт тренажера «Кибер-карточки Югры»
+// тут карточки, перевод интерфейса, симулятор чатов, блиц, графики и сертификат
+// делал на чистом js без фреймворков чтобы быстро открывалось даже офлайн
+// сохранение прогресса идет в localStorage + отправка событий через postMessage
 
 const STORAGE_KEY = 'cybercards_yugra_portal_v1';
 const CUSTOM_CARDS_KEY = 'cybercards_custom_cards_v1';
@@ -10,7 +10,7 @@ const CUSTOM_SCENARIOS_KEY = 'cybershield_custom_scenarios_v1';
 let CARDS = [];
 let SCENARIOS = [];
 
-// ==================== СЛОВАРЬ МУЛЬТИЯЗЫЧНОСТИ (RU / EN) ====================
+// переводы текста интерфейса (русский, английский, хантыйский)
 const I18N = {
   ru: {
     portal_name: 'Цифровой гражданин Югры',
@@ -36,7 +36,6 @@ const I18N = {
     tab_results: 'Аналитика и сертификат',
     overall_progress: 'Общий прогресс:',
     card_counter_label: 'Миссия:',
-    adaptive_label: 'Сложность:',
     btn_restart_cards: 'Начать заново',
     score_now: 'Собрано звёзд:',
     btn_read_aloud: 'Озвучить',
@@ -44,7 +43,7 @@ const I18N = {
     btn_hint: 'Подсказка',
     yugorka_name: 'Кибер-Стив',
     yugorka_role: 'Кибер-герой Югры',
-    detective_bar: 'Лупа детектива: нажми на подозрительные места на картинке!',
+    detective_bar: 'Найди подозрительные места на картинке:',
     detective_done: 'Все улики найдены! Молодец, кибердетектив!',
     clue_xp: 'Улика раскрыта!',
     yugorka_idle: [
@@ -87,7 +86,7 @@ const I18N = {
     btn_next_short: 'Дальше',
     kpi_loot: 'Собранный лут',
     prof_fio_lbl: 'ФИО ученика',
-    prof_fio_hint: 'Подставится в сертификат и автоматически подберёт напарника.',
+    prof_fio_hint: 'Для сертификата и выбора напарника',
     prof_grade_lbl: 'Класс',
     prof_hero_lbl: 'Твой напарник',
     opt_grade_1_4: '1–4 классы',
@@ -132,9 +131,9 @@ const I18N = {
     cert_fio_label: 'Введи ФИО для скачивания именного сертификата',
     btn_download_cert: 'Скачать сертификат (PNG)',
     chart_types_title: 'Результаты по типам заданий',
-    chart_types_sub: 'Процент верных ответов по каждому навыку',
+    chart_types_sub: 'Сколько верно в каждом типе',
     chart_dyn_title: 'Динамика прохождений',
-    chart_dyn_sub: 'Рост результата по попыткам и сессиям (%)',
+    chart_dyn_sub: 'Твои попытки',
     ach_title: 'Достижения (ачивки)',
     ach_sub: 'Выполняй задания без ошибок, чтобы открыть все значки',
     btn_reset_all: 'Сбросить весь прогресс',
@@ -166,15 +165,13 @@ const I18N = {
     of_word: 'из',
     student_default: 'Ученик',
     class_suffix: 'кл.',
-    adaptive_up: 'Адаптивная сложность повышена — следующее задание будет интереснее.',
-    adaptive_down: 'Адаптивная сложность скорректирована — подберём следующее задание проще для закрепления.',
     match_hint_left: '1. Выбери ситуацию слева',
-    match_hint_right: '2. Теперь выбери реакцию справа',
-    sort_hint: 'Распредели каждый пункт в нужную категорию:',
-    order_hint: 'Перетащи шаги мышкой за ручку слева или используй стрелки (от 1 до 4):',
-    sort_drag_hint: 'Перетащи карточки в нужную корзину (или нажми на карточку, а затем на корзину):',
-    sort_pool_empty: 'Все карточки разложены! Нажми «Проверить ответ».',
-    match_drag_hint: 'Перетащи ситуацию слева на реакцию справа (или кликни по паре):',
+    match_hint_right: '2. Теперь выбери ответ справа',
+    sort_hint: 'Разложи карточки по корзинам:',
+    order_hint: 'Расставь шаги по порядку (от 1 до 4):',
+    sort_drag_hint: 'Разложи карточки по корзинам:',
+    sort_pool_empty: 'Всё разложено! Жми «Проверить ответ».',
+    match_drag_hint: 'Соедини ситуацию с правильным ответом:',
     drop_here: 'Перетащи сюда',
     streak_label: 'Серия',
     call_calling: 'Вызов...',
@@ -239,7 +236,6 @@ const I18N = {
     tab_results: 'Analytics & Certificate',
     overall_progress: 'Overall progress:',
     card_counter_label: 'Mission:',
-    adaptive_label: 'Difficulty:',
     btn_restart_cards: 'Restart cards',
     score_now: 'Stars collected:',
     btn_read_aloud: 'Read aloud',
@@ -247,7 +243,7 @@ const I18N = {
     btn_hint: 'Hint',
     yugorka_name: 'Cyber-Steve',
     yugorka_role: 'Yugra Cyber-Hero',
-    detective_bar: 'Detective Magnifier: click suspicious clues in the picture!',
+    detective_bar: 'Tap the suspicious clues in the picture:',
     detective_done: 'All clues found! Awesome detective work!',
     clue_xp: 'Clue spotted!',
     yugorka_idle: [
@@ -290,7 +286,7 @@ const I18N = {
     btn_next_short: 'Next',
     kpi_loot: 'Loot Collected',
     prof_fio_lbl: 'Full Name',
-    prof_fio_hint: 'Added to your certificate and auto-picks your cyber buddy.',
+    prof_fio_hint: 'For your certificate and buddy',
     prof_grade_lbl: 'Grade',
     prof_hero_lbl: 'Your Cyber Buddy',
     opt_grade_1_4: 'Grades 1–4',
@@ -335,9 +331,9 @@ const I18N = {
     cert_fio_label: 'Enter your full name to download your certificate',
     btn_download_cert: 'Download Certificate (PNG)',
     chart_types_title: 'Accuracy by Task Type',
-    chart_types_sub: 'Percentage of correct answers per skill',
+    chart_types_sub: 'Correct answers by type',
     chart_dyn_title: 'Progress Dynamics',
-    chart_dyn_sub: 'Score growth across attempts & sessions (%)',
+    chart_dyn_sub: 'Your attempts',
     ach_title: 'Achievements',
     ach_sub: 'Complete tasks accurately to unlock every badge',
     btn_reset_all: 'Reset all progress',
@@ -369,15 +365,13 @@ const I18N = {
     of_word: 'of',
     student_default: 'Student',
     class_suffix: 'gr.',
-    adaptive_up: 'Adaptive difficulty increased — next task will be more challenging.',
-    adaptive_down: 'Adaptive difficulty adjusted — next task will be gentler to reinforce basics.',
     match_hint_left: '1. Pick a situation on the left',
-    match_hint_right: '2. Now pick the matching reaction on the right',
-    sort_hint: 'Assign each item to the right category:',
-    order_hint: 'Drag steps using the handle on the left or use the arrows (1 to 4):',
-    sort_drag_hint: 'Drag cards into the right basket (or tap a card, then tap a basket):',
-    sort_pool_empty: 'All cards sorted! Click "Check Answer".',
-    match_drag_hint: 'Drag a situation on the left onto a reaction on the right (or click to connect):',
+    match_hint_right: '2. Now pick the answer on the right',
+    sort_hint: 'Sort cards into the right baskets:',
+    order_hint: 'Put the steps in order (1 to 4):',
+    sort_drag_hint: 'Sort cards into the right baskets:',
+    sort_pool_empty: 'All sorted! Tap "Check Answer".',
+    match_drag_hint: 'Match each situation with the right answer:',
     drop_here: 'Drop here',
     streak_label: 'Streak',
     call_calling: 'Calling...',
@@ -442,7 +436,6 @@ const I18N = {
     tab_results: 'Аналитика па сертификат',
     overall_progress: 'Иса вєр:',
     card_counter_label: 'Миссия:',
-    adaptive_label: 'Уровень:',
     btn_restart_cards: 'Оӆӊӑӆ эвӑӆт',
     score_now: 'Звёздат:',
     btn_read_aloud: 'Ӆўӊӑтты',
@@ -566,8 +559,6 @@ const I18N = {
     of_word: 'эвӑӆт',
     student_default: 'Утӆты хоят',
     class_suffix: 'кл.',
-    adaptive_up: 'Уровень вәнӑмӑс — єӆӆы вєр ӆӑвӑртшӑк вәӆӆ.',
-    adaptive_down: 'Уровень айшӑк вєрсы — єӆӆы вєр моньщшӑк вәӆӆ.',
     match_hint_left: '1. Хӑӆ пєӆӑк вєр пириэ',
     match_hint_right: '2. Ин ем пєӆӑк тәса ястӑпсы пириэ',
     sort_hint: 'Иса пунктӑт тәса пєӆӑкн пунэ:',
@@ -628,28 +619,28 @@ function L(val) {
   return val || '';
 }
 
-// ==================== СОСТОЯНИЕ ПРИЛОЖЕНИЯ ====================
+// глобальное состояние игры
 const state = {
   lang: 'ru',
-  activeTab: 'cards',         // 'cards' | 'chat' | 'blitz' | 'results'
-  heroSkin: 'steve',          // 'steve' | 'alex'
-  heroSkinManual: false,      // true, если ученик вручную переключил героя в профиле
+  activeTab: 'cards',         // текущая вкладка: cards | chat | blitz | results
+  heroSkin: 'steve',          // выбранный напарник: steve | alex
+  heroSkinManual: false,      // true если пользователь сам выбрал персонажа в профиле
   blitzBest: 0,
   profile: {
     fio: '',
-    gradeClass: '5-7'         // '1-4' | '5-7' | '8-11'
+    gradeClass: '5-7'         // класс ученика: 1-4 | 5-7 | 8-11
   },
-  // Состояние карточек
+  // данные по карточкам
   currentCardId: null,
-  adaptiveLevel: 1,           // 1, 2, 3
-  supportMode: false,         // true после ошибки или для 1-4 кл.: реально упрощает задание (50/50, примеры, 1-й шаг)
+  adaptiveLevel: 1,           // уровень сложности 1..3
+  supportMode: false,         // если true — немного помогаем с заданием (50/50, примеры, 1-й шаг)
   streak: 0,
   unlockedAchIds: [],
-  cardResults: {},            // cardId -> { answered: bool, correct: bool, firstTryCorrect: bool, attempts: n }
-  cardDraft: {},              // временный ответ на активной карточке
-  sessionHistory: [],         // [{ label, pct }] для графика динамики
+  cardResults: {},            // результаты по каждой карточке
+  cardDraft: {},              // черновик ответа текущей карточки
+  sessionHistory: [],         // история попыток для второго графика
 
-  // Состояние симулятора чатов
+  // данные для симулятора чатов
   chatGradeMode: '8-11',
   chatCompleted: [],
   chats: {},
@@ -668,13 +659,13 @@ const state = {
   activeVoiceTimer: null,
   chatSearch: '',
 
-  // Прочее
+  // остальные настройки
   certId: '',
   embedMode: false,
   soundOn: true
 };
 
-// Специальные нативные SVG для мессенджера (фейковая галочка Premium и двойная галочка прочтения)
+// иконки галочек для чата
 const TG_SVG = {
   fakePremiumBadge: (clickable = true) => `
     <span ${clickable ? `onclick="event.stopPropagation(); inspectFakeBadge()"` : ''}
@@ -698,7 +689,7 @@ const TG_SVG = {
   doubleCheck: () => `<svg class="w-3.5 h-3.5 inline-block text-[#1e5aa8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 13 5 17 14 8"/><polyline points="7 13 11 17 22 6"/></svg>`
 };
 
-// Офлайн-фолбэк векторных иконок (если в школе закрыт CDN)
+// запасные svg-иконки на случай если cdn с lucide не загрузится
 const OFFLINE_ICONS = {
   'shield-check': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
   'check': '<polyline points="20 6 9 17 4 12"/>',
@@ -729,7 +720,7 @@ function refreshIcons() {
   });
 }
 
-// ==================== ИНТЕГРАЦИЯ С ПЛАТФОРМОЙ «ЦИФРОВОЙ ГРАЖДАНИН ЮГРЫ» ====================
+// интеграция с сайтом через url-параметры и postMessage
 
 function emitPortalEvent(eventName, payload = {}) {
   try {
@@ -794,7 +785,7 @@ window.addEventListener('message', (e) => {
   if (data.action === 'setTab' && ['cards', 'chat', 'blitz', 'results'].includes(data.value)) switchMainTab(data.value);
 });
 
-// ==================== ЗАГРУЗКА ДАННЫХ ====================
+// загрузка и сохранение прогресса в localStorage
 
 function loadDataSources() {
   CARDS = Array.isArray(DEFAULT_CARDS) ? [...DEFAULT_CARDS] : [];
@@ -876,7 +867,7 @@ function saveState() {
   } catch (e) {}
 }
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+// запуск приложения после загрузки страницы
 
 function init() {
   loadDataSources();
@@ -891,13 +882,13 @@ function init() {
     state.currentCardId = CARDS[0].id;
   }
 
-  // Если ФИО уже задано (и скин не закреплён вручную), подбираем Стива/Алекс автоматически
+  // если фио уже есть и персонажа не выбирали вручную — подбираем сами
   if (state.profile.fio && !state.heroSkinManual && window.FioGender) {
     const autoSkin = window.FioGender.detectHeroSkin(state.profile.fio);
     if (autoSkin) state.heroSkin = autoSkin;
   }
 
-  // Привязка поля ФИО на вкладке результатов
+  // слушатель поля фио на вкладке итогов
   const certInp = document.getElementById('cert-name-input');
   if (certInp) {
     certInp.value = state.profile.fio || '';
@@ -960,7 +951,7 @@ function init() {
   });
 }
 
-// ==================== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК И ЯЗЫКА ====================
+// переключение вкладок и языка
 
 function switchMainTab(tab, announce = true) {
   stopReadAloud();
@@ -973,13 +964,13 @@ function switchMainTab(tab, announce = true) {
     if (n) n.classList.toggle('active', name === tab);
   });
 
-  // Прячем плавающего героя на «Чатах» и «Блице», чтобы не перекрывал кнопки ответов (особенно на мобиле!)
+  // на чатах и блице скрываем стива/алекс чтобы не мешали нажимать кнопки
   const floatingHero = document.getElementById('floating-steve');
   if (floatingHero) {
     floatingHero.classList.toggle('hidden', tab === 'chat' || tab === 'blitz');
   }
 
-  // Для вкладки «Симулятор чатов» фиксируем высоту ровно под экран — никаких прокруток всей страницы!
+  // в чатах фиксируем высоту под окно браузера
   const mainEl = document.getElementById('app-main');
   if (tab === 'chat') {
     document.body.classList.remove('min-h-screen');
@@ -1050,7 +1041,7 @@ function applyLanguageUI() {
   updateHeaderProfileUI();
 }
 
-// ==================== ПРОФИЛЬ УЧЕНИКА И АВТОВЫБОР ГЕРОЯ ====================
+// профиль ученика и автовыбор персонажа по фио
 
 let modalHeroDraft = 'steve';
 let modalHeroManual = false;
@@ -1192,7 +1183,7 @@ function saveStudentProfile(e) {
       state.adaptiveLevel = 1;
       state.supportMode = false;
     }
-    // Пересобираем черновик текущей нерешённой карточки под новый режим сложности
+    // обновляем текущую карточку если поменяли класс
     const curRes = state.cardResults[state.currentCardId];
     if (!curRes || !curRes.answered || state.cardDraft.retrying) {
       state.cardDraft = { retrying: Boolean(state.cardDraft.retrying) };
@@ -1226,7 +1217,7 @@ function saveStudentProfile(e) {
   showToast(state.lang === 'en' ? 'Profile saved' : 'Профиль ученика сохранён', 'success');
 }
 
-// ==================== ДВИЖОК КИБЕР-КАРТОЧЕК (5 ТИПОВ ЗАДАНИЙ + АДАПТИВНАЯ СЛОЖНОСТЬ) ====================
+// логика карточек (5 типов заданий)
 
 function getCardById(id) {
   return CARDS.find(c => c.id === id) || CARDS[0];
@@ -1340,7 +1331,7 @@ function initCardDraftIfNeeded(card) {
   } else if (card.type === 'truefalse') {
     state.cardDraft.showHint = supportOn;
   } else if (card.type === 'sort') {
-    state.cardDraft.assignments = {}; // itemId -> 'safe' | 'private'
+    state.cardDraft.assignments = {}; // распределение элементов по корзинам
     state.cardDraft.lockedIds = [];
     if (supportOn && Array.isArray(card.items)) {
       const oneSafe = card.items.find(it => it.bucket === 'safe');
@@ -1354,9 +1345,9 @@ function initCardDraftIfNeeded(card) {
     }
   } else if (card.type === 'match') {
     state.cardDraft.selectedLeft = null;
-    state.cardDraft.pairs = {}; // leftId -> rightId
+    state.cardDraft.pairs = {}; // выбранные пары в сопоставлении
     state.cardDraft.lockedLeftId = null;
-    // Детерминированно перемешанный правый столбец
+    // перемешиваем правый столбец
     const rightIds = card.pairs.map(p => p.id);
     const shuffled = [...rightIds];
     if (shuffled.length > 1) {
@@ -1373,10 +1364,10 @@ function initCardDraftIfNeeded(card) {
       state.cardDraft.lockedLeftId = starter.id;
     }
   } else if (card.type === 'order') {
-    // Перемешанный порядок шагов (отличный от правильного)
+    // перемешиваем шаги чтобы не стояли сразу правильно
     const ids = card.steps.map(s => s.id);
     if (supportOn && ids.length >= 3) {
-      // В облегчённом режиме шаг №1 сразу зафиксирован на месте, а остальные 3 перемешаны!
+      // если включена помощь — первый шаг ставим сразу на место
       const firstStep = card.steps.find(s => s.correctPos === 0);
       const rest = card.steps.filter(s => s.id !== (firstStep ? firstStep.id : ids[0])).map(s => s.id);
       if (rest.length >= 2) {
@@ -1411,66 +1402,17 @@ function renderCurrentCard(animateEntrance = false) {
   const res = state.cardResults[card.id];
   const isEvaluated = Boolean(res && res.answered && !state.cardDraft.retrying);
 
-  // Верхняя строка статуса
+  // обновляем счетчик миссии и звезд
   document.getElementById('card-step-text').textContent = `${idx + 1} ${t('of_word')} ${CARDS.length}`;
-  const lvlText = t('levels')[state.adaptiveLevel] || t('levels')[1];
-  const adaptBadge = document.getElementById('adaptive-level-badge');
-  const adaptWrap = document.getElementById('adaptive-pill-wrap');
-  const supportApplied = !isEvaluated && Boolean(state.cardDraft.supportApplied);
-  if (adaptBadge) {
-    adaptBadge.textContent = state.supportMode
-      ? `${lvlText} • ${state.lang === 'en' ? 'Guided' : 'Облегчено'}`
-      : lvlText;
-    adaptBadge.className = state.supportMode ? 'font-extrabold text-[#15803d]' : 'font-extrabold text-cgy-accent';
-  }
-  if (adaptWrap) {
-    adaptWrap.className = state.supportMode
-      ? 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#ecfdf5] border-2 border-[#86efac] text-xs font-bold text-[#166534] transition'
-      : 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 border-2 border-[#d1d5db] text-xs font-bold text-cgy-muted transition';
-  }
   document.getElementById('cards-live-score').textContent = `${stats.correct} / ${stats.total}`;
 
-  // Наглядная плашка облегчённого режима (чтобы было сразу видно, ЧТО именно упростилось!)
-  const assistBar = document.getElementById('adaptive-assist-bar');
-  const assistText = document.getElementById('adaptive-assist-text');
-  if (assistBar && assistText) {
-    if (supportApplied) {
-      const isEn = state.lang === 'en';
-      let msg = '';
-      if (card.type === 'choice' && state.cardDraft.eliminatedOptId) {
-        msg = isEn
-          ? 'Guided mode active: 1 wrong option has been crossed out (50/50).'
-          : 'Облегчённый режим: 1 неверный вариант уже убран — осталось выбрать из двух.';
-      } else if (card.type === 'sort' && (state.cardDraft.lockedIds || []).length > 0) {
-        msg = isEn
-          ? `Guided mode active: ${state.cardDraft.lockedIds.length} example cards are already sorted for you.`
-          : `Облегчённый режим: ${state.cardDraft.lockedIds.length} карточки уже разложены по корзинам как пример.`;
-      } else if (card.type === 'match' && state.cardDraft.lockedLeftId) {
-        msg = isEn
-          ? 'Guided mode active: pair #1 is already connected as an example.'
-          : 'Облегчённый режим: первая пара уже соединена для примера — осталось соединить остальные.';
-      } else if (card.type === 'order' && state.cardDraft.lockedFirst) {
-        msg = isEn
-          ? 'Guided mode active: Step #1 is locked in the right spot — arrange the remaining steps.'
-          : 'Облегчённый режим: шаг №1 уже поставлен на верное место — расставь остальные.';
-      } else if (card.type === 'truefalse') {
-        const tip = card.mascotTip ? L(card.mascotTip) : '';
-        msg = isEn
-          ? `Guided mode active — detective hint unlocked: ${tip}`
-          : `Облегчённый режим — подсказка открыта сразу: ${tip}`;
-      }
-      if (msg) {
-        assistText.textContent = msg;
-        assistBar.classList.remove('hidden');
-      } else {
-        assistBar.classList.add('hidden');
-      }
-    } else {
-      assistBar.classList.add('hidden');
-    }
+  // для верно/неверно при подсказке выводим совет в облачко персонажа
+  const supportApplied = !isEvaluated && Boolean(state.cardDraft.supportApplied);
+  if (supportApplied && card.type === 'truefalse' && card.mascotTip) {
+    updateMascot('detective', L(card.mascotTip), false);
   }
 
-  // Теги карточки
+  // бейджи типа задания и темы
   const typeIcons = {
     choice: 'check-square',
     truefalse: 'scale',
@@ -1484,9 +1426,9 @@ function renderCurrentCard(animateEntrance = false) {
   `;
   document.getElementById('card-topic-pill').textContent = L(card.topicLabel);
   const lvl = card.level || 1;
-  document.getElementById('card-diff-pill').textContent = `${'★'.repeat(lvl)}${'☆'.repeat(Math.max(0, 3 - lvl))} ${t('levelShort')[lvl]}`;
+  document.getElementById('card-diff-pill').textContent = `${'★'.repeat(lvl)}${'☆'.repeat(Math.max(0, 3 - lvl))}`;
 
-  // Яркая игровая цветовая шапка карточки под каждую тему (никакой «белой бумаги»!)
+  // меняем цвет шапки карточки в зависимости от темы
   const topicThemes = {
     game:     { banner: 'from-[#dbeafe] via-[#e0f2fe] to-[#eff6ff] border-[#93c5fd]', stage: 'border-[#93c5fd]' },
     password: { banner: 'from-[#fef3c7] via-[#fef9c3] to-[#fffbeb] border-[#fcd34d]', stage: 'border-[#f59e0b]/70' },
@@ -1509,7 +1451,7 @@ function renderCurrentCard(animateEntrance = false) {
   document.getElementById('card-title').textContent = L(card.title);
   document.getElementById('card-prompt').textContent = L(card.prompt);
 
-  // Обновляем живого маскота Югорку под текущее состояние карточки
+  // меняем фразу и эмоцию персонажа
   if (isEvaluated) {
     const winList = t('yugorka_win');
     const oopsList = t('yugorka_oops');
@@ -1525,7 +1467,7 @@ function renderCurrentCard(animateEntrance = false) {
     updateMascot('idle', defaultMsg, false);
   }
 
-  // Обновляем серию (комбо)
+  // показываем плашку серии если 2+ верных подряд
   const streakPill = document.getElementById('streak-pill');
   const streakText = document.getElementById('streak-text');
   if (streakPill && streakText) {
@@ -1537,7 +1479,7 @@ function renderCurrentCard(animateEntrance = false) {
     }
   }
 
-  // Рендерим наглядный визуальный блок ситуации (мини-чат / браузер / индикатор пароля / алерт)
+  // рисуем сценку (чат, браузер, пароль или предупреждение)
   renderCardVisual(card);
 
   renderCardsStepper();
@@ -1547,7 +1489,7 @@ function renderCurrentCard(animateEntrance = false) {
   const body = document.getElementById('card-interactive-body');
   body.innerHTML = '';
 
-  // Рендерим механику в зависимости от типа карточки
+  // рендерим нужное задание по типу карточки
   if (card.type === 'choice') {
     renderChoiceTask(card, body, isEvaluated, res);
   } else if (card.type === 'truefalse') {
@@ -1560,7 +1502,7 @@ function renderCurrentCard(animateEntrance = false) {
     renderOrderTask(card, body, isEvaluated);
   }
 
-  // Обратная связь и кнопки действий
+  // настройка кнопок проверить / дальше / еще раз
   const fb = document.getElementById('card-feedback');
   const checkBtn = document.getElementById('btn-card-check');
   const retryBtn = document.getElementById('btn-card-retry');
@@ -1575,24 +1517,15 @@ function renderCurrentCard(animateEntrance = false) {
   if (nextLblEl) {
     if (!nextTarget) {
       nextLblEl.textContent = t('to_results');
+    } else if (nextTarget.reason === 'review') {
+      nextLblEl.textContent = state.lang === 'en' ? 'Retry missed card' : 'Закрепить задание';
     } else {
-      const nextNum = CARDS.findIndex(c => c.id === nextTarget.card.id) + 1;
-      const nextLvl = nextTarget.card.level || 1;
-      const starsStr = '★'.repeat(nextLvl) + '☆'.repeat(Math.max(0, 3 - nextLvl));
-      if (nextTarget.reason === 'review') {
-        nextLblEl.textContent = state.lang === 'en'
-          ? `Review #${nextNum} (Guided)`
-          : `Закрепить №${nextNum} (облегчённо)`;
-      } else {
-        nextLblEl.textContent = state.lang === 'en'
-          ? `Next: #${nextNum} (${starsStr})`
-          : `Дальше: №${nextNum} (${starsStr} ${t('levelShort')[nextLvl]})`;
-      }
+      nextLblEl.textContent = t('next_card');
     }
   }
 
   if (isEvaluated) {
-    showCardFeedbackUI(card, res.correct, res.adaptiveNote || '');
+    showCardFeedbackUI(card, res.correct);
     checkBtn.classList.add('hidden');
     retryBtn.classList.toggle('hidden', res.correct);
     nextBtn.classList.remove('hidden');
@@ -1600,7 +1533,7 @@ function renderCurrentCard(animateEntrance = false) {
     fb.classList.add('hidden');
     retryBtn.classList.add('hidden');
     nextBtn.classList.add('hidden');
-    // Для choice и truefalse проверка идёт сразу по клику; для sort/match/order — по кнопке «Проверить»
+    // в choice и truefalse проверка сразу по клику, в остальных по кнопке
     if (card.type === 'sort' || card.type === 'match' || card.type === 'order') {
       checkBtn.classList.remove('hidden');
       updateCheckBtnReadiness(card);
@@ -1609,7 +1542,7 @@ function renderCurrentCard(animateEntrance = false) {
     }
   }
 
-  // Баннер завершения всех карточек
+  // показываем баннер когда пройдены все 8 карточек
   const doneBanner = document.getElementById('cards-complete-banner');
   if (allDone) {
     doneBanner.classList.remove('hidden');
@@ -1628,14 +1561,14 @@ function renderCurrentCard(animateEntrance = false) {
   }
 }
 
-// ==================== МАСКОТ «ЮГОРКА», ОЗВУЧКА И ЛУПА ДЕТЕКТИВА ====================
+// персонаж стив/алекс, озвучка и поиск улик
 
 let isReadingAloud = false;
 
 function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
-  // Аутентичный пиксель-арт Кибер-Стив / Кибер-Алекс (в стиле Minecraft, crispEdges, 100% офлайн!)
-  // Крутые пиксельные тёмные очки с живым бликом за мышкой — всегда на герое!
-  // За собранные звёзды прокачивается броня: 4+ — алмазный щит, 6+ — алмазный шлем!
+  // рисуем пиксельного стива или алекс через svg
+  // темные очки на персонаже всегда
+  // за 4 звезды даем щит, за 6 звезд шлем
   const hasGlasses = true;
   const hasDiamondHelmet = stars >= 6;
   const hasShield = stars >= 4 || mood === 'happy';
@@ -1653,7 +1586,7 @@ function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
   const tunicMain = isAlex ? '#16a34a' : '#1e5aa8';
   const tunicDark = isAlex ? '#15803d' : '#164482';
 
-  // Глаза и эмоции героя (пиксельная сетка 24x24, масштаб x4 = 96x96)
+  // глаза и рот под разные эмоции
   let eyes = `
     <rect x="30" y="34" width="12" height="6" fill="#ffffff"/>
     <rect x="54" y="34" width="12" height="6" fill="#ffffff"/>
@@ -1694,7 +1627,7 @@ function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
         <rect x="38" y="48" width="20" height="4" fill="#c62828"/>
       </g>
     `;
-    // Пиксельные золотые звёздочки вокруг
+    // звездочки вокруг когда радуется
     extraProp = `
       <rect x="8" y="14" width="6" height="6" fill="#f59e0b"/>
       <rect x="10" y="10" width="2" height="14" fill="#fde047"/>
@@ -1716,14 +1649,14 @@ function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
         <rect x="43" y="46" width="10" height="6" fill="#5c331e"/>
       </g>
     `;
-    // Пиксельная капля удивления
+    // капелька когда ошибся
     extraProp = `
       <rect x="78" y="24" width="4" height="4" fill="#38bdf8"/>
       <rect x="76" y="28" width="8" height="8" fill="#38bdf8"/>
       <rect x="78" y="29" width="2" height="3" fill="#e0f2fe"/>
     `;
   } else if (mood === 'detective') {
-    // Пиксельная лупа детектива!
+    // лупа в руке
     extraProp = `
       <g>
         <rect x="66" y="54" width="16" height="16" fill="#e0f2fe" stroke="#1e5aa8" stroke-width="4"/>
@@ -1735,7 +1668,7 @@ function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
     `;
   }
 
-  // Брутальные пиксельные тёмные очки с живым бликом (блик сдвигается за мышкой!)
+  // пиксельные очки с бликом
   const glassesSvg = hasGlasses ? `
     <g>
       <rect x="27" y="32" width="18" height="10" fill="#0f172a"/>
@@ -1771,11 +1704,11 @@ function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
 
   return `
     <svg viewBox="0 0 96 96" class="w-full h-full select-none" shape-rendering="crispEdges" aria-hidden="true">
-      <!-- Мягкий игровой фон -->
+      <!-- фон -->
       <rect width="96" height="96" fill="#f0f7ff"/>
       <rect x="0" y="76" width="96" height="20" fill="#e2effd"/>
 
-      <!-- Тело героя (Стив / Алекс + 3D-тень справа) -->
+      <!-- тело персонажа -->
       <rect x="14" y="60" width="14" height="36" fill="${sleeveL}"/>
       <rect x="14" y="74" width="14" height="22" fill="${skinMain}"/>
       <rect x="68" y="60" width="14" height="36" fill="${sleeveR}"/>
@@ -1787,11 +1720,11 @@ function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
       <rect x="42" y="74" width="12" height="12" fill="#ffffff"/>
       <rect x="45" y="77" width="6" height="6" fill="${isAlex ? '#1e5aa8' : '#1e7e34'}"/>
 
-      <!-- 3D-тень головы справа (воксельный объём!) -->
+      <!-- тень головы -->
       <rect x="72" y="14" width="6" height="46" fill="${skinDark}"/>
       <rect x="72" y="14" width="6" height="14" fill="${hairDark}"/>
 
-      <!-- Голова героя (8x8 блоков) -->
+      <!-- голова -->
       <rect x="24" y="12" width="48" height="48" fill="${skinMain}"/>
       <rect x="24" y="48" width="6" height="12" fill="${skinShade}"/>
       <rect x="66" y="48" width="6" height="12" fill="${skinShade}"/>
@@ -1803,7 +1736,7 @@ function getYugorkaSvg(mood = 'idle', stars = 0, skinOverride = null) {
 
       ${eyes}
       ${mouth}
-      <!-- Анимация открытого рта и звуковых волн во время озвучки! -->
+      <!-- анимация рта при озвучке -->
       <g class="steve-mouth-talk" style="display:none">
         <rect x="36" y="45" width="24" height="8" fill="#4b2316"/>
         <rect x="40" y="45" width="16" height="2.5" fill="#ffffff"/>
@@ -1845,7 +1778,7 @@ function updateMascot(mood = 'idle', speechText = '', animate = true) {
   if (speechText) speech.textContent = String(speechText).replace(/\{HERO\}/g, heroLabel);
   renderHeaderHeroMini();
 
-  // Цвет рамки облачка под настроение
+  // цвет рамки облачка под эмоцию
   if (bubble) {
     bubble.classList.remove('border-[#cfe0f5]', 'border-[#86efac]', 'border-[#fca5a5]', 'border-[#f59e0b]');
     if (mood === 'happy') bubble.classList.add('border-[#86efac]');
@@ -1896,19 +1829,19 @@ function toggleSteveBubble() {
   SoundFX.playPick();
 }
 
-// Перетаскиваемый по всей странице Кибер-Стив (мышь + тач)
+// перетаскивание персонажа мышкой и пальцем
 function initDraggableSteve() {
   const host = document.getElementById('floating-steve');
   const handle = document.getElementById('steve-drag-handle');
   const bubble = document.getElementById('yugorka-bubble');
   if (!host || !handle) return;
 
-  // На мобильных экранах облачко свёрнуто по умолчанию — не перекрывает контент, открывается по клику на героя!
+  // на телефоне сначала сворачиваем облачко чтобы не закрывало экран
   if (bubble && window.innerWidth < 640) {
     bubble.classList.add('hidden');
   }
 
-  // При ресайзе окна возвращаем перетащенного героя в видимую область
+  // если окно сжали — возвращаем персонажа внутрь экрана
   window.addEventListener('resize', () => {
     if (host.style.left && host.style.top) {
       const maxL = Math.max(8, window.innerWidth - host.offsetWidth - 8);
@@ -1979,7 +1912,7 @@ function initDraggableSteve() {
   handle.addEventListener('pointerup', endDrag);
   handle.addEventListener('pointercancel', endDrag);
 
-  // Живой 3D-поворот Стива к курсору мышки + сдвиг блика на крутых очках (видно в любом настроении!)
+  // легкий поворот персонажа за курсором и блик на очках
   window.addEventListener('mousemove', (e) => {
     const avatar = document.getElementById('yugorka-avatar');
     const cardBox = handle.firstElementChild;
@@ -2053,7 +1986,7 @@ function setSteveTalking(active) {
   }, 135);
 }
 
-// Пиксельные иконки предметов для Майнкрафт-хотбара кибер-лута
+// иконки предметов для нижнего хотбара
 function getLootPixelSvg(icon) {
   const map = {
     shield: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="3" y="2" width="10" height="10" fill="#22d3ee"/><rect x="4" y="12" width="8" height="2" fill="#06b6d4"/><rect x="6" y="14" width="4" height="1" fill="#0891b2"/><rect x="5" y="4" width="6" height="6" fill="#1e5aa8"/><rect x="7" y="6" width="2" height="2" fill="#ffffff"/></svg>`,
@@ -2164,7 +2097,7 @@ function getHeroReactionAudioUrl(card, isCorrect) {
       : `audio/steve_win_${pick}_${audioLang}.mp3`;
   }
 
-  // При ошибке в русском режиме — персональный поддерживающий разбор именно этой карточки!
+  // если ошибка на русском — включаем озвучку разбора этой карточки
   if (audioLang === 'ru' && isDefaultCard) {
     return isAlex
       ? `audio/alex/fail_${card.id}_ru.mp3`
@@ -2219,7 +2152,7 @@ function toggleReadAloud() {
     else stopReadAloud();
   };
 
-  // Играем готовую естественную MP3-озвучку под активного героя (Стив или Алекс)!
+  // включаем mp3-озвучку для стива или алекс
   const isDefaultCard = !String(card.id).startsWith('custom_');
   if (isDefaultCard && SoundFX.playAudioFile) {
     const audioLang = state.lang === 'en' ? 'en' : 'ru';
@@ -2235,7 +2168,7 @@ function toggleReadAloud() {
   playTtsFallback();
 }
 
-// ==================== ПЕСОЧНИЦА «ВЗЛОМАЮТ ЛИ ТВОЙ ПАРОЛЬ?» ====================
+// модалка проверки пароля
 
 let passLabCelebrated = false;
 
@@ -2319,12 +2252,12 @@ function evaluatePasswordLab() {
     return;
   }
 
-  // Проверяем самые популярные словарные пароли
+  // проверка на частые простые пароли
   const lower = val.toLowerCase();
   const commonList = ['123456', '12345678', '123456789', 'qwerty', 'password', 'admin', 'minecraft', 'roblox', 'standoff', '000000', '111111', 'йцукен'];
   const isCommon = commonList.some(w => lower === w || (val.length <= 8 && lower.includes(w)));
 
-  // Расчёт энтропии и скорости перебора (10 млрд попыток/сек — современный GPU-кластер)
+  // примерный расчет времени перебора пароля
   let pool = 0;
   if (/[a-z]/.test(val)) pool += 26;
   if (/[A-Z]/.test(val)) pool += 26;
@@ -2393,7 +2326,7 @@ if (SoundFX.onVoicesReady) {
   SoundFX.onVoicesReady(updateReadAloudAvailability);
 }
 
-// Красивая глянцевая иконка Лупы детектива (кастомный SVG)
+// иконка лупы
 function getDetectiveMagnifierSvg(allFound = false) {
   return `
     <svg viewBox="0 0 44 44" class="w-9 h-9 shrink-0 detective-lens-bob" aria-hidden="true">
@@ -2403,12 +2336,12 @@ function getDetectiveMagnifierSvg(allFound = false) {
           <stop offset="100%" stop-color="${allFound ? '#6ee7b7' : '#93c5fd'}"/>
         </linearGradient>
       </defs>
-      <!-- Ручка лупы -->
+      <!-- ручка -->
       <line x1="27" y1="27" x2="38" y2="38" stroke="#7c4a21" stroke-width="6.5" stroke-linecap="round"/>
       <line x1="27" y1="27" x2="38" y2="38" stroke="#b45309" stroke-width="3.2" stroke-linecap="round"/>
-      <!-- Кольцо и стекло -->
+      <!-- стекло -->
       <circle cx="18" cy="18" r="13" fill="url(#lensGlass)" stroke="${allFound ? '#15803d' : '#1e5aa8'}" stroke-width="3.8"/>
-      <!-- Блик на стекле -->
+      <!-- блик -->
       <path d="M11 14 Q14 9 20 10" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.9"/>
       <circle cx="23" cy="13" r="1.4" fill="#ffffff" opacity="0.85"/>
       ${allFound
@@ -2419,7 +2352,7 @@ function getDetectiveMagnifierSvg(allFound = false) {
   `;
 }
 
-// Интерактивная «Лупа детектива»: подсвечиваем кликабельные улики красивыми бейджами-линзами
+// подсвечиваем кликабельные улики в тексте сценки
 function applyClueHotspots(text, card) {
   if (!card.clues || !card.clues.length) return text;
   const found = state.cardDraft.foundClues || [];
@@ -2469,7 +2402,7 @@ function inspectClue(clueId) {
   refreshIcons();
 }
 
-// Визуальный мини-макет ситуации внутри карточки + Красивая «Лупа детектива» и журнал улик!
+// отрисовка визуальной сценки и найденных улик
 function renderCardVisual(card) {
   const slot = document.getElementById('card-visual-slot');
   if (!slot) return;
@@ -2488,7 +2421,7 @@ function renderCardVisual(card) {
   const foundCount = foundClues.length;
   const allCluesFound = clues.length > 0 && foundCount === clues.length;
 
-  // Красивая верхняя панель «Лупы детектива» с точками прогресса
+  // верхняя полоска с точками прогресса по уликам
   const clueDots = clues.map(c => {
     const ok = foundIds.includes(c.id);
     return `<span class="w-3 h-3 rounded-full border-2 transition-all ${ok ? 'bg-[#16a34a] border-[#15803d] scale-110' : 'bg-[#fef3c7] border-[#f59e0b]'}"></span>`;
@@ -2511,7 +2444,7 @@ function renderCardVisual(card) {
     </div>
   ` : '';
 
-  // Журнал раскрытых улик (красивые плашки прямо под сценкой!)
+  // список уже найденных улик под сценкой
   const evidenceLog = foundClues.length > 0 ? `
     <div class="mt-3 space-y-2">
       ${foundClues.map(cl => `
@@ -2616,7 +2549,7 @@ function renderCardVisual(card) {
   `;
 }
 
-// --- Тип 1: Выбор ответа ---
+// 1. выбор ответа
 function renderChoiceTask(card, container, isEvaluated, res) {
   const wrap = document.createElement('div');
   wrap.className = 'flex flex-col gap-3';
@@ -2656,7 +2589,7 @@ function renderChoiceTask(card, container, isEvaluated, res) {
   container.appendChild(wrap);
 }
 
-// --- Тип 2: Верно / Неверно ---
+// 2. верно / неверно
 function renderTrueFalseTask(card, container, isEvaluated, res) {
   const wrap = document.createElement('div');
   wrap.className = 'grid grid-cols-2 gap-2.5 sm:gap-3.5';
@@ -2684,7 +2617,7 @@ function renderTrueFalseTask(card, container, isEvaluated, res) {
   container.appendChild(wrap);
 }
 
-// --- Тип 3: Сортировка с реальным Drag-and-Drop («Тянучка» + клик для телефонов) ---
+// 3. сортировка по корзинам (перетаскивание + клик)
 function renderSortTask(card, container, isEvaluated) {
   const assignments = state.cardDraft.assignments || {};
   const selectedChip = state.cardDraft.selectedSortItem || null;
@@ -2697,7 +2630,7 @@ function renderSortTask(card, container, isEvaluated) {
   hint.innerHTML = `<i data-lucide="hand" class="w-4 h-4 shrink-0"></i><span>${t('sort_drag_hint')}</span>`;
   wrap.appendChild(hint);
 
-  // 1. Зона нераспределённых карточек-фишек (Пул)
+  // зона откуда берем карточки
   const unassigned = card.items.filter(it => !assignments[it.id]);
   const poolWrap = document.createElement('div');
   poolWrap.className = 'rounded-xl bg-[#f8fafc] border-2 border-dashed border-cgy-border p-3.5 min-h-[76px] transition';
@@ -2730,7 +2663,7 @@ function renderSortTask(card, container, isEvaluated) {
   }
   wrap.appendChild(poolWrap);
 
-  // 2. Две большие корзины для перетаскивания (Drop Zones)
+  // две корзины куда кидаем
   const bucketsGrid = document.createElement('div');
   bucketsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4';
 
@@ -2751,7 +2684,7 @@ function renderSortTask(card, container, isEvaluated) {
         const itemId = e.dataTransfer.getData('text/plain');
         if (itemId) assignSortItem(itemId, b.key);
       };
-      // Клик по корзине, если выбрана фишка (суперудобно на телефоне!)
+      // клик по корзине если карточка выбрана (для телефона)
       zone.onclick = (e) => {
         if (e.target.closest('.draggable-chip')) return;
         if (state.cardDraft.selectedSortItem) {
@@ -2872,7 +2805,7 @@ function removeSortItem(itemId) {
   }
 }
 
-// --- Тип 4: Сопоставление с Drag-and-Drop + живые SVG-линии между парами ---
+// 4. сопоставление пар с линиями
 function renderMatchTask(card, container, isEvaluated) {
   const pairs = state.cardDraft.pairs || {};
   const selectedLeft = state.cardDraft.selectedLeft;
@@ -2888,12 +2821,12 @@ function renderMatchTask(card, container, isEvaluated) {
   statusLine.innerHTML = `<i data-lucide="git-compare-arrows" class="w-4 h-4 shrink-0"></i><span>${selectedLeft ? t('match_hint_right') : t('match_drag_hint')}</span>`;
   wrap.appendChild(statusLine);
 
-  // Относительный контейнер для наложения живых SVG-линий
+  // контейнер для линий
   const board = document.createElement('div');
   board.id = 'match-board';
   board.className = 'relative';
 
-  // SVG-слой для кривых линий связи (виден на десктопе md+)
+  // svg-слой для линий на пк
   const svgLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svgLayer.setAttribute('id', 'match-svg-lines');
   svgLayer.setAttribute('class', 'hidden md:block absolute inset-0 w-full h-full pointer-events-none z-10');
@@ -2902,7 +2835,7 @@ function renderMatchTask(card, container, isEvaluated) {
   const grid = document.createElement('div');
   grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 relative z-20';
 
-  // Левая колонка (Ситуации — на ПК перетаскивание + клик, на мобиле чёткий Шаг 1!)
+  // левая колонка с ситуациями
   const lockedLeftId = !isEvaluated ? state.cardDraft.lockedLeftId : null;
   const leftCol = document.createElement('div');
   leftCol.className = 'space-y-2.5 sm:space-y-3';
@@ -2955,7 +2888,7 @@ function renderMatchTask(card, container, isEvaluated) {
     leftCol.appendChild(btn);
   });
 
-  // Правая колонка (Реакции — на ПК принимают drag+клик, на мобиле чёткий Шаг 2 с подсветкой!)
+  // правая колонка с ответами
   const rightCol = document.createElement('div');
   rightCol.id = 'match-right-col';
   rightCol.className = `space-y-2.5 sm:space-y-3 ${(!isEvaluated && selectedLeft) ? 'md:p-0 p-2.5 rounded-2xl bg-[#eef5ff]/70 ring-2 ring-cgy-accent/35 md:bg-transparent md:ring-0' : ''}`;
@@ -3031,7 +2964,7 @@ function renderMatchTask(card, container, isEvaluated) {
   container.appendChild(wrap);
 }
 
-// Рисуем плавные кривые Безье между соединёнными парами
+// рисуем кривые линии между соединенными парами
 function drawMatchConnectorLines() {
   const board = document.getElementById('match-board');
   const svg = document.getElementById('match-svg-lines');
@@ -3061,7 +2994,7 @@ function drawMatchConnectorLines() {
     const x2 = rR.left - rect.left;
     const y2 = rR.top + rR.height / 2 - rect.top;
 
-    // Если колонки стоят друг под другом (мобилка) — линии не рисуем
+    // на узком экране колонки друг под другом, линии не нужны
     if (x2 <= x1 + 6) return;
 
     const idx = leftKeys.indexOf(leftId);
@@ -3079,7 +3012,7 @@ function drawMatchConnectorLines() {
     path.setAttribute('stroke-linecap', 'round');
     svg.appendChild(path);
 
-    // Аккуратные точки на концах линии
+    // точки на концах линий
     [[x1, y1], [x2, y2]].forEach(([cx, cy]) => {
       const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       dot.setAttribute('cx', cx);
@@ -3091,7 +3024,7 @@ function drawMatchConnectorLines() {
   });
 }
 
-// --- Тип 5: Порядок действий с Drag-and-Drop перетаскиванием + стрелки ---
+// 5. порядок действий (перетаскивание + стрелки)
 function renderOrderTask(card, container, isEvaluated) {
   const order = state.cardDraft.order || card.steps.map(s => s.id);
   const wrap = document.createElement('div');
@@ -3250,7 +3183,7 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
   const prev = state.cardResults[card.id];
   const isFirstAttempt = !prev || !prev.answered;
 
-  // Динамическая сложность + Облегчённый режим поддержки + Комбо-серия!
+  // обновляем серию и сложность после ответа
   if (isCorrect) {
     state.streak = (state.streak || 0) + 1;
     state.supportMode = false;
@@ -3280,35 +3213,11 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
     correct: isCorrect,
     firstTryCorrect: isFirstAttempt ? isCorrect : Boolean(prev.firstTryCorrect),
     wrongCount: (prev ? (prev.wrongCount || 0) : 0) + (isCorrect ? 0 : 1),
-    adaptiveNote: '',
     ...extra
   };
   state.cardDraft.retrying = false;
 
-  // Формируем ЧЕСТНУЮ заметку о том, что реально произойдёт дальше (никакого вранья на 8-й карточке!)
-  const nextTarget = getNextAdaptiveTarget();
-  const isEn = state.lang === 'en';
-  let adaptiveNote = '';
-  if (!nextTarget) {
-    adaptiveNote = isEn
-      ? 'All 8 missions completed! Open Analytics to download your Cyber-Hero Diploma.'
-      : 'Все 8 карточек решены! Можно переходить к аналитике и именному диплому.';
-  } else {
-    const nextNum = CARDS.findIndex(c => c.id === nextTarget.card.id) + 1;
-    const nextLvlName = t('levelShort')[nextTarget.card.level || 1];
-    if (isCorrect) {
-      adaptiveNote = isEn
-        ? `Adaptive level ${state.adaptiveLevel}/3 — next up: Mission #${nextNum} (${nextLvlName}).`
-        : `Уровень сложности ${state.adaptiveLevel}/3 — дальше откроется карточка №${nextNum} (${nextLvlName}).`;
-    } else {
-      adaptiveNote = isEn
-        ? `Guided mode activated (${state.adaptiveLevel}/3): retry or next mission (#${nextNum}) will include built-in help.`
-        : `Включён облегчённый режим (${state.adaptiveLevel}/3): при повторе или на карточке №${nextNum} часть задания будет подсказана (50/50, пример или шаг №1).`;
-    }
-  }
-  state.cardResults[card.id].adaptiveNote = adaptiveNote;
-
-  // Записываем точку в историю динамики прохождений при каждом завершении всех карточек
+  // сохраняем точку в историю когда пройдены все карточки
   const summary = getCardStatsSummary();
   if (summary.answered === summary.total) {
     recordSessionHistoryPoint(summary.pct);
@@ -3320,7 +3229,7 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
   updateAllProgressBadges();
   renderCurrentCard();
 
-  // Живая анимация и авто-озвучка героя на ответ ребёнка!
+  // реакция персонажа и озвучка
   const winList = t('yugorka_win');
   const oopsList = t('yugorka_oops');
   const msg = isCorrect
@@ -3342,7 +3251,7 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
 function recordSessionHistoryPoint(pct) {
   const nextNum = state.sessionHistory.length + 1;
   const label = state.lang === 'en' ? `Run #${nextNum}` : `Попытка ${nextNum}`;
-  // Избегаем дубля в одну секунду на одном и том же прохождении
+  // не пишем дубль если нажали подряд
   const last = state.sessionHistory[state.sessionHistory.length - 1];
   if (last && last.sessionTag === state.currentSessionTag) {
     last.pct = pct;
@@ -3353,12 +3262,11 @@ function recordSessionHistoryPoint(pct) {
   }
 }
 
-function showCardFeedbackUI(card, isCorrect, adaptiveNote) {
+function showCardFeedbackUI(card, isCorrect) {
   const fb = document.getElementById('card-feedback');
   const icon = document.getElementById('card-feedback-icon');
   const title = document.getElementById('card-feedback-title');
   const text = document.getElementById('card-feedback-text');
-  const adapt = document.getElementById('card-adaptive-note');
 
   fb.classList.remove('hidden');
   if (isCorrect) {
@@ -3374,8 +3282,6 @@ function showCardFeedbackUI(card, isCorrect, adaptiveNote) {
   }
 
   text.textContent = L(card.explanation);
-  adapt.textContent = adaptiveNote || '';
-  adapt.classList.toggle('hidden', !adaptiveNote);
 }
 
 function retryCurrentCard() {
@@ -3428,7 +3334,7 @@ function resetCardsSession() {
   showToast(state.lang === 'en' ? 'Cards restarted' : 'Кибер-карточки сброшены — можно пройти заново', 'info');
 }
 
-// ==================== ОБЩИЙ ПРОГРЕСС И БЕЙДЖИ ====================
+// подсчет общего прогресса для шапки
 
 function updateAllProgressBadges() {
   const cSum = getCardStatsSummary();
@@ -3449,7 +3355,7 @@ function updateAllProgressBadges() {
   if (pctEl) pctEl.textContent = `${pct}%`;
 }
 
-// ==================== СИМУЛЯТОР МЕССЕНДЖЕРА (ВКЛАДКА 2) ====================
+// симулятор чатов (вкладка 2)
 
 function getLocalizedScenario(baseSc) {
   if (!baseSc) return null;
@@ -3518,7 +3424,7 @@ function getLocalizedScenario(baseSc) {
   return sc;
 }
 
-// Преобразует сохранённое сообщение переписки на текущий выбранный язык (даже если чат уже был открыт!)
+// перевод уже открытых сообщений при переключении языка
 function resolveChatMessage(sc, msgObj) {
   if (!sc || !msgObj) return msgObj;
   const baseSc = SCENARIOS.find(s => s.id === sc.id);
@@ -3533,7 +3439,7 @@ function resolveChatMessage(sc, msgObj) {
     return msgObj;
   }
 
-  // Если у сообщения есть точные координаты шага (новые сообщения)
+  // если сохранены индексы шага
   if (msgObj.stepKey && sc.steps[msgObj.stepKey]) {
     const step = sc.steps[msgObj.stepKey];
     if (msgObj.sender === 'scammer' && typeof msgObj.msgIdx === 'number' && step.messages[msgObj.msgIdx]) {
@@ -3545,7 +3451,7 @@ function resolveChatMessage(sc, msgObj) {
     }
   }
 
-  // Фолбэк для старых сообщений из localStorage (сопоставляем по тексту в базовом русском сценарии)
+  // запасной поиск по тексту для старых сохранений
   if (baseSc) {
     for (const stepKey of Object.keys(baseSc.steps || {})) {
       const bStep = baseSc.steps[stepKey];
@@ -4040,7 +3946,7 @@ function scrollChatToBottom(smooth = true) {
   };
   requestAnimationFrame(() => {
     doScroll();
-    // Повтор после окончательного пересчёта высоты панели ответов / иконок
+    // еще раз скроллим вниз после отрисовки кнопок
     setTimeout(doScroll, 60);
   });
 }
@@ -4064,7 +3970,7 @@ function renderChatChoices(sc, choices) {
   });
   updateInlineSmsHint();
   refreshIcons();
-  // Автопрокрутка ленты сообщений вниз после того как панель ответов раскрылась!
+  // прокрутка чата в самый низ
   scrollChatToBottom(true);
 }
 
@@ -4265,7 +4171,7 @@ function restartCurrentScenario() {
   playStep(sc, 'start');
 }
 
-// ==================== SMS, ПРОФИЛЬ КОНТАКТА И ЗВОНОК ====================
+// смс, профиль контакта и звонок
 
 function deliverIncomingSms(scenarioId, smsData) {
   if (!smsData) return;
@@ -4324,7 +4230,7 @@ function openSmsModal() {
     list.innerHTML = `<div class="py-10 text-center text-sm text-cgy-muted">${t('chat_no_sms')}</div>`;
   } else {
     state.smsInbox.forEach((sms, idx) => {
-      // Подставляем локализованный текст SMS из текущего языка!
+      // берем текст смс на текущем языке
       let smsView = sms;
       const sc = sms.scenarioId ? getScenarioById(sms.scenarioId) : null;
       if (sc && sc.steps) {
@@ -4423,7 +4329,7 @@ function closeCallModal() {
   document.getElementById('call-modal').classList.add('hidden');
 }
 
-// ==================== АНАЛИТИКА С ГРАФИКАМИ, АЧИВКИ И СЕРТИФИКАТ ====================
+// аналитика, графики, ачивки и сертификат
 
 function computeAchievements() {
   const cSum = getCardStatsSummary();
@@ -4534,7 +4440,7 @@ function renderResultsDashboard() {
       : (state.lang === 'kca' ? `Серия: ${state.streak || 0}` : `Серия побед: ${state.streak || 0}`);
   }
 
-  // Рендерим ачивки
+  // вывод карточек ачивок
   const achGrid = document.getElementById('achievements-grid');
   const achs = computeAchievements();
   achGrid.innerHTML = achs.map(a => `
@@ -4564,7 +4470,7 @@ function renderResultsDashboard() {
   refreshIcons();
 }
 
-// График 1: Столбчатая диаграмма точности по типам заданий (Canvas)
+// первый график: столбцы по типам заданий
 function drawTaskTypesChart() {
   const canvas = document.getElementById('chart-task-types');
   if (!canvas) return;
@@ -4577,7 +4483,7 @@ function drawTaskTypesChart() {
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
 
-  // Горизонтальная сетка 0 / 50 / 100%
+  // сетка 0, 50, 100%
   ctx.font = '11px -apple-system, Segoe UI, Arial, sans-serif';
   [0, 50, 100].forEach(val => {
     const y = padT + chartH - (val / 100) * chartH;
@@ -4608,30 +4514,30 @@ function drawTaskTypesChart() {
     const bh = Math.max(answered > 0 ? 6 : 4, (pct / 100) * chartH);
     const by = padT + chartH - bh;
 
-    // Фон-трек столбца
+    // фон столбца
     ctx.fillStyle = '#f1f5f9';
     roundRect(ctx, bx, padT, barW, chartH, 6);
     ctx.fill();
 
-    // Активный столбец
+    // сам столбец
     ctx.fillStyle = answered === 0 ? '#cbd5e1' : (pct >= 80 ? '#1e7e34' : (pct >= 50 ? '#1e5aa8' : '#c62828'));
     roundRect(ctx, bx, by, barW, bh, 6);
     ctx.fill();
 
-    // Значение сверху
+    // процент сверху
     ctx.fillStyle = '#1f2937';
     ctx.font = 'bold 12px -apple-system, Segoe UI, Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(answered === 0 ? '—' : `${pct}%`, cx, by - 6);
 
-    // Подпись типа снизу
+    // подпись снизу
     ctx.fillStyle = '#475569';
     ctx.font = '11.5px -apple-system, Segoe UI, Arial, sans-serif';
     ctx.fillText(t('typesShort')[tp], cx, H - 18);
   });
 }
 
-// График 2: Линейный график динамики прохождений (Canvas)
+// второй график: линия по попыткам
 function drawDynamicsChart() {
   const canvas = document.getElementById('chart-dynamics');
   if (!canvas) return;
@@ -4641,14 +4547,14 @@ function drawDynamicsChart() {
 
   const cSum = getCardStatsSummary();
   const points = [...state.sessionHistory];
-  // Всегда показываем текущую точку в реальном времени
+  // добавляем текущую попытку
   if (points.length === 0 || cSum.answered < cSum.total) {
     points.push({
       label: state.lang === 'en' ? 'Current' : (state.lang === 'kca' ? 'Ин' : 'Сейчас'),
       pct: cSum.answered > 0 ? Math.round((cSum.correct / cSum.answered) * 100) : 0
     });
   }
-  // Чтобы линия наглядно рисовалась даже на первой попытке — добавим стартовую точку 0%
+  // добавляем стартовую точку 0% чтобы линия рисовалась сразу
   const series = points.length === 1
     ? [{ label: state.lang === 'en' ? 'Start' : (state.lang === 'kca' ? 'Оӆӑӊ' : 'Старт'), pct: 0 }, points[0]]
     : points;
@@ -4656,7 +4562,7 @@ function drawDynamicsChart() {
   const padL = 48, padR = 24, padT = 30, padB = 42;
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
-  // Внутренний отступ по бокам внутри сетки, чтобы «Попытка 2» справа и «88%» слева никогда не обрезались и не наезжали на ось Y
+  // отступы по бокам чтобы подписи не обрезались
   const innerPadX = 42;
   const plotW = Math.max(40, chartW - innerPadX * 2);
 
@@ -4682,7 +4588,7 @@ function drawDynamicsChart() {
     pct: pt.pct
   }));
 
-  // Мягкая заливка под графиком
+  // заливка под линией
   ctx.beginPath();
   ctx.moveTo(coords[0].x, padT + chartH);
   coords.forEach(c => ctx.lineTo(c.x, c.y));
@@ -4691,14 +4597,14 @@ function drawDynamicsChart() {
   ctx.fillStyle = 'rgba(30, 90, 168, 0.10)';
   ctx.fill();
 
-  // Основная линия
+  // сама линия
   ctx.beginPath();
   coords.forEach((c, i) => (i === 0 ? ctx.moveTo(c.x, c.y) : ctx.lineTo(c.x, c.y)));
   ctx.strokeStyle = '#1e5aa8';
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // Точки и подписи
+  // точки и проценты
   coords.forEach(c => {
     ctx.beginPath();
     ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
@@ -4719,7 +4625,7 @@ function drawDynamicsChart() {
   });
 }
 
-// ==================== ВАЛИДАЦИЯ ФИО И СКАЧИВАНИЕ PNG-СЕРТИФИКАТА В СТИЛЕ ЦГЮ ====================
+// проверка фио и генерация png-сертификата на canvas
 
 function validateFio(raw) {
   const cleaned = raw.trim().replace(/\s+/g, ' ');
@@ -4784,7 +4690,7 @@ function updateCertFormUI() {
   }
 }
 
-// Вспомогательная отрисовка звёздочки на Canvas
+// рисуем звездочку на canvas
 function drawCanvasStar(ctx, cx, cy, outerR, innerR, fillColor, strokeColor) {
   ctx.beginPath();
   for (let i = 0; i < 10; i++) {
@@ -4805,7 +4711,7 @@ function drawCanvasStar(ctx, cx, cy, outerR, innerR, fillColor, strokeColor) {
   }
 }
 
-// Рисуем пиксельного героя (Стива или Алекс) прямо на игровом дипломе!
+// рисуем стива или алекс на дипломе
 function drawCertSteve(ctx, ox, oy, scale, stars) {
   const isAlex = state.heroSkin === 'alex';
   const px = (x, y, w, h, color) => {
@@ -4813,7 +4719,7 @@ function drawCertSteve(ctx, ox, oy, scale, stars) {
     ctx.fillRect(ox + x * scale, oy + y * scale, w * scale, h * scale);
   };
 
-  // Карточка-пьедестал под героем
+  // рамка под персонажем
   ctx.fillStyle = isAlex ? '#ecfdf5' : '#e6f2ff';
   ctx.strokeStyle = isAlex ? '#6ee7b7' : '#93c5fd';
   ctx.lineWidth = 3;
@@ -4828,7 +4734,7 @@ function drawCertSteve(ctx, ox, oy, scale, stars) {
   const hairL = isAlex ? '#ea853a' : '#4a321b';
   const hairD = isAlex ? '#b55017' : '#2f1f10';
 
-  // Тело и руки
+  // тело и руки
   px(14, 60, 14, 36, isAlex ? '#4ade80' : '#00a8a8');
   px(14, 74, 14, 22, skinM);
   px(68, 60, 14, 36, isAlex ? '#22c55e' : '#008c8c');
@@ -4840,10 +4746,10 @@ function drawCertSteve(ctx, ox, oy, scale, stars) {
   px(42, 74, 12, 12, '#ffffff');
   px(45, 77, 6, 6, isAlex ? '#1e5aa8' : '#1e7e34');
 
-  // 3D тень головы
+  // тень головы
   px(72, 14, 6, 46, skinD);
   px(72, 14, 6, 14, hairD);
-  // Голова + волосы
+  // голова и волосы
   px(24, 12, 48, 48, skinM);
   px(24, 48, 6, 12, skinS);
   px(66, 48, 6, 12, skinS);
@@ -4856,7 +4762,7 @@ function drawCertSteve(ctx, ox, oy, scale, stars) {
     px(66, 66, 6, 8, hairM);
   }
 
-  // Радостные глаза и улыбка
+  // глаза и улыбка
   px(30, 33, 12, 4, '#2f1f10');
   px(32, 31, 8, 3, '#2f1f10');
   px(54, 33, 12, 4, '#2f1f10');
@@ -4865,7 +4771,7 @@ function drawCertSteve(ctx, ox, oy, scale, stars) {
   px(36, 44, 24, 4, '#ffffff');
   px(38, 48, 20, 4, '#c62828');
 
-  // Фирменные тёмные пиксельные очки с синим бликом
+  // очки с бликом
   px(27, 32, 18, 10, '#0f172a');
   px(45, 34, 6, 3, '#0f172a');
   px(51, 32, 18, 10, '#0f172a');
@@ -4873,7 +4779,7 @@ function drawCertSteve(ctx, ox, oy, scale, stars) {
   px(33, 37, 3, 2, '#93c5fd');
   px(53, 34, 4, 3, '#38bdf8');
   px(57, 37, 3, 2, '#93c5fd');
-  // Алмазный шлем при 6+ звёздах
+  // шлем если набрано 6+ звезд
   if (stars >= 6) {
     px(22, 8, 52, 14, '#22d3ee');
     px(22, 8, 52, 4, '#67e8f9');
@@ -4881,7 +4787,7 @@ function drawCertSteve(ctx, ox, oy, scale, stars) {
     px(66, 22, 8, 12, '#06b6d4');
     px(44, 22, 8, 10, '#06b6d4');
   }
-  // Алмазный щит в руке
+  // щит в руке
   px(6, 56, 20, 26, '#1e5aa8');
   px(9, 59, 14, 20, '#22d3ee');
   px(12, 63, 8, 12, '#ffffff');
@@ -4909,7 +4815,7 @@ function downloadCertificatePNG() {
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  // 1. Светлый игровой фон дневного неба Югры (как на сайте!)
+  // 1. фон диплома с небом
   const sky = ctx.createLinearGradient(0, 0, 0, H);
   sky.addColorStop(0, '#aad4ff');
   sky.addColorStop(0.55, '#dceeff');
@@ -4917,7 +4823,7 @@ function downloadCertificatePNG() {
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, W, H);
 
-  // Пиксельное солнышко и воксельные облачка по углам
+  // солнце и облака
   ctx.fillStyle = 'rgba(253, 224, 71, 0.35)';
   ctx.fillRect(42, 34, 76, 76);
   ctx.fillStyle = '#fde047';
@@ -4932,7 +4838,7 @@ function downloadCertificatePNG() {
   drawCloud(1080, 36, 150);
   drawCloud(1230, 88, 110);
 
-  // Кубические зелёные холмы и ёлочки Югры у самого низа
+  // холмы и елки снизу
   for (let x = 0; x < W; x += 70) {
     const hh = 56 + Math.round(Math.sin(x * 0.01) * 18);
     ctx.fillStyle = '#9fe2bf';
@@ -4951,7 +4857,7 @@ function downloadCertificatePNG() {
   drawMiniTree(W - 60, H - 16);
   drawMiniTree(W - 126, H - 12);
 
-  // 2. Главная игровая карточка диплома (тёплый белый + объёмная тень + сине-золотая рамка)
+  // 2. основная карточка диплома с рамкой
   ctx.fillStyle = 'rgba(30, 90, 168, 0.16)';
   roundRect(ctx, 74, 78, W - 148, H - 144, 34);
   ctx.fill();
@@ -4963,7 +4869,7 @@ function downloadCertificatePNG() {
   ctx.lineWidth = 6;
   ctx.stroke();
 
-  // Внутренняя пунктирная золотая рамка приключения
+  // внутренняя пунктирная рамка
   ctx.save();
   ctx.setLineDash([12, 8]);
   ctx.strokeStyle = '#f59e0b';
@@ -4972,7 +4878,7 @@ function downloadCertificatePNG() {
   ctx.stroke();
   ctx.restore();
 
-  // 4 цветных пиксельных самоцвета по углам диплома
+  // квадратики по углам
   const drawGem = (gx, gy, c1, c2) => {
     ctx.fillStyle = c1; ctx.fillRect(gx, gy, 24, 24);
     ctx.fillStyle = c2; ctx.fillRect(gx + 5, gy + 5, 10, 10);
@@ -4982,7 +4888,7 @@ function downloadCertificatePNG() {
   drawGem(98, H - 132, '#f59e0b', '#fef08a');
   drawGem(W - 122, H - 132, '#60a5fa', '#dbeafe');
 
-  // 3. Верхняя официальная лента-баннер «Цифровой гражданин Югры»
+  // 3. верхняя полоска с названием портала
   const ribGrad = ctx.createLinearGradient(250, 0, W - 250, 0);
   ribGrad.addColorStop(0, '#1e5aa8');
   ribGrad.addColorStop(0.5, '#2563eb');
@@ -5002,16 +4908,16 @@ function downloadCertificatePNG() {
     : (isKca ? 'ЮГРА ЦИФРОВОЙ ХОЯТ  •  КИБЕР-КАРТОЧКАТ' : 'ЦИФРОВОЙ ГРАЖДАНИН ЮГРЫ  •  КИБЕР-КАРТОЧКИ ЮГРЫ');
   ctx.fillText(portalBannerText, W / 2, 134);
 
-  // 4. Заголовок «ДИПЛОМ КИБЕРГЕРОЯ»
+  // 4. заголовок диплома
   ctx.fillStyle = '#1e5aa8';
   ctx.font = '900 54px Rubik, Nunito, Segoe UI, Arial, sans-serif';
   const mainTitle = isEn ? 'CYBER-HERO DIPLOMA' : (isKca ? 'КИБЕРГЕРОЙ ДИПЛОМ' : 'ДИПЛОМ КИБЕРГЕРОЯ');
   ctx.fillText(mainTitle, W / 2, 224);
 
-  // 5. Левая колонка: Пиксельный Кибер-Стив (ровно по центру без лишних табличек)
+  // 5. слева рисуем персонажа
   drawCertSteve(ctx, 148, 300, 1.95, cSum.correct);
 
-  // 6. Правая основная зона: Вручается + Имя героя + Класс + Звёзды!
+  // 6. справа имя, класс и звезды
   const rightCenterX = 835;
   ctx.fillStyle = '#5b6778';
   ctx.font = '700 22px Nunito, Segoe UI, Arial, sans-serif';
@@ -5020,7 +4926,7 @@ function downloadCertificatePNG() {
     rightCenterX, 290
   );
 
-  // Красивая именная табличка под ФИО
+  // подложка под фио
   ctx.fillStyle = '#eef5ff';
   ctx.strokeStyle = '#93c5fd';
   ctx.lineWidth = 3;
@@ -5033,7 +4939,7 @@ function downloadCertificatePNG() {
   ctx.font = `800 ${nameFontSize}px Rubik, Nunito, Segoe UI, Arial, sans-serif`;
   ctx.fillText(userName, rightCenterX, 366);
 
-  // Плашка класса + 8 золотых звёзд миссий
+  // плашка класса и звезды
   ctx.fillStyle = '#fef3c7';
   ctx.strokeStyle = '#f59e0b';
   ctx.lineWidth = 2;
@@ -5044,7 +4950,7 @@ function downloadCertificatePNG() {
   ctx.font = '800 18px Nunito, Arial, sans-serif';
   ctx.fillText(`${t('grade_word')}: ${state.profile.gradeClass}`, 497, 438);
 
-  // 8 звёзд (закрашенные золотые за верные карточки!)
+  // 8 звезд за карточки
   for (let s = 0; s < Math.min(8, cSum.total); s++) {
     const filled = s < cSum.correct;
     drawCanvasStar(
@@ -5058,7 +4964,7 @@ function downloadCertificatePNG() {
     );
   }
 
-  // 7. Три яркие цветные игровые карточки статистики
+  // 7. три блока со статистикой
   const statCards = [
     {
       label: isEn ? 'CYBER-CARDS' : (isKca ? 'КАРТОЧКАТ' : 'КИБЕР-КАРТОЧКИ'),
@@ -5096,7 +5002,7 @@ function downloadCertificatePNG() {
     ctx.fillText(sc.val, sx + 132, sy + 72);
   });
 
-  // 8. Полоса собранных трофеев (реальные пиксельные иконки предметов, а не просто квадратики!)
+  // 8. полоска с иконками собранного лута
   ctx.fillStyle = '#e8f1fc';
   ctx.strokeStyle = '#93c5fd';
   ctx.lineWidth = 2.5;
@@ -5112,7 +5018,7 @@ function downloadCertificatePNG() {
     160, 648
   );
 
-  // Рисуем узнаваемую пиксельную иконку трофея в слоте (сетка 16x16, масштаб 2.4)
+  // отрисовка пиксельной иконки предмета в слоте
   const drawMiniLoot = (icon, ox, oy) => {
     const p = (x, y, w, h, c) => {
       ctx.fillStyle = c;
@@ -5160,7 +5066,7 @@ function downloadCertificatePNG() {
     }
   });
 
-  // 9. Аккуратная золотая печать-значок справа внизу (весь текст строго внутри круга!)
+  // 9. печать справа внизу
   ctx.save();
   ctx.translate(1152, 676);
   ctx.rotate(-0.12);
@@ -5187,7 +5093,7 @@ function downloadCertificatePNG() {
   ctx.fillText(isEn ? 'YUGRA 2026' : 'ЮГРА • 2026', 0, 43);
   ctx.restore();
 
-  // 10. Аккуратная дата и номер в самом низу диплома
+  // 10. дата и номер снизу
   const dateStr = new Date().toLocaleDateString(isEn ? 'en-US' : 'ru-RU');
   ctx.textAlign = 'center';
   ctx.fillStyle = '#64748b';
@@ -5225,7 +5131,7 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-// ==================== УТИЛИТЫ ====================
+// вспомогательные функции
 
 function toggleSound() {
   state.soundOn = !state.soundOn;
@@ -5308,7 +5214,7 @@ function showToast(text, type = 'info', duration = 2600) {
 }
 
 
-// ==================== ВИЗУАЛЬНЫЕ ЭФФЕКТЫ (КОНФЕТТИ, +XP, УВЕДОМЛЕНИЯ ОБ АЧИВКАХ) ====================
+// конфетти и всплывающие плашки достижений
 
 function checkNewlyUnlockedAchievements() {
   const achs = computeAchievements();
@@ -5326,7 +5232,7 @@ function checkNewlyUnlockedAchievements() {
   saveState();
 }
 
-// Пиксельная плашка в стиле Minecraft Advancement (правый верхний угол, без центрового +XP)
+// плашка достижения справа сверху
 function showMcAdvancement(title, subtitle = '', iconName = 'trophy', tone = 'green') {
   const layer = document.getElementById('fx-xp-layer');
   if (!layer) return;
@@ -5338,7 +5244,7 @@ function showMcAdvancement(title, subtitle = '', iconName = 'trophy', tone = 'gr
   };
   const pal = palettes[tone] || palettes.green;
 
-  // Не копим больше 2 плашек одновременно
+  // максимум 2 плашки одновременно
   while (layer.children.length >= 2) {
     layer.firstElementChild.remove();
   }
@@ -5398,7 +5304,7 @@ function burstConfetti(intensity = 'small') {
     pieces.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.24; // gravity
+      p.vy += 0.24; // гравитация частиц
       p.vx *= 0.985;
       p.rot += p.vrot;
       if (frame > maxFrames * 0.65) {
@@ -5423,7 +5329,7 @@ function burstConfetti(intensity = 'small') {
   draw();
 }
 
-// ==================== БЛИЦ-АТАКА 60 СЕКУНД («ОТБЕЙ СКАМЕРОВ!») ====================
+// блиц-режим на 60 секунд
 
 const BLITZ_POOL = [
   { safe: false, color: '#c97b2b', av: 'AP', sender: 'Admin_Pro99', tag: { ru: 'Игровой чат', en: 'Game Chat', kca: 'Юнт чат' }, text: { ru: 'Дарова! Выдаю бесплатную админку — скинь логин и пароль на 2 минуты!', en: 'Hey! Free admin rights — send your login and password for 2 mins!', kca: 'Вух ӆыпи админка мӑӆум — логин па пароль китэ!' }, why: { ru: 'Админ никогда не просит пароль!', en: 'Admins never ask for passwords!', kca: 'Админ пароль ӑн вохӆ!' } },
@@ -5616,14 +5522,14 @@ function finishBlitzGame(outOfHearts) {
   refreshIcons();
 }
 
-// Поддержка стрелок клавиатуры в Блице (← Безопасно / → В БАН!)
+// управление стрелками клавиатуры в блице
 document.addEventListener('keydown', (e) => {
   if (state.activeTab !== 'blitz' || !blitzState.running) return;
   if (e.key === 'ArrowLeft') { e.preventDefault(); answerBlitz(true); }
   if (e.key === 'ArrowRight') { e.preventDefault(); answerBlitz(false); }
 });
 
-// ==================== ИНТЕРАКТИВНЫЙ МАЙНКРАФТ-ФОН ЮГРЫ (ЖИВОЕ НЕБО, ОБЛАКА, ТАЙГА И КЛИКАБЕЛЬНЫЕ БЛОКИ) ====================
+// пиксельный фон с облаками, елками и мельницей
 
 function initVoxelBackground() {
   const canvas = document.getElementById('bg-voxel-world');
@@ -5645,7 +5551,7 @@ function initVoxelBackground() {
   resize();
   window.addEventListener('resize', resize);
 
-  // Облака в стиле 3D-вокселей
+  // облака
   const clouds = Array.from({ length: 7 }, (_, i) => ({
     x: (i / 7) * (W + 240) - 120,
     y: 68 + (i % 3) * 58 + Math.random() * 24,
@@ -5655,7 +5561,7 @@ function initVoxelBackground() {
     depth: 0.4 + (i % 3) * 0.25
   }));
 
-  // Палитра кликабельных майнкрафт-блоков (трава, алмаз, изумруд, золото, щит Югры)
+  // цвета блоков на фоне
   const BLOCK_TYPES = [
     { name: 'diamond', top: '#67e8f9', front: '#22d3ee', side: '#0891b2', speck: '#ecfeff' },
     { name: 'emerald', top: '#86efac', front: '#22c55e', side: '#15803d', speck: '#f0fdf4' },
@@ -5664,7 +5570,7 @@ function initVoxelBackground() {
     { name: 'yugra',   top: '#60a5fa', front: '#1e5aa8', side: '#14407a', speck: '#dbeafe' }
   ];
 
-  // Летающие интерактивные блоки по краям экрана (просто приятный интерактив без баллов и лагов!)
+  // плавающие блоки по краям экрана
   function resetFloatingBlock(b, sideHint = null) {
     const type = BLOCK_TYPES[Math.floor(Math.random() * BLOCK_TYPES.length)];
     const isLeft = sideHint === 'left' ? true : (sideHint === 'right' ? false : Math.random() < 0.5);
@@ -5690,13 +5596,13 @@ function initVoxelBackground() {
   function drawVoxelCube(cx, cy, s, type, scale = 1) {
     const sz = s * scale;
     const half = sz / 2;
-    const d = sz * 0.28; // глубина 3D-грани
+    const d = sz * 0.28; // глубина боковой грани
 
-    // Мягкая тень под блоком
+    // тень под блоком
     ctx.fillStyle = 'rgba(30, 90, 168, 0.12)';
     ctx.fillRect(cx - half + 3, cy + half + 6, sz, 6);
 
-    // Верхняя грань (изометрия)
+    // верхняя грань
     ctx.fillStyle = type.top;
     ctx.beginPath();
     ctx.moveTo(cx - half, cy - half);
@@ -5706,7 +5612,7 @@ function initVoxelBackground() {
     ctx.closePath();
     ctx.fill();
 
-    // Правая 3D-грань
+    // правая грань
     ctx.fillStyle = type.side;
     ctx.beginPath();
     ctx.moveTo(cx + half, cy - half);
@@ -5716,11 +5622,11 @@ function initVoxelBackground() {
     ctx.closePath();
     ctx.fill();
 
-    // Передняя грань
+    // передняя грань
     ctx.fillStyle = type.front;
     ctx.fillRect(cx - half, cy - half, sz, sz);
 
-    // Пиксельный узор блока (трава сверху или блеск руды)
+    // текстура сверху или пиксели руды
     if (type.isGrass) {
       ctx.fillStyle = type.top;
       ctx.fillRect(cx - half, cy - half, sz, sz * 0.32);
@@ -5733,34 +5639,34 @@ function initVoxelBackground() {
       ctx.fillRect(cx - half + sz * 0.62, cy - half + sz * 0.22, sz * 0.14, sz * 0.14);
     }
 
-    // Тонкая пиксельная обводка
+    // обводка
     ctx.strokeStyle = 'rgba(255,255,255,0.45)';
     ctx.lineWidth = 1.5;
     ctx.strokeRect(cx - half + 0.75, cy - half + 0.75, sz - 1.5, sz - 1.5);
   }
 
-  // Пиксельная ветряная мельница на холме (крутится сама + ускоряется при клике!)
+  // ветряная мельница на холме
   let millAngle = 0;
   let millSpeed = 0.014;
 
   function drawVoxelWindmill(mx, baseY, scale = 1) {
     const u = 8 * scale;
-    // Башня мельницы (дерево + камень)
+    // башня мельницы
     ctx.fillStyle = 'rgba(148, 163, 184, 0.55)';
     ctx.fillRect(mx - u * 1.6, baseY - u * 2.2, u * 3.2, u * 2.2);
     ctx.fillStyle = 'rgba(217, 179, 130, 0.68)';
     ctx.fillRect(mx - u * 1.3, baseY - u * 6.0, u * 2.6, u * 3.8);
     ctx.fillStyle = 'rgba(180, 123, 78, 0.55)';
     ctx.fillRect(mx + u * 0.7, baseY - u * 6.0, u * 0.6, u * 3.8);
-    // Крыша синяя (в цвет Югры)
+    // крыша
     ctx.fillStyle = 'rgba(30, 90, 168, 0.62)';
     ctx.fillRect(mx - u * 1.6, baseY - u * 7.0, u * 3.2, u * 1.1);
     ctx.fillRect(mx - u * 0.9, baseY - u * 7.9, u * 1.8, u * 1.0);
-    // Окошко
+    // окно
     ctx.fillStyle = 'rgba(254, 240, 138, 0.85)';
     ctx.fillRect(mx - u * 0.4, baseY - u * 4.2, u * 0.8, u * 1.0);
 
-    // Вращающиеся 4 лопасти
+    // лопасти
     const hubX = mx;
     const hubY = baseY - u * 6.0;
     ctx.save();
@@ -5768,17 +5674,17 @@ function initVoxelBackground() {
     ctx.rotate(millAngle);
     for (let k = 0; k < 4; k++) {
       ctx.rotate(Math.PI / 2);
-      // Деревянная балка
+      // балка лопасти
       ctx.fillStyle = 'rgba(120, 74, 34, 0.72)';
       ctx.fillRect(-u * 0.18, 0, u * 0.36, u * 4.4);
-      // Парус лопасти (светлый пиксельный)
+      // парус лопасти
       ctx.fillStyle = 'rgba(255, 255, 255, 0.84)';
       ctx.fillRect(u * 0.18, u * 0.9, u * 1.25, u * 3.3);
       ctx.strokeStyle = 'rgba(30, 90, 168, 0.32)';
       ctx.lineWidth = 1.2;
       ctx.strokeRect(u * 0.18, u * 0.9, u * 1.25, u * 3.3);
     }
-    // Центральная ось
+    // центр
     ctx.fillStyle = '#1e5aa8';
     ctx.fillRect(-u * 0.45, -u * 0.45, u * 0.9, u * 0.9);
     ctx.restore();
@@ -5786,10 +5692,10 @@ function initVoxelBackground() {
 
   function drawVoxelTree(x, baseY, scale = 1) {
     const u = 10 * scale;
-    // Ствол
+    // ствол елки
     ctx.fillStyle = 'rgba(139, 90, 43, 0.38)';
     ctx.fillRect(x - u * 0.5, baseY - u * 2.2, u, u * 2.2);
-    // Кубическая крона югорской ели
+    // ветки елки
     ctx.fillStyle = 'rgba(30, 126, 52, 0.26)';
     ctx.fillRect(x - u * 2.1, baseY - u * 3.6, u * 4.2, u * 1.6);
     ctx.fillStyle = 'rgba(34, 158, 70, 0.28)';
@@ -5803,7 +5709,7 @@ function initVoxelBackground() {
     mouseY = e.clientY / Math.max(1, H);
   }, { passive: true });
 
-  // Интерактив фона без лишних блёсток: клик по мельнице раскручивает лопасти, клик по блоку аккуратно убирает и спавнит новый
+  // клик по мельнице ускоряет лопасти, клик по блоку переносит его
   window.addEventListener('click', (e) => {
     if (e.target.closest('button, a, input, select, textarea, #card-stage, #floating-steve, #chat-sidebar, #chat-pane, .mc-hotbar')) {
       return;
@@ -5840,7 +5746,7 @@ function initVoxelBackground() {
 
       ctx.clearRect(0, 0, W, H);
 
-      // 1. Светлое дневное небо (100% светлая палитра без тёмных тем!)
+      // 1. градиент неба
       const skyGrad = ctx.createLinearGradient(0, 0, 0, H);
       skyGrad.addColorStop(0, '#b5daff');
       skyGrad.addColorStop(0.55, '#dff0ff');
@@ -5848,7 +5754,7 @@ function initVoxelBackground() {
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, W, H);
 
-      // 2. Пиксельное тёплое солнышко в верхнем левом углу
+      // 2. солнце сверху слева
       const sunX = 88 + (smoothMx - 0.5) * -12;
       const sunY = 104 + (smoothMy - 0.5) * -8;
       ctx.fillStyle = 'rgba(253, 224, 71, 0.22)';
@@ -5858,23 +5764,23 @@ function initVoxelBackground() {
       ctx.fillStyle = '#fde047';
       ctx.fillRect(sunX - 15, sunY - 15, 30, 30);
 
-      // 3. Плывущие 3D воксельные облака
+      // 3. облака
       clouds.forEach(c => {
         c.x += c.speed;
         if (c.x > W + 140) c.x = -c.w - 60;
         const px = c.x + (smoothMx - 0.5) * -28 * c.depth;
         const py = c.y + (smoothMy - 0.5) * -14 * c.depth;
 
-        // Нижняя 3D-тень облака
+        // тень облака
         ctx.fillStyle = 'rgba(147, 197, 253, 0.45)';
         ctx.fillRect(px + 6, py + c.h - 4, c.w, 8);
-        // Основной блок облака
+        // само облако
         ctx.fillStyle = 'rgba(255, 255, 255, 0.86)';
         ctx.fillRect(px, py, c.w, c.h);
         ctx.fillRect(px + c.w * 0.2, py - 10, c.w * 0.56, 12);
       });
 
-      // 4. Дальние пиксельные холмы и кубическая тайга Югры у самого низа экрана
+      // 4. холмы снизу
       const hillStep = 64;
       for (let x = 0; x < W + hillStep; x += hillStep) {
         const h1 = 44 + Math.round(Math.sin(x * 0.008) * 18 + Math.cos(x * 0.015) * 12);
@@ -5884,7 +5790,7 @@ function initVoxelBackground() {
         ctx.fillRect(x, H - h1, hillStep + 1, 8);
       }
 
-      // Несколько милых пиксельных ёлочек Югры + крутящаяся ветряная мельница!
+      // елки и мельница
       millAngle += millSpeed;
       if (millSpeed > 0.014) millSpeed += (0.014 - millSpeed) * 0.018;
       if (W >= 820) {
@@ -5895,7 +5801,7 @@ function initVoxelBackground() {
       drawVoxelTree(W - 64, H - 20, 1.2);
       drawVoxelTree(W - 128, H - 14, 0.9);
 
-      // 5. Летающие кликабельные 3D-блоки по бокам (крутятся и плавно качаются!)
+      // 5. летающие блоки по бокам
       if (W >= 820) {
         floatingBlocks.forEach(b => {
           if (!b.alive) {

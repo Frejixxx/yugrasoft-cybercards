@@ -37,14 +37,14 @@
 </head>
 <body class="bg-cgy-bg text-cgy-text antialiased min-h-screen flex flex-col">
 
-  <!-- INTERACTIVE MINECRAFT-STYLE YUGRA DAYLIGHT SKY & VOXEL TAIGA BACKGROUND -->
+  <!-- фон с пиксельным небом и тайгой на канвасе -->
   <canvas id="bg-voxel-world" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
 
-  <!-- GLOBAL CONFETTI & MINECRAFT-STYLE ADVANCEMENT TOAST LAYER -->
+  <!-- слой для конфетти и всплывающих плашек -->
   <canvas id="fx-confetti" class="fixed inset-0 pointer-events-none z-[70]"></canvas>
   <div id="fx-xp-layer" class="fixed top-20 right-3 sm:right-5 pointer-events-none z-[75] flex flex-col items-end gap-2 max-w-[calc(100vw-24px)]"></div>
 
-  <!-- INCOMING SMS PUSH NOTIFICATION (for Messenger Simulator tab) -->
+  <!-- всплывашка с новым смс для симулятора чатов -->
   <div id="sms-push-banner" onclick="openSmsModalFromPush()" role="button" tabindex="0"
     class="hidden fixed top-16 right-3 sm:right-5 z-[60] w-[calc(100%-24px)] max-w-sm bg-white border-2 border-cgy-accent rounded-xl shadow-xl p-3.5 cursor-pointer transition sms-slide-in">
     <div class="flex items-start gap-3">
@@ -69,10 +69,10 @@
     </div>
   </div>
 
-  <!-- OFFICIAL PORTAL HEADER («Цифровой гражданин Югры») -->
+  <!-- шапка сайта -->
   <header class="bg-white/95 backdrop-blur-md border-b-2 border-[#c5daf4] sticky top-0 z-30 shadow-sm">
     <div id="portal-brand-row" class="max-w-6xl mx-auto px-3 sm:px-6 py-2 sm:py-0 sm:h-16 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
-      <!-- Brand / Portal Mark -->
+      <!-- логотип и название -->
       <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
         <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-cgy-accent text-white flex items-center justify-center shrink-0 shadow-sm">
           <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
@@ -87,23 +87,23 @@
         </div>
       </div>
 
-      <!-- Right Controls -->
+      <!-- кнопки справа в шапке -->
       <div class="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 w-full sm:w-auto shrink-0">
-        <!-- Student Profile Pill -->
+        <!-- кнопка профиля ученика -->
         <button onclick="openStudentProfileModal()" class="flex items-center gap-1.5 sm:gap-2 pl-1.5 pr-2.5 sm:pr-3 py-1 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-xs sm:text-sm font-medium text-cgy-text transition min-w-0">
           <span id="header-hero-mini" class="w-6 h-6 rounded-md bg-white border border-[#b6d0f2] overflow-hidden flex items-center justify-center shrink-0"></span>
           <span id="header-profile-label" class="max-w-[125px] sm:max-w-[170px] truncate">Ученик • 5–7 кл.</span>
         </button>
 
         <div class="flex items-center gap-1.5 shrink-0">
-          <!-- Language Switcher (RU / ХАН / EN — Expert Track: Язык народов Югры!) -->
+          <!-- переключение языка -->
           <div class="inline-flex items-center bg-cgy-bg rounded-lg p-0.5 border border-cgy-border text-[11px] sm:text-xs font-bold" title="Выбор языка: Русский / Хантыйский / English">
             <button id="lang-ru" onclick="setLang('ru')" class="px-1.5 sm:px-2 py-1 rounded-md bg-cgy-accent text-white transition" title="Русский язык">RU</button>
             <button id="lang-kca" onclick="setLang('kca')" class="px-1.5 sm:px-2 py-1 rounded-md text-cgy-muted hover:text-cgy-text transition" title="Хантыйский язык (Ханты ясӑӊ)">ХАН</button>
             <button id="lang-en" onclick="setLang('en')" class="px-1.5 sm:px-2 py-1 rounded-md text-cgy-muted hover:text-cgy-text transition" title="English">EN</button>
           </div>
 
-          <!-- SMS Inbox Button -->
+          <!-- кнопка входящих смс -->
           <button id="btn-sms-inbox" onclick="openSmsModal()" title="Входящие SMS"
             class="relative flex items-center gap-1 h-8 sm:h-9 px-2 sm:px-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-cgy-text transition">
             <i data-lucide="smartphone" class="w-4 h-4 text-cgy-accent"></i>
@@ -111,7 +111,7 @@
             <span id="sms-unread-badge" class="hidden min-w-[18px] h-[18px] px-1 rounded-full bg-cgy-ok text-[10px] font-bold text-white items-center justify-center">0</span>
           </button>
 
-          <!-- Sound Toggle -->
+          <!-- вкл/выкл звука -->
           <button onclick="toggleSound()" title="Звук" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-cgy-muted hover:text-cgy-text flex items-center justify-center transition">
             <span id="sound-icon-on"><i data-lucide="volume-2" class="w-4 h-4"></i></span>
             <span id="sound-icon-off" class="hidden"><i data-lucide="volume-x" class="w-4 h-4"></i></span>
@@ -120,7 +120,7 @@
       </div>
     </div>
 
-    <!-- MODULE SUB-NAV TABS (без горизонтальной прокрутки на ПК, планшете и мобиле!) -->
+    <!-- вкладки навигации -->
     <div class="border-t border-[#dce8f8] bg-[#f4f8ff]">
       <div class="max-w-6xl mx-auto px-1.5 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
         <nav class="grid grid-cols-4 md:flex md:items-center gap-0.5 sm:gap-1 lg:gap-1.5 w-full md:w-auto">
@@ -158,7 +158,7 @@
           </button>
         </nav>
 
-        <!-- Overall Progress Compact Bar (только на широких экранах xl+, никогда не вызывает скролл!) -->
+        <!-- полоска общего прогресса на широких экранах -->
         <div class="hidden xl:flex items-center gap-2 shrink-0 pl-2" title="Общий прогресс по карточкам и чатам">
           <span class="text-xs font-semibold text-cgy-muted whitespace-nowrap" data-i18n="overall_progress">Прогресс:</span>
           <div class="w-24 h-2 bg-cgy-bg rounded-full overflow-hidden border border-cgy-border">
@@ -170,37 +170,28 @@
     </div>
   </header>
 
-  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <!-- основной контент -->
   <main id="app-main" class="relative z-10 flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-5 sm:py-6 flex flex-col">
 
-    <!-- ========================================================== -->
-    <!-- VIEW 1: КИБЕР-КАРТОЧКИ (ИГРОВОЙ РЕЖИМ С ПЕРЕТАСКИВАЕМЫМ СТИВОМ И ХОТБАРОМ) -->
-    <!-- ========================================================== -->
+    <!-- вкладка 1: кибер-карточки -->
     <section id="view-cards" class="flex-1 flex flex-col gap-4 pb-28 sm:pb-10">
-      <!-- Top Mission Map Bar (цветная шапка-панель миссий без серой скуки!) -->
+      <!-- верхняя панель миссий -->
       <div class="bg-gradient-to-r from-[#dfeeff] via-[#edf5ff] to-[#e7f7ee] border-2 border-[#b5d0f2] border-b-4 rounded-2xl p-3 sm:p-4 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3.5">
         <div class="flex flex-wrap items-center gap-1.5 sm:gap-2.5">
-          <!-- Mission Counter Pill -->
+          <!-- счетчик миссий -->
           <div class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white border-2 border-[#b5d0f2] shadow-sm">
             <i data-lucide="compass" class="w-4 h-4 text-cgy-accent"></i>
             <span class="font-pixel text-xs sm:text-sm font-bold text-cgy-accent" data-i18n="card_counter_label">Миссия:</span>
             <span id="card-step-text" class="font-pixel text-sm sm:text-base font-bold text-cgy-text tabular-nums">1 из 8</span>
           </div>
 
-          <!-- Adaptive Difficulty Pill -->
-          <div id="adaptive-pill-wrap" class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white/90 border-2 border-[#d1d5db] text-[11px] sm:text-xs font-bold text-cgy-muted transition" title="Сложность автоматически подстраивается под твои ответы">
-            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-cgy-accent shrink-0"></i>
-            <span class="hidden sm:inline" data-i18n="adaptive_label">Сложность:</span>
-            <span id="adaptive-level-badge" class="font-extrabold text-cgy-accent">Базовый (1/3)</span>
-          </div>
-
-          <!-- Combo Streak -->
+          <!-- серия верных ответов -->
           <div id="streak-pill" class="hidden inline-flex items-center gap-1 px-2.5 py-1 sm:py-1.5 rounded-xl bg-[#fef3c7] border-2 border-[#f59e0b] text-[11px] sm:text-xs font-extrabold text-[#92400e] shadow-sm">
             <i data-lucide="flame" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#d97706]"></i>
             <span id="streak-text">Серия: 2</span>
           </div>
 
-          <!-- Fun Kids Mini-Game Button: Password Cracker Sandbox -->
+          <!-- кнопка проверки пароля -->
           <button type="button" onclick="openPasswordLab()"
             class="btn-3d inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-[#fef3c7] hover:bg-[#fde68a] border-2 border-[#f59e0b] border-b-[#d97706] text-[11px] sm:text-xs font-extrabold text-[#92400e] shadow-sm">
             <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
@@ -208,13 +199,13 @@
           </button>
         </div>
 
-        <!-- Playful Circular Star Mission Map -->
+        <!-- кружочки-шаги миссий -->
         <div id="cards-stepper" class="flex items-center gap-1.5 sm:gap-2 flex-wrap"></div>
       </div>
 
-      <!-- Active Interactive Card Container -->
+      <!-- сама карточка с заданием -->
       <div id="card-stage" class="bg-white border-2 border-[#9ec2ec] border-b-[6px] rounded-2xl sm:rounded-3xl shadow-md overflow-hidden flex flex-col">
-        <!-- Colorful Card Top Banner Strip (динамически меняет цвет под тему задания!) -->
+        <!-- верхняя полоска карточки с темой и озвучкой -->
         <div id="card-banner" class="bg-gradient-to-r from-[#dbeafe] via-[#eaf3ff] to-[#e0f2fe] border-b-2 border-[#bfd8f6] px-3.5 sm:px-7 py-2.5 sm:py-3.5 flex flex-wrap items-center justify-between gap-2">
           <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <span id="card-type-pill" class="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-xl bg-cgy-accent text-white text-[11px] sm:text-xs font-extrabold shadow-sm">
@@ -243,37 +234,30 @@
         </div>
 
         <div class="p-3.5 sm:p-7 flex flex-col gap-4 sm:gap-5">
-          <!-- Card Question Header -->
+          <!-- заголовок и текст вопроса -->
           <div class="space-y-1.5">
             <h2 id="card-title" class="text-lg sm:text-[26px] font-bold text-cgy-text leading-snug"></h2>
             <p id="card-prompt" class="text-sm sm:text-[17px] text-[#334155] font-medium leading-relaxed"></p>
           </div>
 
-          <!-- Visual Context Illustration / Interactive Detective Magnifier Scene -->
+          <!-- сценка ситуации и лупа -->
           <div id="card-visual-slot" class="hidden"></div>
 
-          <!-- Adaptive Support Mode Bar (появляется, когда тренажёр реально облегчает задание) -->
-          <div id="adaptive-assist-bar" class="hidden rounded-xl px-4 py-2.5 bg-[#eff6ff] border-2 border-[#93c5fd] text-[#1e40af] text-xs sm:text-sm font-bold flex items-start gap-2.5">
-            <i data-lucide="life-buoy" class="w-4 h-4 shrink-0 mt-0.5 text-cgy-accent"></i>
-            <div id="adaptive-assist-text" class="leading-snug"></div>
-          </div>
-
-          <!-- Dynamic Interactive Task Area (Choice / TrueFalse / Sort / Match / Order) -->
+          <!-- блок самого задания -->
           <div id="card-interactive-body" class="pt-1"></div>
 
-          <!-- Instant Feedback Box -->
+          <!-- результат проверки ответа -->
           <div id="card-feedback" class="hidden rounded-2xl p-4 sm:p-5 border-2 animate-fade-in">
             <div class="flex items-start gap-3">
               <div id="card-feedback-icon" class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 shadow-sm"></div>
               <div class="flex-1 min-w-0">
                 <div id="card-feedback-title" class="font-pixel font-bold text-lg sm:text-xl"></div>
                 <p id="card-feedback-text" class="text-sm sm:text-base mt-1 leading-relaxed font-medium"></p>
-                <div id="card-adaptive-note" class="text-xs font-bold mt-2 opacity-90"></div>
               </div>
             </div>
           </div>
 
-          <!-- Card Action Footer -->
+          <!-- низ карточки: звёзды и кнопки -->
           <div class="pt-3.5 border-t border-[#e5edf7] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="inline-flex items-center justify-center sm:justify-start gap-2 px-3 py-1.5 rounded-xl bg-[#fef7e0] border-2 border-[#f6d57a] text-sm text-[#92400e] font-bold self-start">
               <i data-lucide="star" class="w-4 h-4 text-[#d97706] fill-[#f59e0b]"></i>
@@ -297,7 +281,7 @@
         </div>
       </div>
 
-      <!-- MINECRAFT LOOT HOTBAR (Инвентарь кибер-лута за пройденные карточки!) -->
+      <!-- нижний хотбар с лутом за карточки -->
       <div class="mc-hotbar rounded-2xl p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-2.5 shrink-0">
           <div class="w-9 h-9 rounded-xl bg-cgy-accent text-white flex items-center justify-center shadow-sm">
@@ -311,7 +295,7 @@
         <div id="mc-loot-slots" class="grid grid-cols-4 sm:grid-cols-8 gap-2 justify-items-center shrink-0"></div>
       </div>
 
-      <!-- Cards Finished Summary Banner (shows when all 8 cards are completed) -->
+      <!-- плашка когда все карточки пройдены -->
       <div id="cards-complete-banner" class="hidden bg-[#e9f6ec] border-2 border-cgy-ok rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div class="flex items-start gap-3.5">
           <div class="w-12 h-12 rounded-xl bg-cgy-ok text-white flex items-center justify-center shrink-0">
@@ -333,13 +317,11 @@
       </div>
     </section>
 
-    <!-- ========================================================== -->
-    <!-- VIEW 2: СИМУЛЯТОР МЕССЕНДЖЕРА (EXPERT TRACK KILLER FEATURE) -->
-    <!-- ========================================================== -->
+    <!-- вкладка 2: симулятор чатов -->
     <section id="view-chat" class="hidden flex-1 flex flex-col min-h-0 h-full">
       <div class="bg-white border border-cgy-border rounded-xl shadow-sm flex-1 flex min-h-0 overflow-hidden relative">
 
-        <!-- Left Sidebar: Chats List -->
+        <!-- список чатов слева -->
         <aside id="chat-sidebar" class="w-full md:w-[320px] lg:w-[350px] bg-white border-r border-cgy-border flex flex-col shrink-0 z-20">
           <div class="p-3.5 border-b border-[#e5e9f0] bg-[#f4f8fe]">
             <div class="flex items-center justify-between gap-2">
@@ -359,9 +341,9 @@
           </div>
         </aside>
 
-        <!-- Right Pane: Chat Window -->
+        <!-- окно открытого чата справа -->
         <section id="chat-pane" class="flex-1 flex flex-col chat-wallpaper-light min-w-0 min-h-0 overflow-hidden absolute inset-0 md:static translate-x-full md:translate-x-0 transition-transform duration-200 z-20">
-          <!-- Empty State -->
+          <!-- заглушка пока чат не выбран -->
           <div id="chat-empty-state" class="flex-1 flex flex-col items-center justify-center p-6 text-center">
             <div class="max-w-md w-full bg-white border-2 border-[#b8d1f0] border-b-4 rounded-2xl p-6 shadow-sm">
               <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-cgy-soft text-cgy-accent flex items-center justify-center">
@@ -377,9 +359,9 @@
             </div>
           </div>
 
-          <!-- Active Chat -->
+          <!-- активный чат -->
           <div id="active-chat" class="hidden flex-1 flex flex-col min-h-0 h-full overflow-hidden">
-            <!-- Chat Header -->
+            <!-- шапка чата -->
             <div class="bg-white border-b border-cgy-border h-14 px-2 sm:px-4 flex items-center justify-between gap-2 shrink-0">
               <div class="flex items-center gap-2 min-w-0 flex-1">
                 <button onclick="closeMobileChat()" class="md:hidden w-9 h-9 rounded-lg hover:bg-cgy-bg text-cgy-muted flex items-center justify-center shrink-0">
@@ -415,7 +397,7 @@
               </div>
             </div>
 
-            <!-- Pinned Completed Bar -->
+            <!-- полоска когда чат пройден -->
             <div id="chat-completed-banner" class="hidden bg-[#e9f6ec] border-b border-[#b7e4c7] px-4 py-2 flex items-center justify-between gap-3 shrink-0">
               <div class="flex items-center gap-2 min-w-0">
                 <i data-lucide="check-circle-2" class="w-4 h-4 text-cgy-ok shrink-0"></i>
@@ -426,10 +408,10 @@
               </button>
             </div>
 
-            <!-- Messages Feed -->
+            <!-- лента сообщений -->
             <div id="messages-area" class="flex-1 min-h-0 overflow-y-auto custom-scroll px-3 sm:px-5 py-3.5 space-y-2.5"></div>
 
-            <!-- Typing Bubble -->
+            <!-- анимация печатает... -->
             <div id="typing-indicator" class="hidden px-4 sm:px-6 pb-2">
               <div class="inline-flex items-center gap-1.5 bubble-in px-3.5 py-2.5 shadow-sm">
                 <span class="typing-dot"></span>
@@ -438,7 +420,7 @@
               </div>
             </div>
 
-            <!-- Choices Keyboard -->
+            <!-- варианты ответа снизу -->
             <div id="chat-choices-dock" class="bg-white border-t border-cgy-border px-3 sm:px-4 py-2.5 shrink-0 max-h-[42%] overflow-y-auto custom-scroll">
               <div class="max-w-3xl mx-auto">
                 <div id="choices-hint" class="text-xs text-cgy-muted font-medium mb-1.5 flex items-center justify-between gap-2">
@@ -456,11 +438,9 @@
       </div>
     </section>
 
-    <!-- ========================================================== -->
-    <!-- VIEW 2.5: БЛИЦ-АТАКА 60 СЕКУНД («ОТБЕЙ АТАКУ СКАМЕРОВ!»)   -->
-    <!-- ========================================================== -->
+    <!-- вкладка 3: блиц на 60 секунд -->
     <section id="view-blitz" class="hidden flex-1 flex flex-col items-center justify-start gap-4 pb-20 sm:pb-6">
-      <!-- Start Screen -->
+      <!-- стартовый экран блица -->
       <div id="blitz-start" class="max-w-2xl w-full bg-white border-2 border-[#f59e0b] border-b-[6px] rounded-3xl shadow-md overflow-hidden">
         <div class="bg-gradient-to-r from-[#fef3c7] via-[#fde68a] to-[#dbeafe] border-b-2 border-[#fcd34d] px-6 py-5 flex items-center justify-between gap-3">
           <div class="flex items-center gap-3">
@@ -496,9 +476,9 @@
         </div>
       </div>
 
-      <!-- Active Blitz Arena -->
+      <!-- игровой экран блица -->
       <div id="blitz-arena" class="hidden max-w-2xl w-full flex flex-col gap-4">
-        <!-- HUD Bar -->
+        <!-- таймер, сердечки и очки -->
         <div class="bg-white border-2 border-[#93c5fd] border-b-4 rounded-2xl p-3.5 shadow-sm space-y-2.5">
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-2">
@@ -520,7 +500,7 @@
           </div>
         </div>
 
-        <!-- Incoming Message Card -->
+        <!-- карточка входящего сообщения -->
         <div id="blitz-card" class="bg-white border-2 border-[#93c5fd] border-b-[6px] rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-md space-y-3.5 sm:space-y-4">
           <div class="flex items-center justify-between gap-2 pb-3 border-b border-[#e5edf7]">
             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -537,7 +517,7 @@
             ...
           </div>
 
-          <!-- Two Big Action Buttons -->
+          <!-- кнопки безопасно / в бан -->
           <div class="grid grid-cols-2 gap-3.5 pt-1">
             <button onclick="answerBlitz(true)" class="card-option tf-true-opt py-4 sm:py-5 px-4 flex items-center justify-center gap-2 text-base sm:text-lg font-extrabold">
               <i data-lucide="shield-check" class="w-6 h-6 text-[#1e7e34]"></i>
@@ -553,7 +533,7 @@
         </div>
       </div>
 
-      <!-- End Screen -->
+      <!-- экран результатов блица -->
       <div id="blitz-end" class="hidden max-w-xl w-full bg-white border-2 border-[#4ade80] border-b-[6px] rounded-3xl p-6 sm:p-7 shadow-md text-center space-y-4">
         <div class="w-16 h-16 mx-auto rounded-2xl bg-[#ecfdf5] border-2 border-[#4ade80] text-[#15803d] flex items-center justify-center">
           <i data-lucide="trophy" class="w-9 h-9"></i>
@@ -583,11 +563,9 @@
       </div>
     </section>
 
-    <!-- ========================================================== -->
-    <!-- VIEW 3: АНАЛИТИКА С ГРАФИКАМИ, АЧИВКИ И СЕРТИФИКАТ         -->
-    <!-- ========================================================== -->
+    <!-- вкладка 4: аналитика и сертификат -->
     <section id="view-results" class="hidden flex-1 flex flex-col gap-5 pb-28 sm:pb-10">
-      <!-- Row 1: Summary KPIs (живые, цветные и понятные школьнику — без «ложных тревог»!) -->
+      <!-- карточки со статистикой -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="bg-gradient-to-br from-[#eaf3ff] to-white border-2 border-[#b8d1f0] border-b-4 rounded-2xl p-4 shadow-sm">
           <div class="text-xs font-extrabold text-cgy-accent uppercase tracking-wide" data-i18n="kpi_cards">Кибер-карточки</div>
@@ -611,7 +589,7 @@
         </div>
       </div>
 
-      <!-- Row 2: Certificate FIO Form (Strictly NO preview card below!) -->
+      <!-- форма для скачивания сертификата -->
       <div class="bg-white border border-cgy-border rounded-xl p-5 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-end gap-3.5">
           <div class="flex-1">
@@ -631,7 +609,7 @@
               </span>
             </div>
             <p id="cert-name-hint" class="text-xs text-cgy-muted mt-1.5">
-              Укажи минимум Фамилию и Имя (через пробел), чтобы разблокировать скачивание PNG.
+              Введи Фамилию и Имя, чтобы скачать сертификат.
             </p>
           </div>
           <button id="btn-download-cert" onclick="downloadCertificatePNG()" disabled
@@ -642,14 +620,14 @@
         </div>
       </div>
 
-      <!-- Row 3: VISUAL CHARTS (Expert Track: Аналитика с графиками!) -->
+      <!-- графики результатов -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <!-- Chart 1: Accuracy by Task Type -->
+        <!-- график по типам заданий -->
         <div class="bg-white border border-cgy-border rounded-xl p-5 shadow-sm flex flex-col">
           <div class="flex items-center justify-between mb-3">
             <div>
               <h3 class="font-bold text-base text-cgy-text" data-i18n="chart_types_title">Результаты по типам заданий</h3>
-              <p class="text-xs text-cgy-muted" data-i18n="chart_types_sub">Процент верных ответов по каждому навыку</p>
+              <p class="text-xs text-cgy-muted" data-i18n="chart_types_sub">Сколько верно в каждом типе</p>
             </div>
             <i data-lucide="bar-chart-2" class="w-5 h-5 text-cgy-accent"></i>
           </div>
@@ -658,12 +636,12 @@
           </div>
         </div>
 
-        <!-- Chart 2: Attempt History Dynamics -->
+        <!-- график по попыткам -->
         <div class="bg-white border border-cgy-border rounded-xl p-5 shadow-sm flex flex-col">
           <div class="flex items-center justify-between mb-3">
             <div>
               <h3 class="font-bold text-base text-cgy-text" data-i18n="chart_dyn_title">Динамика прохождений</h3>
-              <p class="text-xs text-cgy-muted" data-i18n="chart_dyn_sub">Рост результата по попыткам и сессиям (%)</p>
+              <p class="text-xs text-cgy-muted" data-i18n="chart_dyn_sub">Твои попытки</p>
             </div>
             <i data-lucide="trending-up" class="w-5 h-5 text-cgy-ok"></i>
           </div>
@@ -673,7 +651,7 @@
         </div>
       </div>
 
-      <!-- Row 4: Achievements Gallery (Advanced Track: «Без ошибок», «Мастер паролей», «Сыщик» и др.) -->
+      <!-- блок с ачивками -->
       <div class="bg-white border border-cgy-border rounded-xl p-5 shadow-sm">
         <div class="flex items-center justify-between mb-4">
           <div>
@@ -690,9 +668,9 @@
     </section>
   </main>
 
-  <!-- ==================== MODALS ==================== -->
+  <!-- модальные окна -->
 
-  <!-- STUDENT PROFILE MODAL (Advanced Track: Имя + Класс) -->
+  <!-- модалка профиля ученика -->
   <div id="student-profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in" onclick="if(event.target===this) closeStudentProfileModal()">
     <div class="max-w-md w-full bg-white border border-cgy-border rounded-xl overflow-hidden shadow-2xl">
       <div class="px-5 py-4 border-b border-[#e5e9f0] flex items-center justify-between">
@@ -710,7 +688,7 @@
           <input id="prof-fio-input" type="text" placeholder="Например: Петрова Мария или Смирнов Андрей" maxlength="60"
             oninput="onProfileFioInput()"
             class="w-full bg-cgy-bg border-2 border-cgy-border focus:border-cgy-accent focus:bg-white rounded-lg px-3.5 py-2.5 text-sm outline-none" />
-          <p class="text-xs text-cgy-muted mt-1" data-i18n="prof_fio_hint">Подставится в сертификат и автоматически подберёт напарника.</p>
+          <p class="text-xs text-cgy-muted mt-1" data-i18n="prof_fio_hint">Для сертификата и выбора напарника</p>
         </div>
         <div>
           <label class="block text-sm font-semibold text-cgy-text mb-1" data-i18n="prof_grade_lbl">Класс</label>
@@ -754,7 +732,7 @@
     </div>
   </div>
 
-  <!-- CALL VERIFICATION MODAL -->
+  <!-- модалка звонка для проверки -->
   <div id="call-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 animate-fade-in" onclick="if(event.target===this) closeCallModal()">
     <div class="max-w-xs w-full bg-white border border-cgy-border rounded-2xl shadow-2xl text-center p-6 space-y-4">
       <div id="call-avatar-wrap" class="w-16 h-16 mx-auto rounded-full flex items-center justify-center text-xl font-bold text-white call-ringing"></div>
@@ -770,7 +748,7 @@
     </div>
   </div>
 
-  <!-- SMS INBOX MODAL -->
+  <!-- модалка входящих смс -->
   <div id="sms-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 animate-fade-in" onclick="if(event.target===this) closeSmsModal()">
     <div class="max-w-md w-full bg-white border border-cgy-border rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[82vh]">
       <div class="px-4 py-3.5 bg-cgy-bg border-b border-cgy-border flex items-center justify-between shrink-0">
@@ -795,7 +773,7 @@
     </div>
   </div>
 
-  <!-- CHAT PROFILE INSPECTOR MODAL -->
+  <!-- модалка просмотра профиля контакта -->
   <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 animate-fade-in" onclick="if(event.target===this) closeProfileModal()">
     <div class="max-w-sm w-full bg-white border border-cgy-border rounded-xl overflow-hidden shadow-2xl">
       <div class="px-4 py-3 border-b border-cgy-border flex items-center justify-between bg-cgy-bg">
@@ -839,7 +817,7 @@
     </div>
   </div>
 
-  <!-- FALSE ALARM MODAL (Legit Chat Protection) -->
+  <!-- модалка если заблочил обычного человека -->
   <div id="false-alarm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 animate-fade-in" onclick="if(event.target===this) closeFalseAlarmModal()">
     <div class="max-w-md w-full bg-white border-2 border-[#f59e0b] rounded-xl overflow-hidden shadow-2xl animate-shake">
       <div class="bg-[#d97706] px-5 py-4 flex items-center gap-3 text-white">
@@ -861,7 +839,7 @@
     </div>
   </div>
 
-  <!-- CHAT FAIL MODAL -->
+  <!-- модалка если попался на развод -->
   <div id="fail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-fade-in">
     <div class="max-w-lg w-full bg-white border-2 border-cgy-err rounded-xl overflow-hidden shadow-2xl animate-shake">
       <div class="bg-cgy-err px-5 py-4 flex items-center gap-3.5 text-white">
@@ -906,7 +884,7 @@
     </div>
   </div>
 
-  <!-- CHAT REPORT MODAL -->
+  <!-- модалка выбора жалобы -->
   <div id="report-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 animate-fade-in" onclick="if(event.target===this) closeReportModal()">
     <div class="max-w-md w-full bg-white border border-cgy-border rounded-xl overflow-hidden shadow-2xl">
       <div class="px-4 py-3.5 bg-cgy-bg border-b border-cgy-border flex items-center justify-between">
@@ -966,7 +944,7 @@
     </div>
   </div>
 
-  <!-- CHAT SCENARIO WIN MODAL -->
+  <!-- модалка победы в чате -->
   <div id="win-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 animate-fade-in">
     <div class="max-w-md w-full bg-white border-2 border-cgy-ok rounded-xl overflow-hidden shadow-2xl">
       <div class="px-5 pt-6 pb-4 text-center border-b border-[#e5e9f0] bg-[#f4fbf6]">
@@ -989,7 +967,7 @@
     </div>
   </div>
 
-  <!-- PASSWORD CRACKER SANDBOX MODAL («Взломают ли твой пароль?») -->
+  <!-- модалка теста пароля -->
   <div id="password-lab-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/55 animate-fade-in" onclick="if(event.target===this) closePasswordLab()">
     <div class="max-w-lg w-full max-h-[90dvh] flex flex-col bg-white border-2 border-[#93c5fd] border-b-[6px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
       <div class="px-4 sm:px-5 py-3.5 sm:py-4 bg-gradient-to-r from-[#dbeafe] via-[#eaf3ff] to-[#fef3c7] border-b-2 border-[#bfdbfe] flex items-center justify-between gap-2 shrink-0">
@@ -1019,7 +997,7 @@
           </button>
         </div>
 
-        <!-- Crack Time Gauge -->
+        <!-- полоска времени взлома -->
         <div class="rounded-2xl bg-[#f8fbff] border-2 border-[#d6e4f7] p-4 space-y-2.5">
           <div class="flex items-center justify-between gap-2 text-xs font-bold text-cgy-muted">
             <span data-i18n="pass_lab_time_lbl">Время взлома хакером:</span>
@@ -1034,7 +1012,7 @@
           </p>
         </div>
 
-        <!-- Live Checklist -->
+        <!-- чеклист требований к паролю -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold">
           <div id="pl-chk-len" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 text-slate-500 border border-slate-200">
             <i data-lucide="circle" class="w-4 h-4 shrink-0"></i>
@@ -1057,9 +1035,9 @@
     </div>
   </div>
 
-  <!-- FLOATING DRAGGABLE CYBER-STEVE / ALEX BUDDY -->
+  <!-- плавающий персонаж стив/алекс -->
   <div id="floating-steve" class="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-[48] flex flex-col items-end pointer-events-none" style="max-width: min(290px, calc(100vw - 24px));">
-    <!-- Speech Bubble ABOVE Hero's Head (на мобиле по умолчанию свёрнуто, чтобы не перекрывать кнопки!) -->
+    <!-- облачко с подсказками над персонажем -->
     <div id="yugorka-bubble" class="steve-speech-top pointer-events-auto mb-2.5 w-[min(275px,calc(100vw-24px))] sm:w-[285px] bg-white border-2 border-[#1e5aa8] rounded-2xl px-3.5 py-2.5 shadow-xl transition-all">
       <div class="flex items-center justify-between gap-1.5 mb-1">
         <span id="yugorka-status-tag" class="font-pixel text-xs font-bold text-cgy-accent uppercase tracking-wide truncate">Кибер-Стив</span>
@@ -1080,7 +1058,7 @@
       </p>
     </div>
 
-    <!-- Draggable Hero Character -->
+    <!-- сам персонаж, можно перетаскивать -->
     <div id="steve-drag-handle" title="Потяни меня по экрану или кликни!"
       class="steve-body-btn pointer-events-auto cursor-grab active:cursor-grabbing flex flex-col items-center transition-transform">
       <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-white border-[3px] border-[#1e5aa8] border-b-[5px] sm:border-b-[6px] shadow-xl overflow-hidden flex items-center justify-center">
@@ -1092,10 +1070,10 @@
     </div>
   </div>
 
-  <!-- TOAST CONTAINER -->
+  <!-- контейнер для обычных уведомлений снизу -->
   <div id="toast-container" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[65] flex flex-col items-center gap-2 pointer-events-none px-4 w-full max-w-md"></div>
 
-  <!-- SCRIPTS -->
+  <!-- подключение скриптов -->
   <script src="sound.js"></script>
   <script src="fio-gender.js"></script>
   <script src="cards-data.js"></script>

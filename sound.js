@@ -1,6 +1,6 @@
-// Звуковой движок «Кибер-карточек Югры» на Web Audio API (100% офлайн, без сторонних копирайт-файлов)
-// Звуки в узнаваемой стилистике Minecraft: каменный клик меню, стук установки блока,
-// подбор предмета (pop), перезвон сферы опыта (orb), Level Up и фанфара достижения (Advancement)
+// звуки для сайта на Web Audio API, без внешних файлов
+// делаем звуки как в майнкрафте: клики, блоки, подбор, опыт, уровень и ачивка
+// плюс звуки смс и гудки телефона для симулятора чатов
 
 const SoundFX = (() => {
   let ctx = null;
@@ -142,39 +142,39 @@ const SoundFX = (() => {
     osc.stop(t + duration + 0.02);
   }
 
-  // 1. Minecraft Stone UI Button Click (сухой каменный «клац» меню Minecraft!)
+  // клик по кнопке (похоже на каменную кнопку в меню)
   function playPick() {
     playNoise({ duration: 0.016, freq: 1850, q: 1.9, volume: 0.085 });
     playOsc({ freq: 720, endFreq: 310, wave: 'triangle', duration: 0.032, volume: 0.08, attack: 0.002, filterFreq: 1900 });
   }
 
-  // 2. Minecraft Wood/Stone Block Place (плотный глухой стук установки блока + лёгкий хруст!)
+  // звук установки блока
   function playDrop() {
     playNoise({ duration: 0.028, freq: 720, q: 1.2, volume: 0.11 });
     playNoise({ start: 0.006, duration: 0.02, freq: 2100, q: 1.5, volume: 0.035 });
     playOsc({ freq: 195, endFreq: 88, wave: 'triangle', duration: 0.078, volume: 0.14, attack: 0.002, filterFreq: 850 });
   }
 
-  // 3. Minecraft Item Pickup Pop («чпок» подбора предмета в инвентарь!)
+  // звук подбора предмета
   function playConnect() {
     playNoise({ duration: 0.01, freq: 2600, q: 1.8, volume: 0.035 });
     playOsc({ freq: 410, endFreq: 1080, wave: 'sine', duration: 0.062, volume: 0.11, attack: 0.003, filterFreq: 3200 });
     playOsc({ freq: 820, endFreq: 1560, wave: 'triangle', start: 0.015, duration: 0.055, volume: 0.045, attack: 0.003, filterFreq: 3600 });
   }
 
-  // 4. Minecraft XP Orb Chime (знаменитый высокий хрустальный звон сфер опыта — для улик и трофеев!)
+  // звон сферы опыта (для найденных улик)
   function playXpOrb() {
-    const pitches = [1396.91, 1567.98, 1760.0, 1975.53]; // F6, G6, A6, B6
+    const pitches = [1396.91, 1567.98, 1760.0, 1975.53]; // ноты F6, G6, A6, B6
     const base = pitches[Math.floor(Math.random() * pitches.length)] * (0.97 + Math.random() * 0.06);
     playOsc({ freq: base, endFreq: base * 1.03, wave: 'sine', start: 0, duration: 0.24, volume: 0.095, attack: 0.003, filterFreq: 5200, reverb: true });
     playOsc({ freq: base * 1.5, wave: 'sine', start: 0.025, duration: 0.19, volume: 0.04, attack: 0.004, filterFreq: 5800, reverb: true });
   }
 
-  // 5. Minecraft Level Up / Orb Win Chime (звонкий хрустально-пиксельный перелив победы!)
+  // звук верного ответа / повышения уровня
   function playWin(streak = 1) {
     const semis = Math.min(Math.max(0, streak - 1), 4);
     const mult = Math.pow(2, semis / 12);
-    // Узнаваемый майнкрафтовский восходящий звон колокольчиков + лёгкая квадратная подложка
+    // аккорд вверх как при новом уровне
     const notes = [587.33, 739.99, 880.0, 1174.66]; // D5 - F#5 - A5 - D6
     notes.forEach((f, i) => {
       const st = i * 0.055;
@@ -184,7 +184,7 @@ const SoundFX = (() => {
     });
   }
 
-  // 6. Minecraft Advancement / Challenge Complete (торжественная 5-нотная фанфара!)
+  // звук получения достижения
   function playAchievement() {
     const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51]; // C5 E5 G5 C6 E6
     notes.forEach((f, i) => {
@@ -195,7 +195,7 @@ const SoundFX = (() => {
     });
   }
 
-  // 7. Minecraft Soft Block Miss / Thud (мягкий глухой стук промаха — не режет уши!)
+  // глухой стук при ошибке
   function playFail() {
     playNoise({ start: 0, duration: 0.025, freq: 520, q: 1.1, volume: 0.09 });
     playOsc({ freq: 210, endFreq: 145, wave: 'triangle', start: 0, duration: 0.12, volume: 0.11, attack: 0.003, filterFreq: 680 });
@@ -203,27 +203,27 @@ const SoundFX = (() => {
     playOsc({ freq: 165, endFreq: 112, wave: 'triangle', start: 0.11, duration: 0.18, volume: 0.105, attack: 0.003, filterFreq: 560 });
   }
 
-  // 8. Мессенджер: входящее сообщение (чистый pop-звон)
+  // входящее сообщение в чате
   function playIncoming() {
     playNoise({ duration: 0.008, freq: 3000, q: 2.0, volume: 0.022 });
     playOsc({ freq: 698.46, wave: 'sine', start: 0, duration: 0.1, volume: 0.07, filterFreq: 3000, reverb: true });
     playOsc({ freq: 1046.5, wave: 'sine', start: 0.045, duration: 0.15, volume: 0.065, filterFreq: 3400, reverb: true });
   }
 
-  // 9. Мессенджер: отправка сообщения (лёгкий pop)
+  // отправка сообщения
   function playOutgoing() {
     playNoise({ duration: 0.022, freq: 1600, q: 1.0, volume: 0.035 });
     playOsc({ freq: 440, endFreq: 660, wave: 'sine', duration: 0.05, volume: 0.05, filterFreq: 1900 });
   }
 
-  // 10. Входящее SMS (тройной стеклянный перезвон)
+  // звук нового смс
   function playSms() {
     playOsc({ freq: 880.0, wave: 'sine', start: 0, duration: 0.18, volume: 0.08, filterFreq: 3800, reverb: true });
     playOsc({ freq: 1108.73, wave: 'sine', start: 0.085, duration: 0.2, volume: 0.08, filterFreq: 4000, reverb: true });
     playOsc({ freq: 1318.51, wave: 'sine', start: 0.17, duration: 0.34, volume: 0.085, filterFreq: 4200, reverb: true });
   }
 
-  // 11. Телефонный гудок 425 Гц через полосовой фильтр
+  // гудок телефона 425 Гц
   function playPhonePulse(offset, dur, vol) {
     const c = getContext();
     if (!c) return;
