@@ -901,44 +901,72 @@ body.mc-theme .fixed.inset-0 > div {
   border-color: rgba(255, 255, 255, 0.35);
 }
 
-/* стили 6-й механики: кибер-верстак 3x3 (крафт защиты как в майнкрафте) */
+/* стили 6-й механики: кибер-верстак 3x3 точь-в-точь как в майнкрафте */
 .craft-bench {
-  background: linear-gradient(180deg, #e5eef9 0%, #d4e2f3 100%);
-  border: 2px solid #24364d;
-  border-radius: 4px;
-  box-shadow: inset 3px 3px 0 #ffffff, inset -3px -3px 0 #95aec9, 4px 4px 0 rgba(36, 54, 77, 0.14);
+  background: #c6c6c6;
+  border: 3px solid #000000;
+  border-radius: 5px;
+  box-shadow:
+    inset 4px 4px 0 #ffffff,
+    inset -4px -4px 0 #555555,
+    4px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.craft-grid-3x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  background: #8b8b8b;
 }
 .craft-cell {
-  border-radius: 3px;
-  background: #b7c8de;
-  border: 2px solid #59708e;
-  box-shadow: inset 2px 2px 0 #6f87a6, inset -2px -2px 0 #f4f8ff;
-  min-height: 62px;
-  transition: transform 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
+  border-radius: 0;
+  background: #8b8b8b;
+  border-top: 3px solid #373737;
+  border-left: 3px solid #373737;
+  border-right: 3px solid #ffffff;
+  border-bottom: 3px solid #ffffff;
+  width: 66px;
+  height: 66px;
+  transition: background-color 0.12s ease, filter 0.12s ease;
+}
+@media (max-width: 480px) {
+  .craft-cell {
+    width: 50px;
+    height: 50px;
+  }
+  .craft-result-slot {
+    width: 62px !important;
+    height: 62px !important;
+  }
+}
+.craft-cell:hover:not(:disabled) {
+  background: #9e9e9e;
 }
 .craft-cell.filled {
-  background: linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
-  border-color: #1e5aa8;
-  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 #b8d3f4, 2px 2px 0 rgba(30, 90, 168, 0.18);
+  background: #9a9a9a;
 }
 .craft-cell.is-correct {
-  background: #e9f6ec;
-  border-color: #1e7e34;
+  background: #4d8a4d;
+  border-top-color: #1f4d1f;
+  border-left-color: #1f4d1f;
 }
 .craft-cell.is-wrong {
-  background: #fdecec;
-  border-color: #c62828;
+  background: #9e4747;
+  border-top-color: #5c1c1c;
+  border-left-color: #5c1c1c;
 }
 .craft-result-slot {
-  border-radius: 4px;
-  background: #b7c8de;
-  border: 3px solid #59708e;
-  box-shadow: inset 3px 3px 0 #6f87a6, inset -3px -3px 0 #ffffff;
+  border-radius: 0;
+  background: #8b8b8b;
+  border-top: 3px solid #373737;
+  border-left: 3px solid #373737;
+  border-right: 3px solid #ffffff;
+  border-bottom: 3px solid #ffffff;
+  width: 78px;
+  height: 78px;
 }
 .craft-result-slot.ready {
-  background: linear-gradient(180deg, #fffdf0 0%, #fef3c7 100%);
-  border-color: #d97706;
-  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 #e5a93c, 0 0 0 3px rgba(245, 158, 11, 0.24);
+  background: #a5a5a5;
+  box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.75);
 }
 .craft-ingredient {
   border-radius: 4px;
@@ -957,4 +985,144 @@ body.mc-theme .fixed.inset-0 > div {
   background: #dbeafe;
   border-color: #1e5aa8;
   box-shadow: inset 2px 2px 0 rgba(30, 90, 168, 0.15);
+}
+
+/* стили карты-тропинки уровней в стиле duolingo + minecraft */
+.biome-bg-1 {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(132, 224, 28, 0.16), transparent 45%),
+    radial-gradient(circle at 88% 82%, rgba(56, 189, 248, 0.14), transparent 45%),
+    linear-gradient(180deg, #f1faec 0%, #e7f5fe 100%);
+}
+.biome-bg-2 {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.14), transparent 45%),
+    radial-gradient(circle at 85% 78%, rgba(245, 158, 11, 0.14), transparent 45%),
+    linear-gradient(180deg, #eef4fc 0%, #e3ebf7 100%);
+}
+.biome-bg-3 {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(34, 211, 238, 0.18), transparent 45%),
+    radial-gradient(circle at 84% 78%, rgba(250, 204, 21, 0.18), transparent 45%),
+    linear-gradient(180deg, #eff6ff 0%, #eef2ff 100%);
+}
+
+/* 3D-узел уровня как кубический блок minecraft */
+.path-node-btn {
+  position: relative;
+  border-radius: 5px;
+  border: 3px solid #24364d;
+  border-bottom-width: 7px;
+  box-shadow:
+    inset 3px 3px 0 rgba(255, 255, 255, 0.45),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.2),
+    0 6px 0 rgba(36, 54, 77, 0.18);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.path-node-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+  filter: brightness(1.05);
+}
+.path-node-btn:active {
+  transform: translateY(3px);
+  border-bottom-width: 3px;
+}
+
+.path-node-done {
+  background: linear-gradient(180deg, #fde047 0%, #f59e0b 100%);
+  border-color: #92400e;
+  color: #78350f;
+}
+.path-node-current {
+  background: linear-gradient(180deg, #65c40e 0%, #4a9603 100%);
+  border-color: #254d02;
+  color: #ffffff;
+  box-shadow:
+    0 0 0 5px rgba(101, 196, 14, 0.28),
+    inset 3px 3px 0 rgba(255, 255, 255, 0.42),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.22),
+    0 6px 0 rgba(37, 77, 2, 0.25);
+}
+.path-node-wrong {
+  background: linear-gradient(180deg, #f87171 0%, #dc2626 100%);
+  border-color: #7f1d1d;
+  color: #ffffff;
+}
+.path-node-idle {
+  background: linear-gradient(180deg, #ffffff 0%, #dbe7f5 100%);
+  border-color: #496587;
+  color: #1e3a5f;
+}
+.path-node-boss {
+  background: linear-gradient(180deg, #38bdf8 0%, #1e5aa8 100%);
+  border-color: #0f2e59;
+  color: #ffffff;
+}
+
+/* подпрыгивающая табличка ИГРАТЬ! над текущим узлом */
+@keyframes playTagBob {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -6px); }
+}
+.path-play-tag {
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #ffffff;
+  border: 2px solid #254d02;
+  border-radius: 4px;
+  padding: 2px 10px;
+  font-family: 'Tektur', 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: #254d02;
+  box-shadow: 2px 3px 0 rgba(37, 77, 2, 0.22);
+  animation: playTagBob 1.5s ease-in-out infinite;
+  z-index: 10;
+}
+.path-play-tag::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  margin-left: -5px;
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  border-right: 2px solid #254d02;
+  border-bottom: 2px solid #254d02;
+  transform: rotate(45deg);
+}
+
+/* пиксельные ступеньки-блоки тропинки между узлами */
+.path-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1.5px solid #355070;
+  background: #c5d8ef;
+  box-shadow: inset 1px 1px 0 #ffffff;
+}
+.path-step-dot.lit {
+  background: #65c40e;
+  border-color: #254d02;
+}
+
+/* плавная змейка-сдвиг узлов (адаптируется под телефон без переполнения) */
+.path-row-0 { transform: translateX(0px); }
+.path-row-1 { transform: translateX(-44px); }
+.path-row-2 { transform: translateX(-62px); }
+.path-row-3 { transform: translateX(-12px); }
+.path-row-4 { transform: translateX(46px); }
+.path-row-5 { transform: translateX(10px); }
+
+@media (max-width: 520px) {
+  .path-row-0 { transform: translateX(0px); }
+  .path-row-1 { transform: translateX(-10px); }
+  .path-row-2 { transform: translateX(-14px); }
+  .path-row-3 { transform: translateX(-4px); }
+  .path-row-4 { transform: translateX(14px); }
+  .path-row-5 { transform: translateX(4px); }
 }

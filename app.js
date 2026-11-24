@@ -101,6 +101,8 @@ const I18N = {
     chat_scam_done: 'Пройдено! Мошенник заблокирован',
     chat_no_sms: 'Пока нет входящих SMS. Они приходят в ходе диалогов в «Симуляторе чатов».',
     btn_pass_lab: 'Тест пароля',
+    btn_map_play: 'Продолжить путь',
+    btn_back_map: 'К карте',
     pass_lab_title: 'Взломают ли твой пароль?',
     pass_lab_sub: 'Придумай тестовый пароль — проверь защиту!',
     pass_lab_gen: 'Супер-пароль',
@@ -291,6 +293,8 @@ const I18N = {
     chat_scam_done: 'Done! Scammer blocked',
     chat_no_sms: 'No incoming SMS yet. They arrive during chats in the Chat Simulator.',
     btn_pass_lab: 'Password Lab',
+    btn_map_play: 'Continue Path',
+    btn_back_map: 'To Map',
     pass_lab_title: 'Can Hackers Crack Your Password?',
     pass_lab_sub: 'Type a test password to check its shield!',
     pass_lab_gen: 'Super Password',
@@ -475,6 +479,8 @@ const I18N = {
     chat_scam_done: 'Вєрсы! Мошенник пӑнтсы',
     chat_no_sms: 'SMS ӑнтєм. Ӆыв «Потӑр симулятор» чатӑтн юхӑтӆӑт.',
     btn_pass_lab: 'Пароль вәньщты',
+    btn_map_play: 'Єӆӆы вєрты',
+    btn_back_map: 'Карта хося',
     pass_lab_title: 'Парольэн тӑк аӆпа ӑн?',
     pass_lab_sub: 'Йиӆуп пароль хӑншэ па вәньщэ!',
     pass_lab_gen: 'Тӑк пароль',
@@ -601,6 +607,8 @@ const state = {
   },
   // данные по карточкам
   currentCardId: null,
+  cardsViewMode: 'map',       // map (карта-тропинка биома) | play (режим урока)
+  lessonHearts: 3,            // 3 пиксельных сердечка в уроке
   adaptiveLevel: 1,           // уровень сложности 1..3
   supportMode: false,         // если true — немного помогаем с заданием (50/50, примеры, 1-й шаг)
   streak: 0,
@@ -1259,11 +1267,219 @@ function renderBiomeTabs() {
   }).join('');
 }
 
+function syncCardsViewMode() {
+  const mapEl = document.getElementById('cards-map-view');
+  const playEl = document.getElementById('cards-play-view');
+  const isPlay = state.cardsViewMode === 'play';
+  if (mapEl) mapEl.classList.toggle('hidden', isPlay);
+  if (playEl) playEl.classList.toggle('hidden', !isPlay);
+}
+
+function renderLessonHearts() {
+  const box = document.getElementById('lesson-hearts');
+  if (!box) return;
+  const lives = Math.max(0, Math.min(3, typeof state.lessonHearts === 'number' ? state.lessonHearts : 3));
+  const emptyHeartSvg = `<svg viewBox="0 0 16 16" class="w-5 h-5 shrink-0 opacity-45" shape-rendering="crispEdges"><rect x="3" y="4" width="4" height="4" fill="#94a3b8"/><rect x="9" y="4" width="4" height="4" fill="#94a3b8"/><rect x="2" y="6" width="12" height="3" fill="#64748b"/><rect x="4" y="9" width="8" height="2" fill="#64748b"/><rect x="6" y="11" width="4" height="2" fill="#475569"/></svg>`;
+  let html = '';
+  for (let i = 0; i < 3; i++) {
+    html += i < lives ? getLootPixelSvg('heart', 'w-5 h-5') : emptyHeartSvg;
+  }
+  box.innerHTML = html;
+}
+
+// рисуем карту-тропинку уровней активного биома (как в duolingo + блоки minecraft)
+function renderBiomePathMap() {
+  const nodesBox = document.getElementById('biome-path-nodes');
+  if (!nodesBox || typeof CARD_CHAPTERS === 'undefined') return;
+
+  const stats = getCardStatsSummary();
+  const activeCh = getActiveChapterId();
+  const chObj = CARD_CHAPTERS.find(c => c.id === activeCh) || CARD_CHAPTERS[0];
+  const chCards = getChapterCards(activeCh);
+  const doneCount = chCards.filter(c => state.cardResults[c.id] && state.cardResults[c.id].correct).length;
+  const isEn = state.lang === 'en';
+  const isKca = state.lang === 'kca';
+
+  // обновляем верхнюю полоску карты (звёзды, серия, ошибки, кнопка старта)
+  const mapStars = document.getElementById('map-stars-text');
+  if (mapStars) mapStars.textContent = `${stats.correct} / ${stats.total}`;
+
+  const mapStreakPill = document.getElementById('map-streak-pill');
+  const mapStreakText = document.getElementById('map-streak-text');
+  if (mapStreakPill && mapStreakText) {
+    if (state.streak >= 2) {
+      mapStreakPill.classList.remove('hidden');
+      mapStreakText.textContent = `${t('streak_label')}: ${state.streak}`;
+    } else {
+      mapStreakPill.classList.add('hidden');
+    }
+  }
+
+  const playBtnLbl = document.getElementById('btn-map-play-label');
+  if (playBtnLbl) {
+    if (doneCount === chCards.length && chCards.length > 0) {
+      playBtnLbl.textContent = isEn ? 'Replay Chapter' : (isKca ? 'Иӆпийн вєрты' : 'Повторить главу');
+    } else if (doneCount === 0) {
+      playBtnLbl.textContent = isEn ? 'Start Path' : (isKca ? 'Оӆӑӊ вєр' : 'Начать путь');
+    } else {
+      playBtnLbl.textContent = t('btn_map_play');
+    }
+  }
+
+  // стилизуем фон и баннер выбранного биома
+  const stageEl = document.getElementById('biome-path-stage');
+  if (stageEl) {
+    stageEl.className = `mc-panel overflow-hidden biome-bg-${activeCh}`;
+  }
+  const bannerEl = document.getElementById('biome-path-banner');
+  if (bannerEl) {
+    const bannerGrads = {
+      1: 'from-[#5ca904] to-[#427d03] text-white',
+      2: 'from-[#1e5aa8] to-[#153e75] text-white',
+      3: 'from-[#312e81] to-[#1d4ed8] text-white'
+    };
+    bannerEl.className = `px-4 sm:px-6 py-3.5 sm:py-4 border-b-2 border-[#24364d] bg-gradient-to-r ${bannerGrads[activeCh] || bannerGrads[1]} flex flex-wrap items-center justify-between gap-2`;
+  }
+
+  const kickerEl = document.getElementById('biome-path-kicker');
+  const titleEl = document.getElementById('biome-path-title');
+  const countEl = document.getElementById('biome-path-count');
+  if (kickerEl) kickerEl.textContent = `${isEn ? 'Chapter' : 'Глава'} ${chObj.id} • ${L(chObj.sub)}`;
+  if (titleEl) titleEl.textContent = L(chObj.title);
+  if (countEl) countEl.textContent = `${doneCount} / ${chCards.length}`;
+
+  // ищем первую непройденную миссию главы — над ней будет прыгать табличка ИГРАТЬ!
+  const nextTodo = chCards.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || chCards[0];
+  const nextTodoId = nextTodo ? nextTodo.id : null;
+
+  nodesBox.innerHTML = '';
+
+  chCards.forEach((c, idx) => {
+    const res = state.cardResults[c.id];
+    const isDone = Boolean(res && res.answered && res.correct);
+    const isWrong = Boolean(res && res.answered && !res.correct);
+    const isNext = c.id === nextTodoId && !isDone;
+    const isBoss = c.type === 'craft';
+    const lootIcon = (c.loot && c.loot.icon) || 'shield';
+
+    // соединительная пиксельная дорожка из 3 кубиков между узлами
+    if (idx > 0) {
+      const prevRes = state.cardResults[chCards[idx - 1].id];
+      const prevLit = Boolean(prevRes && prevRes.answered && prevRes.correct);
+      const trail = document.createElement('div');
+      trail.className = `flex flex-col items-center gap-1.5 my-1 path-row-${idx}`;
+      trail.innerHTML = `
+        <span class="path-step-dot ${prevLit ? 'lit' : ''}"></span>
+        <span class="path-step-dot ${prevLit ? 'lit' : ''}"></span>
+        <span class="path-step-dot ${prevLit ? 'lit' : ''}"></span>
+      `;
+      nodesBox.appendChild(trail);
+    }
+
+    const row = document.createElement('div');
+    row.className = `relative flex items-center justify-center gap-3 sm:gap-4 py-1.5 w-full max-w-[520px] path-row-${idx % 6}`;
+
+    // класс кубического блока-узла
+    let nodeCls = 'path-node-idle';
+    if (isDone) nodeCls = 'path-node-done';
+    else if (isWrong) nodeCls = 'path-node-wrong';
+    else if (isNext) nodeCls = 'path-node-current';
+    else if (isBoss) nodeCls = 'path-node-boss';
+
+    // мини-напарник рядом с активной миссией
+    const heroHtml = isNext ? `
+      <div class="hidden sm:flex items-center justify-center w-16 h-16 shrink-0 -ml-2 drop-shadow-sm" aria-hidden="true">
+        ${getYugorkaSvg('idle', stats.correct)}
+      </div>
+    ` : '';
+
+    const playTag = isNext
+      ? `<span class="path-play-tag">${isEn ? 'PLAY!' : (isKca ? 'ВЄРТЫ!' : 'ИГРАТЬ!')}</span>`
+      : '';
+
+    const nodeInner = isDone
+      ? `${getLootPixelSvg(lootIcon, 'w-9 h-9 sm:w-10 sm:h-10')}<span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-[3px] bg-[#16a34a] border-2 border-[#14532d] text-white flex items-center justify-center shadow-sm"><i data-lucide="check" class="w-3.5 h-3.5" stroke-width="3"></i></span>`
+      : (isWrong
+        ? `<i data-lucide="rotate-ccw" class="w-7 h-7 sm:w-8 sm:h-8"></i>`
+        : (isBoss
+          ? `${getLootPixelSvg(lootIcon, 'w-9 h-9 sm:w-10 sm:h-10')}<span class="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-[2px] bg-[#facc15] border border-[#854d0e] text-[#713f12] font-pixel text-[9px] font-bold">3×3</span>`
+          : (isNext
+            ? `<i data-lucide="play" class="w-7 h-7 sm:w-8 sm:h-8 fill-white"></i>`
+            : `<span class="font-pixel text-xl sm:text-2xl font-bold">${idx + 1}</span>`)));
+
+    const badgeTone = isDone
+      ? 'bg-[#fef3c7] border-[#d97706] text-[#92400e]'
+      : (isWrong
+        ? 'bg-[#fdecec] border-[#c62828] text-[#991b1b]'
+        : (isNext
+          ? 'bg-[#dcfce7] border-[#16a34a] text-[#14532d]'
+          : (isBoss ? 'bg-[#e0f2fe] border-[#0284c7] text-[#075985]' : 'bg-[#f1f5f9] border-[#cbd5e1] text-cgy-muted')));
+
+    row.innerHTML = `
+      ${heroHtml}
+      <button type="button" onclick="openMissionFromMap('${c.id}')"
+        class="path-node-btn ${nodeCls} w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 cursor-pointer"
+        title="${idx + 1}. ${L(c.title)}">
+        ${playTag}
+        ${nodeInner}
+      </button>
+      <button type="button" onclick="openMissionFromMap('${c.id}')"
+        class="flex-1 max-w-[260px] sm:max-w-[300px] text-left bg-white/95 hover:bg-white border-2 ${isNext ? 'border-[#4a9603] shadow-md' : (isDone ? 'border-[#d97706]/70' : 'border-[#bfd4ec]')} rounded-[4px] px-3 py-2 transition cursor-pointer">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-pixel text-[10px] font-bold px-1.5 py-0.5 rounded-[2px] border ${badgeTone}">
+            #${idx + 1} • ${t('typesShort')[c.type] || c.type}
+          </span>
+          ${isDone ? `<span class="text-[11px] font-extrabold text-[#16a34a]">★ ${isEn ? 'Done' : (isKca ? 'Вєрсы' : 'Пройдено')}</span>` : ''}
+        </div>
+        <div class="font-bold text-xs sm:text-sm text-cgy-text leading-snug mt-1 line-clamp-2">${L(c.title)}</div>
+      </button>
+    `;
+
+    nodesBox.appendChild(row);
+  });
+}
+
+function openMissionFromMap(cardId) {
+  stopReadAloud();
+  state.currentCardId = cardId;
+  state.cardsViewMode = 'play';
+  state.lessonHearts = 3;
+  state.cardDraft = {};
+  saveState();
+  SoundFX.playPick();
+  renderCurrentCard(true);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openNextMissionFromMap() {
+  const activeCh = getActiveChapterId();
+  const chCards = getChapterCards(activeCh);
+  let target = chCards.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct));
+  if (!target) {
+    target = CARDS.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || chCards[0] || CARDS[0];
+  }
+  if (target) openMissionFromMap(target.id);
+}
+
+function backToBiomeMap() {
+  stopReadAloud();
+  state.cardsViewMode = 'map';
+  SoundFX.playPick();
+  renderCurrentCard(false);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function selectBiomeChapter(chId) {
   const chCards = getChapterCards(chId);
   if (!chCards.length) return;
   const target = chCards.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || chCards[0];
-  selectCardById(target.id);
+  stopReadAloud();
+  state.currentCardId = target.id;
+  state.cardsViewMode = 'map';
+  state.cardDraft = {};
+  saveState();
+  SoundFX.playPick();
+  renderCurrentCard(false);
 }
 
 function jumpToMistakeCard() {
@@ -1274,10 +1490,13 @@ function jumpToMistakeCard() {
   if (!wrong) return;
   stopReadAloud();
   state.currentCardId = wrong.id;
+  state.cardsViewMode = 'play';
+  state.lessonHearts = 3;
   state.cardDraft = { retrying: true };
   state.supportMode = true;
   SoundFX.playPick();
   renderCurrentCard(true);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderCardsStepper() {
@@ -1318,6 +1537,7 @@ function renderCardsStepper() {
 function selectCardById(cardId) {
   stopReadAloud();
   state.currentCardId = cardId;
+  state.cardsViewMode = 'play';
   state.cardDraft = {};
   saveState();
   SoundFX.playPick();
@@ -1451,13 +1671,25 @@ function renderCurrentCard(animateEntrance = false) {
   }
 
   const idx = CARDS.findIndex(c => c.id === card.id);
+  const chCards = getChapterCards(getActiveChapterId());
+  const chIdx = Math.max(0, chCards.findIndex(c => c.id === card.id));
   const stats = getCardStatsSummary();
   const res = state.cardResults[card.id];
   const isEvaluated = Boolean(res && res.answered && !state.cardDraft.retrying);
 
-  // обновляем счетчик миссии и звезд
-  document.getElementById('card-step-text').textContent = `${idx + 1} ${t('of_word')} ${CARDS.length}`;
-  document.getElementById('cards-live-score').textContent = `${stats.correct} / ${stats.total}`;
+  // переключаем экран карты-тропинки / урока и обновляем прогресс главы + сердечки
+  syncCardsViewMode();
+  const stepEl = document.getElementById('card-step-text');
+  if (stepEl) stepEl.textContent = `${chIdx + 1} / ${chCards.length || CARDS.length}`;
+  const liveScoreEl = document.getElementById('cards-live-score');
+  if (liveScoreEl) liveScoreEl.textContent = `${stats.correct} / ${stats.total}`;
+  const barEl = document.getElementById('lesson-progress-bar');
+  if (barEl && chCards.length) {
+    const chSolved = chCards.filter(c => state.cardResults[c.id] && state.cardResults[c.id].correct).length;
+    const pct = Math.max(12, Math.round((Math.max(chSolved, chIdx + (isEvaluated ? 1 : 0)) / chCards.length) * 100));
+    barEl.style.width = `${Math.min(100, pct)}%`;
+  }
+  renderLessonHearts();
 
   // для верно/неверно при подсказке выводим совет в облачко персонажа
   const supportApplied = !isEvaluated && Boolean(state.cardDraft.supportApplied);
@@ -1566,6 +1798,7 @@ function renderCurrentCard(animateEntrance = false) {
   renderCardVisual(card);
 
   renderBiomeTabs();
+  renderBiomePathMap();
   renderCardsStepper();
   renderLootHotbar();
   updateReadAloudAvailability();
@@ -3366,7 +3599,7 @@ function moveOrderStep(pos, delta) {
   renderCurrentCard();
 }
 
-// 6. кибер-верстак 3x3 (крафт защиты как в майнкрафте)
+// 6. кибер-верстак 3x3 (окно крафта точь-в-точь как в майнкрафте)
 function renderCraftTask(card, container, isEvaluated) {
   const selected = state.cardDraft.selectedIds || [];
   const locked = !isEvaluated ? (state.cardDraft.lockedIds || []) : [];
@@ -3377,29 +3610,29 @@ function renderCraftTask(card, container, isEvaluated) {
   const wrap = document.createElement('div');
   wrap.className = 'grid grid-cols-1 lg:grid-cols-12 gap-4 items-start';
 
-  // левая часть: сам верстак 3x3 + стрелка + итоговый щит
+  // левая часть: настоящее серое окно верстака 3x3 -> стрелка -> слот результата
   const bench = document.createElement('div');
-  bench.className = 'craft-bench lg:col-span-6 p-3.5 sm:p-4 flex flex-col gap-3';
+  bench.className = 'craft-bench lg:col-span-6 p-3.5 sm:p-5 flex flex-col gap-3';
 
   const hdr = document.createElement('div');
   hdr.className = 'flex items-center justify-between gap-2';
   hdr.innerHTML = `
-    <span class="font-pixel text-xs sm:text-sm font-bold text-cgy-accent flex items-center gap-1.5">
-      <i data-lucide="hammer" class="w-4 h-4"></i>
-      <span>${isEn ? 'Crafting Table (3×3)' : 'Кибер-верстак (3×3)'}</span>
+    <span class="font-pixel text-sm sm:text-base font-bold text-[#3f3f3f]">
+      ${isEn ? 'Crafting' : 'Создание'}
     </span>
-    <span class="font-pixel text-xs font-bold px-2 py-0.5 rounded-[3px] ${ready ? 'bg-[#dcfce7] text-[#14532d] border border-[#16a34a]' : 'bg-white text-cgy-text border border-[#93c5fd]'} tabular-nums">
+    <span class="font-pixel text-xs font-bold px-2 py-0.5 rounded-[2px] ${ready ? 'bg-[#dcfce7] text-[#14532d] border-2 border-[#16a34a]' : 'bg-[#8b8b8b] text-white border-2 border-[#373737]'} tabular-nums">
       ${selected.length} / ${need}
     </span>
   `;
   bench.appendChild(hdr);
 
+  // горизонтальный ряд: [сетка 3x3 без щелей]  [пиксельная стрелка]  [слот результата]
   const row = document.createElement('div');
-  row.className = 'flex flex-col sm:flex-row items-center justify-center gap-3.5';
+  row.className = 'flex items-center justify-center gap-3 sm:gap-5 py-1';
 
-  // сетка 3x3 (слоты заполняются по центру/по порядку)
+  // сетка 3x3 вплотную (0 gap, как в игре)
   const grid = document.createElement('div');
-  grid.className = 'grid grid-cols-3 gap-2 w-full max-w-[234px]';
+  grid.className = 'craft-grid-3x3 shrink-0';
   const slotMap = [1, 3, 4, 5, 7, 0, 2, 6, 8];
   const cellItems = new Array(9).fill(null);
   selected.forEach((id, i) => {
@@ -3410,16 +3643,13 @@ function renderCraftTask(card, container, isEvaluated) {
   cellItems.forEach(ing => {
     const cell = document.createElement('button');
     cell.type = 'button';
-    let cls = 'craft-cell flex flex-col items-center justify-center p-1.5 text-center';
+    let cls = 'craft-cell flex items-center justify-center p-1';
     if (ing) {
       const isOk = isEvaluated && ing.correct;
       const isBad = isEvaluated && !ing.correct;
       cls += isOk ? ' is-correct' : (isBad ? ' is-wrong' : ' filled');
       cell.title = L(ing.label);
-      cell.innerHTML = `
-        ${getLootPixelSvg(ing.icon || 'shield', 'w-7 h-7')}
-        <span class="text-[9px] font-bold text-cgy-text leading-tight line-clamp-2 mt-0.5">${L(ing.label)}</span>
-      `;
+      cell.innerHTML = getLootPixelSvg(ing.icon || 'shield', 'w-9 h-9 sm:w-11 sm:h-11');
       if (!isEvaluated && !locked.includes(ing.id)) {
         cell.onclick = () => toggleCraftIngredient(ing.id);
       } else {
@@ -3427,26 +3657,51 @@ function renderCraftTask(card, container, isEvaluated) {
       }
     } else {
       cell.disabled = true;
-      cell.innerHTML = '<span class="text-xs font-bold text-slate-500/50">·</span>';
+      cell.innerHTML = '';
     }
+    cell.className = cls;
     grid.appendChild(cell);
   });
   row.appendChild(grid);
 
-  // стрелка и слот результата крафта
+  // пиксельная стрелка из верстака майнкрафта (#8b8b8b)
+  const arrowWrap = document.createElement('div');
+  arrowWrap.className = 'flex items-center justify-center shrink-0';
+  arrowWrap.innerHTML = `
+    <svg viewBox="0 0 22 15" class="w-9 h-6 sm:w-12 sm:h-8 shrink-0" shape-rendering="crispEdges" aria-hidden="true">
+      <rect x="0" y="5" width="12" height="5" fill="#8b8b8b"/>
+      <rect x="12" y="0" width="2" height="15" fill="#8b8b8b"/>
+      <rect x="14" y="1" width="1" height="13" fill="#8b8b8b"/>
+      <rect x="15" y="2" width="1" height="11" fill="#8b8b8b"/>
+      <rect x="16" y="3" width="1" height="9" fill="#8b8b8b"/>
+      <rect x="17" y="4" width="1" height="7" fill="#8b8b8b"/>
+      <rect x="18" y="5" width="1" height="5" fill="#8b8b8b"/>
+      <rect x="19" y="6" width="1" height="3" fill="#8b8b8b"/>
+      <rect x="20" y="7" width="1" height="1" fill="#8b8b8b"/>
+    </svg>
+  `;
+  row.appendChild(arrowWrap);
+
+  // правый слот результата крафта (большой квадрат #8b8b8b)
   const resArea = document.createElement('div');
-  resArea.className = 'flex sm:flex-col items-center justify-center gap-2.5';
+  resArea.className = 'flex flex-col items-center justify-center gap-1.5 shrink-0';
   resArea.innerHTML = `
-    <i data-lucide="arrow-right" class="w-6 h-6 text-[#355070] sm:rotate-0 rotate-90 shrink-0"></i>
-    <div class="craft-result-slot ${ready ? 'ready' : ''} w-20 h-20 flex flex-col items-center justify-center p-2 text-center">
-      ${ready ? getLootPixelSvg((card.craftTarget && card.craftTarget.icon) || 'shield', 'w-10 h-10') : '<span class="font-pixel text-xl font-bold text-slate-500">?</span>'}
-    </div>
-    <div class="font-pixel text-xs font-bold text-cgy-text text-center max-w-[110px] leading-tight">
-      ${L((card.craftTarget && card.craftTarget.name) || { ru: 'Кибер-Щит', en: 'Cyber Shield', kca: 'Щит' })}
+    <div class="craft-result-slot ${ready ? 'ready' : ''} flex items-center justify-center p-2"
+      title="${L((card.craftTarget && card.craftTarget.name) || { ru: 'Кибер-Щит', en: 'Cyber Shield', kca: 'Щит' })}">
+      ${ready ? getLootPixelSvg((card.craftTarget && card.craftTarget.icon) || 'shield', 'w-11 h-11 sm:w-12 sm:h-12') : ''}
     </div>
   `;
   row.appendChild(resArea);
   bench.appendChild(row);
+
+  // подпись крафтимого предмета внизу окна верстака
+  const foot = document.createElement('div');
+  foot.className = 'flex items-center justify-between gap-2 pt-1 border-t-2 border-[#a8a8a8] text-xs font-bold text-[#3f3f3f]';
+  foot.innerHTML = `
+    <span>${isEn ? 'Recipe:' : 'Рецепт:'} ${L((card.craftTarget && card.craftTarget.name) || { ru: 'Кибер-Щит', en: 'Cyber Shield', kca: 'Щит' })}</span>
+    <span class="text-[11px] opacity-80">${isEn ? 'Tap slot to remove' : 'Клик по слоту убирает блок'}</span>
+  `;
+  bench.appendChild(foot);
   wrap.appendChild(bench);
 
   // правая часть: доступные блоки для крафта
@@ -3586,6 +3841,7 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
   } else {
     state.streak = 0;
     state.supportMode = true;
+    state.lessonHearts = Math.max(0, (typeof state.lessonHearts === 'number' ? state.lessonHearts : 3) - 1);
     SoundFX.playFail();
     if (state.adaptiveLevel > 1) {
       state.adaptiveLevel -= 1;
@@ -3680,8 +3936,10 @@ function retryCurrentCard() {
 
 function goNextCard() {
   stopReadAloud();
+  const prevChapter = getActiveChapterId();
   const nextTarget = getNextAdaptiveTarget();
   if (!nextTarget) {
+    state.cardsViewMode = 'map';
     switchMainTab('results');
     return;
   }
@@ -3689,10 +3947,29 @@ function goNextCard() {
   if (nextTarget.reason === 'review') {
     state.supportMode = true;
     state.currentCardId = nextTarget.card.id;
+    state.cardsViewMode = 'play';
     state.cardDraft = { retrying: true };
     saveState();
     SoundFX.playPick();
     renderCurrentCard(true);
+    return;
+  }
+
+  // если завершили текущую главу — возвращаем на карту-тропинку следующего биома
+  const nextChapter = (nextTarget.card && nextTarget.card.chapter) || 1;
+  if (nextChapter !== prevChapter) {
+    state.currentCardId = nextTarget.card.id;
+    state.cardsViewMode = 'map';
+    state.lessonHearts = 3;
+    state.cardDraft = {};
+    saveState();
+    SoundFX.playWin(3);
+    renderCurrentCard(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast(
+      state.lang === 'en' ? 'Chapter complete! Pick the next biome on the map!' : 'Глава пройдена! Открыта следующая тропинка на карте!',
+      'success'
+    );
     return;
   }
 
@@ -3710,6 +3987,8 @@ function resetCardsSession() {
   state.adaptiveLevel = state.profile.gradeClass === '8-11' ? 3 : 1;
   state.supportMode = state.profile.gradeClass === '1-4';
   state.streak = 0;
+  state.lessonHearts = 3;
+  state.cardsViewMode = 'map';
   state.currentCardId = CARDS[0].id;
   stopReadAloud();
   saveState();
@@ -5053,6 +5332,8 @@ function jumpToWeakestTopic() {
   }
   if (weakestSkillTarget.firstTargetCard) {
     state.currentCardId = weakestSkillTarget.firstTargetCard;
+    state.cardsViewMode = 'play';
+    state.lessonHearts = 3;
     state.cardDraft = {};
     switchMainTab('cards');
     renderCurrentCard(true);
@@ -5621,6 +5902,8 @@ function confirmFullReset() {
   state.adaptiveLevel = state.profile.gradeClass === '8-11' ? 3 : 1;
   state.supportMode = state.profile.gradeClass === '1-4';
   state.streak = 0;
+  state.lessonHearts = 3;
+  state.cardsViewMode = 'map';
   state.unlockedAchIds = [];
   state.sessionHistory = [];
   state.chatCompleted = [];
