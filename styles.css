@@ -68,15 +68,7 @@ h1, h2, h3,
 #streak-pill,
 #badge-cards-progress,
 #badge-chat-progress,
-#badge-blitz-best,
 #overall-pct,
-#blitz-timer-text,
-#blitz-combo-pill,
-#blitz-score-text,
-#blitz-start-best,
-#blitz-end-score,
-#blitz-end-acc,
-#blitz-end-best,
 #pass-lab-time {
   font-family: 'Pixelify Sans', 'Nunito', sans-serif;
   letter-spacing: 0.01em;
@@ -102,9 +94,6 @@ h1, h2, h3,
 .mc-panel,
 #card-stage,
 #cards-complete-banner,
-#blitz-start,
-#blitz-card,
-#blitz-end,
 #view-chat > div {
   border-radius: 4px !important;
   border: 2px solid var(--mc-ink) !important;
@@ -253,8 +242,7 @@ body.mc-theme .fixed.inset-0 > div {
   font-weight: 700;
 }
 .nav-tab.active #badge-cards-progress,
-.nav-tab.active #badge-chat-progress,
-.nav-tab.active #badge-blitz-best {
+.nav-tab.active #badge-chat-progress {
   background-color: rgba(255, 255, 255, 0.2);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.35);
