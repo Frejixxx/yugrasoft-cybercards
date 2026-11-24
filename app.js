@@ -2317,6 +2317,7 @@ function getLootPixelSvg(icon, sizeCls = 'w-8 h-8') {
     book: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="3" y="2" width="10" height="12" fill="#7c3aed"/><rect x="5" y="3" width="7" height="10" fill="#a78bfa"/><rect x="4" y="4" width="1" height="8" fill="#fde047"/><rect x="7" y="5" width="4" height="2" fill="#fef08a"/></svg>`,
     poppy: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="#ef4444"/><rect x="5" y="4" width="6" height="3" fill="#dc2626"/><rect x="7" y="4" width="2" height="2" fill="#450a0a"/><rect x="7" y="7" width="2" height="7" fill="#22c55e"/><rect x="5" y="9" width="2" height="2" fill="#16a34a"/><rect x="9" y="10" width="2" height="2" fill="#16a34a"/><rect x="6" y="13" width="4" height="2" fill="#15803d"/></svg>`,
     star: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="7" y="1" width="2" height="4" fill="#fde047"/><rect x="6" y="5" width="4" height="6" fill="#facc15"/><rect x="2" y="6" width="12" height="3" fill="#fbbf24"/><rect x="4" y="9" width="8" height="2" fill="#f59e0b"/><rect x="3" y="11" width="3" height="3" fill="#d97706"/><rect x="10" y="11" width="3" height="3" fill="#d97706"/><rect x="7" y="6" width="2" height="2" fill="#ffffff"/></svg>`,
+    workbench: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="1" y="1" width="14" height="14" fill="#6b4226"/><rect x="2" y="2" width="12" height="12" fill="#b07c4f"/><rect x="2" y="5" width="12" height="1" fill="#4e2e18"/><rect x="2" y="9" width="12" height="1" fill="#4e2e18"/><rect x="5" y="2" width="1" height="12" fill="#4e2e18"/><rect x="9" y="2" width="1" height="12" fill="#4e2e18"/><rect x="3" y="3" width="2" height="2" fill="#c99563"/><rect x="6" y="6" width="3" height="3" fill="#c99563"/><rect x="10" y="10" width="3" height="3" fill="#9a683f"/></svg>`,
     lock: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="5" y="2" width="6" height="2" fill="#9ca3af"/><rect x="4" y="4" width="2" height="4" fill="#9ca3af"/><rect x="10" y="4" width="2" height="4" fill="#9ca3af"/><rect x="3" y="7" width="10" height="7" fill="#6b7280"/><rect x="4" y="8" width="8" height="5" fill="#4b5563"/><rect x="7" y="9" width="2" height="3" fill="#1f2937"/></svg>`
   };
   return map[icon] || map.poppy;
@@ -4996,25 +4997,70 @@ function closeCallModal() {
 function computeAchievements() {
   const cSum = getCardStatsSummary();
   const isCardOk = (id) => Boolean(state.cardResults[id] && state.cardResults[id].correct);
-  const matchAndOrderCards = CARDS.filter(c => c.type === 'match' || c.type === 'order');
-  const detectiveDone = matchAndOrderCards.length > 0 && matchAndOrderCards.every(c => isCardOk(c.id));
+  const countOk = (ids) => ids.filter(id => isCardOk(id)).length;
+
+  const ch1Ids = getChapterCards(1).map(c => c.id);
+  const ch2Ids = getChapterCards(2).map(c => c.id);
+  const ch3Ids = getChapterCards(3).map(c => c.id);
+  const craftIds = CARDS.filter(c => c.type === 'craft').map(c => c.id);
+  const passIds = ['card_password_tf', 'card_craft_account', 'card_hacked_order', 'card_2fa_order'].filter(id => CARDS.some(c => c.id === id));
+  const detIds = CARDS.filter(c => c.type === 'match' || c.type === 'order').map(c => c.id);
+  const scam2026Ids = ['card_qr_choice', 'card_wifi_tf', 'card_apk_choice', 'card_vote_choice', 'card_deepfake_choice'].filter(id => CARDS.some(c => c.id === id));
+
+  const ch1Done = countOk(ch1Ids);
+  const ch2Done = countOk(ch2Ids);
+  const ch3Done = countOk(ch3Ids);
+  const craftDone = countOk(craftIds);
+  const passDone = countOk(passIds);
+  const detDone = countOk(detIds);
+  const scam2026Done = countOk(scam2026Ids);
+  const chatDone = Math.min(3, state.chatCompleted.length);
 
   return [
     {
-      id: 'no_errors',
-      icon: 'sparkles',
-      pixelIcon: 'star',
-      title: { ru: 'Без ошибок', en: 'Flawless', kca: 'Ӑн тәса ӆыпи' },
-      desc: { ru: 'Все кибер-карточки пройдены без единой ошибки', en: 'All cyber-cards solved with zero mistakes', kca: 'Иса кибер-карточкат ӑн тәса ӆыпи вєрӑн' },
-      unlocked: cSum.answered === cSum.total && cSum.correct === cSum.total && cSum.totalErrors === 0
+      id: 'ch1_hero',
+      icon: 'trees',
+      pixelIcon: 'emerald',
+      title: { ru: 'Защитник Деревни', en: 'Village Defender', kca: 'Югра кәрт ӆавӑӆты' },
+      desc: { ru: 'Пройдены все 6 миссий Главы 1 («Деревня Югры»)', en: 'Completed all 6 missions in Chapter 1 (Yugra Village)', kca: 'Глава 1 иса 6 карточкат тәса вєрӑн' },
+      progress: `${ch1Done}/${ch1Ids.length || 6}`,
+      unlocked: ch1Ids.length > 0 && ch1Done === ch1Ids.length
+    },
+    {
+      id: 'ch2_hero',
+      icon: 'pickaxe',
+      pixelIcon: 'sword',
+      title: { ru: 'Гроза Фишинга', en: 'Phishing Slayer', kca: 'Фишинг вәтты' },
+      desc: { ru: 'Пройдена вся Глава 2: QR, Wi-Fi, троян .apk и домены', en: 'Completed Chapter 2: QR, Wi-Fi, .apk malware & domains', kca: 'Глава 2 иса 6 вєрӑт тәса вєрӑн' },
+      progress: `${ch2Done}/${ch2Ids.length || 6}`,
+      unlocked: ch2Ids.length > 0 && ch2Done === ch2Ids.length
+    },
+    {
+      id: 'ch3_hero',
+      icon: 'castle',
+      pixelIcon: 'armor',
+      title: { ru: 'Покоритель Цитадели', en: 'Citadel Champion', kca: 'Вән тӑхи мастер' },
+      desc: { ru: 'Пройдена Глава 3: дипфейки, геометки, 2FA и босс-верстак', en: 'Completed Chapter 3: deepfakes, geotags, 2FA & final craft', kca: 'Глава 3 иса 6 вєрӑт тәса вєрӑн' },
+      progress: `${ch3Done}/${ch3Ids.length || 6}`,
+      unlocked: ch3Ids.length > 0 && ch3Done === ch3Ids.length
+    },
+    {
+      id: 'craft_master',
+      icon: 'hammer',
+      pixelIcon: 'workbench',
+      title: { ru: 'Мастер Верстака', en: 'Crafting Master', kca: 'Верстак мастер' },
+      desc: { ru: 'Собраны все 3 кибер-щита в «Кибер-верстаке 3×3»', en: 'Crafted all 3 cyber-shields on the 3×3 Crafting Table', kca: 'Иса 3 кибер-щит верстакӑн вєрӑн' },
+      progress: `${craftDone}/${craftIds.length || 3}`,
+      unlocked: craftIds.length > 0 && craftDone === craftIds.length
     },
     {
       id: 'password_master',
       icon: 'key-round',
       pixelIcon: 'key',
       title: { ru: 'Мастер паролей', en: 'Password Master', kca: 'Пароль мастер' },
-      desc: { ru: 'Верно выполнены задания про пароли и защиту от взлома', en: 'Solved password & account recovery tasks', kca: 'Пароль па аккаунт ӆавӑӆты вєрӑт тәса вєрӑн' },
-      unlocked: isCardOk('card_password_tf') && isCardOk('card_hacked_order')
+      desc: { ru: 'Верно пройдены все задания про пароли, 2FA и защиту от взлома', en: 'Solved all password, 2FA & account recovery missions', kca: 'Пароль, 2FA па аккаунт ӆавӑӆты вєрӑт тәса вєрӑн' },
+      progress: `${passDone}/${passIds.length || 4}`,
+      unlocked: passIds.length > 0 && passDone === passIds.length
     },
     {
       id: 'detective',
@@ -5022,23 +5068,17 @@ function computeAchievements() {
       pixelIcon: 'spyglass',
       title: { ru: 'Сыщик', en: 'Cyber Detective', kca: 'Вәтты хоят (Сыщик)' },
       desc: { ru: 'Все задания на сопоставление и порядок действий выполнены верно', en: 'All matching & action order cards solved correctly', kca: 'Кимӑӆтӑты па вєрӑт тӑхи карточкат иса тәса вєрӑн' },
-      unlocked: detectiveDone
+      progress: `${detDone}/${detIds.length || 4}`,
+      unlocked: detIds.length > 0 && detDone === detIds.length
     },
     {
-      id: 'privacy_guard',
-      icon: 'shield-check',
+      id: 'scam_2026',
+      icon: 'shield-alert',
       pixelIcon: 'shield',
-      title: { ru: 'Хранитель данных', en: 'Privacy Guardian', kca: 'Нєм-хот ӆавӑӆты' },
-      desc: { ru: 'Верно распределил личные данные в сортировке', en: 'Sorted personal data accurately', kca: 'Нєм па хот вєрӑт тәса пєӆӑкн пунӑн' },
-      unlocked: isCardOk('card_personal_sort')
-    },
-    {
-      id: 'anti_bullying',
-      icon: 'heart-handshake',
-      pixelIcon: 'poppy',
-      title: { ru: 'Анти-буллинг', en: 'Kind & Safe', kca: 'Ёмӑщ сӑм (Анти-буллинг)' },
-      desc: { ru: 'Выбрал правильную реакцию на травлю в сети', en: 'Chose the right response to cyberbullying', kca: 'Ӑтӑм ясӑӊӑт эвӑӆт юрєн тәса нётӑн' },
-      unlocked: isCardOk('card_bullying_choice')
+      title: { ru: 'Анти-Фейк 2026', en: 'Anti-Scam 2026', kca: 'Анти-Фейк 2026' },
+      desc: { ru: 'Раскрыты новые схемы: QR, Wi-Fi, .apk, «голосование» и ИИ-дипфейк', en: 'Defeated modern scams: QR, Wi-Fi, .apk, voting & AI deepfake', kca: 'QR, Wi-Fi, .apk, голосование па ИИ-дипфейк вәтӑн' },
+      progress: `${scam2026Done}/${scam2026Ids.length || 5}`,
+      unlocked: scam2026Ids.length > 0 && scam2026Done === scam2026Ids.length
     },
     {
       id: 'chat_agent',
@@ -5046,7 +5086,17 @@ function computeAchievements() {
       pixelIcon: 'book',
       title: { ru: 'Агент мессенджера', en: 'Messenger Pro', kca: 'Потӑр мастер' },
       desc: { ru: 'Пройдено 3 или более диалогов в симуляторе чатов', en: 'Completed 3+ scenarios in the Chat Simulator', kca: 'Потӑр симуляторӑн 3 аӆпа аршӑк диалог вєрӑн' },
+      progress: `${chatDone}/3`,
       unlocked: state.chatCompleted.length >= 3
+    },
+    {
+      id: 'no_errors',
+      icon: 'sparkles',
+      pixelIcon: 'star',
+      title: { ru: 'Без ошибок', en: 'Flawless', kca: 'Ӑн тәса ӆыпи' },
+      desc: { ru: `Все ${cSum.total} кибер-карточек пройдены без единой ошибки`, en: `All ${cSum.total} cyber-cards solved with zero mistakes`, kca: `Иса ${cSum.total} кибер-карточкат ӑн тәса ӆыпи вєрӑн` },
+      progress: `${cSum.correct}/${cSum.total}`,
+      unlocked: cSum.total > 0 && cSum.answered === cSum.total && cSum.correct === cSum.total && cSum.totalErrors === 0
     }
   ];
 }
@@ -5108,9 +5158,13 @@ function renderResultsDashboard() {
       : (state.lang === 'kca' ? `Серия: ${state.streak || 0}` : `Серия побед: ${state.streak || 0}`);
   }
 
-  // вывод карточек ачивок как в майнкрафте
+  // вывод карточек ачивок как в майнкрафте (с прогрессом по новым миссиям)
   const achGrid = document.getElementById('achievements-grid');
   const achs = computeAchievements();
+  const achUnlockedCount = achs.filter(a => a.unlocked).length;
+  const achCountBadge = document.getElementById('ach-count-badge');
+  if (achCountBadge) achCountBadge.textContent = `${achUnlockedCount} / ${achs.length}`;
+
   const achUnlockedHdr = state.lang === 'en' ? 'Advancement Made!' : (state.lang === 'kca' ? 'Ачивка вўсы!' : 'Достижение получено!');
   const achLockedHdr = state.lang === 'en' ? 'Locked' : (state.lang === 'kca' ? 'Пӑнтӑм' : 'Закрыто');
   achGrid.innerHTML = achs.map(a => `
@@ -5119,7 +5173,10 @@ function renderResultsDashboard() {
         ${getLootPixelSvg(a.unlocked ? (a.pixelIcon || 'poppy') : 'lock', 'w-9 h-9')}
       </div>
       <div class="min-w-0 flex-1">
-        <div class="mc-adv-title text-[13px] sm:text-sm truncate">${a.unlocked ? achUnlockedHdr : achLockedHdr}</div>
+        <div class="flex items-center justify-between gap-2">
+          <div class="mc-adv-title text-[12px] sm:text-[13px] truncate">${a.unlocked ? achUnlockedHdr : achLockedHdr}</div>
+          ${a.progress ? `<span class="font-pixel text-[11px] font-bold px-1.5 py-0.5 rounded-[2px] shrink-0 tabular-nums ${a.unlocked ? 'bg-[#16a34a]/30 text-[#86efac] border border-[#22c55e]/60' : 'bg-black/35 text-[#e5e7eb] border border-white/15'}">${a.progress}</span>` : ''}
+        </div>
         <div class="mc-adv-sub text-sm sm:text-[15px] truncate mt-0.5">${L(a.title)}</div>
         <p class="mc-ach-desc text-[11px] mt-1 leading-snug line-clamp-2">${L(a.desc)}</p>
       </div>
@@ -5671,9 +5728,10 @@ async function downloadCertificatePNG() {
   ctx.font = '700 20px "Tektur", Nunito, Arial, sans-serif';
   ctx.fillText(`${t('grade_word')}: ${state.profile.gradeClass}`, 502, 440);
 
-  // 8 звезд за карточки
-  for (let s = 0; s < Math.min(8, cSum.total); s++) {
-    const filled = s < cSum.correct;
+  // 8 звезд на дипломе пропорционально проценту пройденных карточек
+  const filledStars = Math.round((cSum.correct / Math.max(1, cSum.total)) * 8);
+  for (let s = 0; s < 8; s++) {
+    const filled = s < filledStars;
     drawCanvasStar(
       ctx,
       636 + s * 52,

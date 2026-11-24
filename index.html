@@ -594,8 +594,11 @@
       <div class="mc-panel bg-white p-5">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="font-bold text-base text-cgy-text" data-i18n="ach_title">Достижения (ачивки)</h3>
-            <p class="text-xs text-cgy-muted" data-i18n="ach_sub">Выполняй задания без ошибок, чтобы открыть все значки</p>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-base text-cgy-text" data-i18n="ach_title">Достижения (ачивки)</h3>
+              <span id="ach-count-badge" class="font-pixel text-xs font-bold px-2 py-0.5 rounded-[3px] bg-[#212121] text-[#ffff55] border border-black tabular-nums">0 / 9</span>
+            </div>
+            <p class="text-xs text-cgy-muted mt-0.5" data-i18n="ach_sub">Выполняй задания без ошибок, чтобы открыть все значки</p>
           </div>
           <button id="btn-reset-all" onclick="confirmFullReset()" class="text-xs font-semibold text-cgy-muted hover:text-cgy-err flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
