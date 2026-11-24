@@ -1269,7 +1269,7 @@ function renderCardsStepper() {
     }
 
     const btn = document.createElement('button');
-    btn.className = `mission-node w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 text-xs flex items-center justify-center ${cls}`;
+    btn.className = `mission-node w-8 h-8 sm:w-9 sm:h-9 rounded-[3px] border-2 text-xs flex items-center justify-center ${cls}`;
     btn.innerHTML = inner;
     btn.title = `${idx + 1}. ${L(c.title)} (${t('types')[c.type]})`;
     btn.onclick = () => selectCardById(c.id);
@@ -1445,7 +1445,7 @@ function renderCurrentCard(animateEntrance = false) {
     bannerEl.className = `bg-gradient-to-r ${theme.banner} border-b-2 px-4 sm:px-7 py-3.5 flex flex-wrap items-center justify-between gap-2`;
   }
   if (stageEl) {
-    stageEl.className = `bg-white border-2 ${theme.stage} border-b-[6px] rounded-3xl shadow-md overflow-hidden flex flex-col`;
+    stageEl.className = `mc-panel bg-white border-2 ${theme.stage} overflow-hidden flex flex-col`;
   }
 
   document.getElementById('card-title').textContent = L(card.title);
@@ -1986,19 +1986,22 @@ function setSteveTalking(active) {
   }, 135);
 }
 
-// иконки предметов для нижнего хотбара
-function getLootPixelSvg(icon) {
+// пиксельные иконки предметов для хотбара и ачивок в стиле майнкрафта
+function getLootPixelSvg(icon, sizeCls = 'w-8 h-8') {
   const map = {
-    shield: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="3" y="2" width="10" height="10" fill="#22d3ee"/><rect x="4" y="12" width="8" height="2" fill="#06b6d4"/><rect x="6" y="14" width="4" height="1" fill="#0891b2"/><rect x="5" y="4" width="6" height="6" fill="#1e5aa8"/><rect x="7" y="6" width="2" height="2" fill="#ffffff"/></svg>`,
-    key: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="3" y="3" width="6" height="6" fill="#38bdf8"/><rect x="5" y="5" width="2" height="2" fill="#ffffff"/><rect x="9" y="5" width="5" height="2" fill="#0284c7"/><rect x="11" y="7" width="2" height="3" fill="#0284c7"/><rect x="13" y="7" width="1" height="2" fill="#38bdf8"/></svg>`,
-    chest: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="2" y="3" width="12" height="10" fill="#b45309"/><rect x="2" y="3" width="12" height="4" fill="#d97706"/><rect x="2" y="7" width="12" height="1" fill="#451a03"/><rect x="7" y="6" width="2" height="3" fill="#fde047"/></svg>`,
-    heart: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="3" y="4" width="4" height="4" fill="#ef4444"/><rect x="9" y="4" width="4" height="4" fill="#ef4444"/><rect x="2" y="6" width="12" height="3" fill="#dc2626"/><rect x="4" y="9" width="8" height="2" fill="#dc2626"/><rect x="6" y="11" width="4" height="2" fill="#b91c1c"/><rect x="4" y="5" width="2" height="2" fill="#fca5a5"/></svg>`,
-    spyglass: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="9" y="2" width="5" height="5" fill="#38bdf8"/><rect x="10" y="3" width="2" height="2" fill="#e0f2fe"/><rect x="6" y="6" width="4" height="4" fill="#d97706"/><rect x="3" y="9" width="4" height="4" fill="#92400e"/><rect x="2" y="12" width="2" height="2" fill="#78350f"/></svg>`,
-    armor: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="2" y="3" width="4" height="5" fill="#22d3ee"/><rect x="10" y="3" width="4" height="5" fill="#22d3ee"/><rect x="4" y="4" width="8" height="9" fill="#06b6d4"/><rect x="6" y="3" width="4" height="2" fill="#ffffff"/><rect x="6" y="7" width="4" height="4" fill="#1e5aa8"/></svg>`,
-    emerald: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="#4ade80"/><rect x="4" y="4" width="8" height="8" fill="#16a34a"/><rect x="6" y="12" width="4" height="2" fill="#15803d"/><rect x="6" y="5" width="3" height="4" fill="#86efac"/></svg>`,
-    book: `<svg viewBox="0 0 16 16" class="w-8 h-8" shape-rendering="crispEdges"><rect x="3" y="2" width="10" height="12" fill="#7c3aed"/><rect x="5" y="3" width="7" height="10" fill="#a78bfa"/><rect x="4" y="4" width="1" height="8" fill="#fde047"/><rect x="7" y="5" width="4" height="2" fill="#fef08a"/></svg>`
+    shield: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="3" y="2" width="10" height="10" fill="#22d3ee"/><rect x="4" y="12" width="8" height="2" fill="#06b6d4"/><rect x="6" y="14" width="4" height="1" fill="#0891b2"/><rect x="5" y="4" width="6" height="6" fill="#1e5aa8"/><rect x="7" y="6" width="2" height="2" fill="#ffffff"/></svg>`,
+    key: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="3" y="3" width="6" height="6" fill="#38bdf8"/><rect x="5" y="5" width="2" height="2" fill="#ffffff"/><rect x="9" y="5" width="5" height="2" fill="#0284c7"/><rect x="11" y="7" width="2" height="3" fill="#0284c7"/><rect x="13" y="7" width="1" height="2" fill="#38bdf8"/></svg>`,
+    chest: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="2" y="3" width="12" height="10" fill="#b45309"/><rect x="2" y="3" width="12" height="4" fill="#d97706"/><rect x="2" y="7" width="12" height="1" fill="#451a03"/><rect x="7" y="6" width="2" height="3" fill="#fde047"/></svg>`,
+    heart: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="3" y="4" width="4" height="4" fill="#ef4444"/><rect x="9" y="4" width="4" height="4" fill="#ef4444"/><rect x="2" y="6" width="12" height="3" fill="#dc2626"/><rect x="4" y="9" width="8" height="2" fill="#dc2626"/><rect x="6" y="11" width="4" height="2" fill="#b91c1c"/><rect x="4" y="5" width="2" height="2" fill="#fca5a5"/></svg>`,
+    spyglass: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="9" y="2" width="5" height="5" fill="#38bdf8"/><rect x="10" y="3" width="2" height="2" fill="#e0f2fe"/><rect x="6" y="6" width="4" height="4" fill="#d97706"/><rect x="3" y="9" width="4" height="4" fill="#92400e"/><rect x="2" y="12" width="2" height="2" fill="#78350f"/></svg>`,
+    armor: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="2" y="3" width="4" height="5" fill="#22d3ee"/><rect x="10" y="3" width="4" height="5" fill="#22d3ee"/><rect x="4" y="4" width="8" height="9" fill="#06b6d4"/><rect x="6" y="3" width="4" height="2" fill="#ffffff"/><rect x="6" y="7" width="4" height="4" fill="#1e5aa8"/></svg>`,
+    emerald: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="#4ade80"/><rect x="4" y="4" width="8" height="8" fill="#16a34a"/><rect x="6" y="12" width="4" height="2" fill="#15803d"/><rect x="6" y="5" width="3" height="4" fill="#86efac"/></svg>`,
+    book: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="3" y="2" width="10" height="12" fill="#7c3aed"/><rect x="5" y="3" width="7" height="10" fill="#a78bfa"/><rect x="4" y="4" width="1" height="8" fill="#fde047"/><rect x="7" y="5" width="4" height="2" fill="#fef08a"/></svg>`,
+    poppy: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="#ef4444"/><rect x="5" y="4" width="6" height="3" fill="#dc2626"/><rect x="7" y="4" width="2" height="2" fill="#450a0a"/><rect x="7" y="7" width="2" height="7" fill="#22c55e"/><rect x="5" y="9" width="2" height="2" fill="#16a34a"/><rect x="9" y="10" width="2" height="2" fill="#16a34a"/><rect x="6" y="13" width="4" height="2" fill="#15803d"/></svg>`,
+    star: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="7" y="1" width="2" height="4" fill="#fde047"/><rect x="6" y="5" width="4" height="6" fill="#facc15"/><rect x="2" y="6" width="12" height="3" fill="#fbbf24"/><rect x="4" y="9" width="8" height="2" fill="#f59e0b"/><rect x="3" y="11" width="3" height="3" fill="#d97706"/><rect x="10" y="11" width="3" height="3" fill="#d97706"/><rect x="7" y="6" width="2" height="2" fill="#ffffff"/></svg>`,
+    lock: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="5" y="2" width="6" height="2" fill="#9ca3af"/><rect x="4" y="4" width="2" height="4" fill="#9ca3af"/><rect x="10" y="4" width="2" height="4" fill="#9ca3af"/><rect x="3" y="7" width="10" height="7" fill="#6b7280"/><rect x="4" y="8" width="8" height="5" fill="#4b5563"/><rect x="7" y="9" width="2" height="3" fill="#1f2937"/></svg>`
   };
-  return map[icon] || map.emerald;
+  return map[icon] || map.poppy;
 }
 
 function renderLootHotbar() {
@@ -2392,9 +2395,8 @@ function inspectClue(clueId) {
   const isEn = state.lang === 'en';
   showMcAdvancement(
     isEn ? 'Clue Found!' : (state.lang === 'kca' ? 'Улика кӑншсы!' : 'Улика найдена!'),
-    isEn ? `Evidence logged (${foundNow}/${totalClues})` : `Добавлено в журнал (${foundNow} из ${totalClues})`,
-    'search',
-    'amber'
+    isEn ? `Evidence (${foundNow}/${totalClues})` : `Найдено ${foundNow} из ${totalClues}`,
+    'spyglass'
   );
 
   updateMascot('detective', L(clue.note), true);
@@ -3148,8 +3150,8 @@ function updateCheckBtnReadiness(card) {
   }
   btn.disabled = !ready;
   btn.className = ready
-    ? 'px-6 py-3 rounded-lg bg-cgy-accent hover:bg-cgy-accentHover text-white font-bold text-base transition shadow-sm cursor-pointer'
-    : 'px-6 py-3 rounded-lg bg-slate-200 text-slate-400 font-bold text-base cursor-not-allowed';
+    ? 'btn-3d w-full sm:w-auto px-6 py-3 bg-cgy-accent hover:bg-cgy-accentHover border-[#153e75] text-white font-bold text-base cursor-pointer text-center'
+    : 'w-full sm:w-auto px-6 py-3 rounded-[3px] border-2 border-slate-300 bg-slate-200 text-slate-400 font-pixel font-bold text-base cursor-not-allowed text-center';
 }
 
 function submitCurrentCard() {
@@ -3190,11 +3192,11 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
     SoundFX.playWin(state.streak);
     const lootName = card.loot && card.loot.name ? L(card.loot.name) : L(card.title);
     const streakTxt = state.streak >= 2 ? ` • ${t('streak_label')} x${state.streak}` : '';
+    const lootIcon = (card.loot && card.loot.icon) || 'emerald';
     showMcAdvancement(
       state.lang === 'en' ? `Trophy Unlocked!${streakTxt}` : `Трофей получен!${streakTxt}`,
       lootName,
-      'trophy',
-      'green'
+      lootIcon
     );
     if (state.adaptiveLevel < 3) {
       state.adaptiveLevel += 1;
@@ -4126,8 +4128,7 @@ function completeChatScenario(sc, customNote) {
   showMcAdvancement(
     state.lang === 'en' ? 'Chat Completed!' : 'Чат пройден!',
     sc.achievement.title,
-    'shield-check',
-    'green'
+    'shield'
   );
   checkNewlyUnlockedAchievements();
 
@@ -4341,6 +4342,7 @@ function computeAchievements() {
     {
       id: 'no_errors',
       icon: 'sparkles',
+      pixelIcon: 'star',
       title: { ru: 'Без ошибок', en: 'Flawless', kca: 'Ӑн тәса ӆыпи' },
       desc: { ru: 'Все кибер-карточки пройдены без единой ошибки', en: 'All cyber-cards solved with zero mistakes', kca: 'Иса кибер-карточкат ӑн тәса ӆыпи вєрӑн' },
       unlocked: cSum.answered === cSum.total && cSum.correct === cSum.total && cSum.totalErrors === 0
@@ -4348,6 +4350,7 @@ function computeAchievements() {
     {
       id: 'password_master',
       icon: 'key-round',
+      pixelIcon: 'key',
       title: { ru: 'Мастер паролей', en: 'Password Master', kca: 'Пароль мастер' },
       desc: { ru: 'Верно выполнены задания про пароли и защиту от взлома', en: 'Solved password & account recovery tasks', kca: 'Пароль па аккаунт ӆавӑӆты вєрӑт тәса вєрӑн' },
       unlocked: isCardOk('card_password_tf') && isCardOk('card_hacked_order')
@@ -4355,6 +4358,7 @@ function computeAchievements() {
     {
       id: 'detective',
       icon: 'search-check',
+      pixelIcon: 'spyglass',
       title: { ru: 'Сыщик', en: 'Cyber Detective', kca: 'Вәтты хоят (Сыщик)' },
       desc: { ru: 'Все задания на сопоставление и порядок действий выполнены верно', en: 'All matching & action order cards solved correctly', kca: 'Кимӑӆтӑты па вєрӑт тӑхи карточкат иса тәса вєрӑн' },
       unlocked: detectiveDone
@@ -4362,6 +4366,7 @@ function computeAchievements() {
     {
       id: 'privacy_guard',
       icon: 'shield-check',
+      pixelIcon: 'shield',
       title: { ru: 'Хранитель данных', en: 'Privacy Guardian', kca: 'Нєм-хот ӆавӑӆты' },
       desc: { ru: 'Верно распределил личные данные в сортировке', en: 'Sorted personal data accurately', kca: 'Нєм па хот вєрӑт тәса пєӆӑкн пунӑн' },
       unlocked: isCardOk('card_personal_sort')
@@ -4369,6 +4374,7 @@ function computeAchievements() {
     {
       id: 'anti_bullying',
       icon: 'heart-handshake',
+      pixelIcon: 'poppy',
       title: { ru: 'Анти-буллинг', en: 'Kind & Safe', kca: 'Ёмӑщ сӑм (Анти-буллинг)' },
       desc: { ru: 'Выбрал правильную реакцию на травлю в сети', en: 'Chose the right response to cyberbullying', kca: 'Ӑтӑм ясӑӊӑт эвӑӆт юрєн тәса нётӑн' },
       unlocked: isCardOk('card_bullying_choice')
@@ -4376,6 +4382,7 @@ function computeAchievements() {
     {
       id: 'chat_agent',
       icon: 'messages-square',
+      pixelIcon: 'book',
       title: { ru: 'Агент мессенджера', en: 'Messenger Pro', kca: 'Потӑр мастер' },
       desc: { ru: 'Пройдено 3 или более диалогов в симуляторе чатов', en: 'Completed 3+ scenarios in the Chat Simulator', kca: 'Потӑр симуляторӑн 3 аӆпа аршӑк диалог вєрӑн' },
       unlocked: state.chatCompleted.length >= 3
@@ -4440,26 +4447,20 @@ function renderResultsDashboard() {
       : (state.lang === 'kca' ? `Серия: ${state.streak || 0}` : `Серия побед: ${state.streak || 0}`);
   }
 
-  // вывод карточек ачивок
+  // вывод карточек ачивок как в майнкрафте
   const achGrid = document.getElementById('achievements-grid');
   const achs = computeAchievements();
+  const achUnlockedHdr = state.lang === 'en' ? 'Advancement Made!' : (state.lang === 'kca' ? 'Ачивка вўсы!' : 'Достижение получено!');
+  const achLockedHdr = state.lang === 'en' ? 'Locked' : (state.lang === 'kca' ? 'Пӑнтӑм' : 'Закрыто');
   achGrid.innerHTML = achs.map(a => `
-    <div class="rounded-xl p-3.5 border-2 flex items-start gap-3 ${
-      a.unlocked ? 'bg-[#e9f6ec] border-cgy-ok' : 'bg-cgy-bg border-cgy-border opacity-75'
-    }">
-      <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-        a.unlocked ? 'bg-cgy-ok text-white' : 'bg-white border border-cgy-border text-cgy-muted'
-      }">
-        <i data-lucide="${a.unlocked ? a.icon : 'lock'}" class="w-5 h-5"></i>
+    <div class="mc-ach-card ${a.unlocked ? '' : 'is-locked'} px-3.5 py-3 flex items-center gap-3">
+      <div class="w-10 h-10 flex items-center justify-center shrink-0">
+        ${getLootPixelSvg(a.unlocked ? (a.pixelIcon || 'poppy') : 'lock', 'w-9 h-9')}
       </div>
-      <div class="min-w-0">
-        <div class="flex items-center gap-2">
-          <span class="font-bold text-sm text-cgy-text">${L(a.title)}</span>
-          <span class="text-[11px] font-bold ${a.unlocked ? 'text-cgy-ok' : 'text-cgy-muted'}">
-            ${a.unlocked ? (state.lang === 'en' ? 'Unlocked' : (state.lang === 'kca' ? 'Вўсы' : 'Получено')) : (state.lang === 'en' ? 'Locked' : (state.lang === 'kca' ? 'Пӑнтӑм' : 'Закрыто'))}
-          </span>
-        </div>
-        <p class="text-xs text-cgy-muted mt-0.5 leading-snug">${L(a.desc)}</p>
+      <div class="min-w-0 flex-1">
+        <div class="mc-adv-title text-[13px] sm:text-sm truncate">${a.unlocked ? achUnlockedHdr : achLockedHdr}</div>
+        <div class="mc-adv-sub text-sm sm:text-[15px] truncate mt-0.5">${L(a.title)}</div>
+        <p class="mc-ach-desc text-[11px] mt-1 leading-snug line-clamp-2">${L(a.desc)}</p>
       </div>
     </div>
   `).join('');
@@ -4484,10 +4485,10 @@ function drawTaskTypesChart() {
   const chartH = H - padT - padB;
 
   // сетка 0, 50, 100%
-  ctx.font = '11px -apple-system, Segoe UI, Arial, sans-serif';
+  ctx.font = '600 12px "Pixelify Sans", Nunito, Arial, sans-serif';
   [0, 50, 100].forEach(val => {
     const y = padT + chartH - (val / 100) * chartH;
-    ctx.strokeStyle = '#e5e9f0';
+    ctx.strokeStyle = '#d7e3f2';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(padL, y);
@@ -4515,25 +4516,28 @@ function drawTaskTypesChart() {
     const by = padT + chartH - bh;
 
     // фон столбца
-    ctx.fillStyle = '#f1f5f9';
-    roundRect(ctx, bx, padT, barW, chartH, 6);
-    ctx.fill();
+    ctx.fillStyle = '#e7eff8';
+    ctx.fillRect(bx, padT, barW, chartH);
 
-    // сам столбец
-    ctx.fillStyle = answered === 0 ? '#cbd5e1' : (pct >= 80 ? '#1e7e34' : (pct >= 50 ? '#1e5aa8' : '#c62828'));
-    roundRect(ctx, bx, by, barW, bh, 6);
-    ctx.fill();
+    // сам столбец в пиксельном стиле
+    ctx.fillStyle = answered === 0 ? '#b7c8de' : (pct >= 80 ? '#5ca904' : (pct >= 50 ? '#1e5aa8' : '#c62828'));
+    ctx.fillRect(bx, by, barW, bh);
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.fillRect(bx, by, barW, 4);
+    ctx.strokeStyle = '#24364d';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(bx, by, barW, bh);
 
     // процент сверху
     ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 12px -apple-system, Segoe UI, Arial, sans-serif';
+    ctx.font = '700 13px "Pixelify Sans", Nunito, Arial, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(answered === 0 ? '—' : `${pct}%`, cx, by - 6);
+    ctx.fillText(answered === 0 ? '—' : `${pct}%`, cx, by - 7);
 
     // подпись снизу
-    ctx.fillStyle = '#475569';
-    ctx.font = '11.5px -apple-system, Segoe UI, Arial, sans-serif';
-    ctx.fillText(t('typesShort')[tp], cx, H - 18);
+    ctx.fillStyle = '#334155';
+    ctx.font = '600 12.5px "Pixelify Sans", Nunito, Arial, sans-serif';
+    ctx.fillText(t('typesShort')[tp], cx, H - 16);
   });
 }
 
@@ -4566,10 +4570,10 @@ function drawDynamicsChart() {
   const innerPadX = 42;
   const plotW = Math.max(40, chartW - innerPadX * 2);
 
-  ctx.font = '11px -apple-system, Segoe UI, Arial, sans-serif';
+  ctx.font = '600 12px "Pixelify Sans", Nunito, Arial, sans-serif';
   [0, 50, 100].forEach(val => {
     const y = padT + chartH - (val / 100) * chartH;
-    ctx.strokeStyle = '#e5e9f0';
+    ctx.strokeStyle = '#d7e3f2';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(padL, y);
@@ -4594,7 +4598,7 @@ function drawDynamicsChart() {
   coords.forEach(c => ctx.lineTo(c.x, c.y));
   ctx.lineTo(coords[coords.length - 1].x, padT + chartH);
   ctx.closePath();
-  ctx.fillStyle = 'rgba(30, 90, 168, 0.10)';
+  ctx.fillStyle = 'rgba(30, 90, 168, 0.12)';
   ctx.fill();
 
   // сама линия
@@ -4604,24 +4608,22 @@ function drawDynamicsChart() {
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // точки и проценты
+  // квадратные пиксельные точки и проценты
   coords.forEach(c => {
-    ctx.beginPath();
-    ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
     ctx.fillStyle = '#ffffff';
-    ctx.fill();
+    ctx.fillRect(c.x - 5, c.y - 5, 10, 10);
     ctx.strokeStyle = '#1e5aa8';
     ctx.lineWidth = 2.5;
-    ctx.stroke();
+    ctx.strokeRect(c.x - 5, c.y - 5, 10, 10);
 
     ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 11.5px -apple-system, Segoe UI, Arial, sans-serif';
+    ctx.font = '700 13px "Pixelify Sans", Nunito, Arial, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(c.pct + '%', c.x, c.y - 10);
+    ctx.fillText(c.pct + '%', c.x, c.y - 11);
 
-    ctx.fillStyle = '#475569';
-    ctx.font = '11px -apple-system, Segoe UI, Arial, sans-serif';
-    ctx.fillText(c.label, c.x, H - 18);
+    ctx.fillStyle = '#334155';
+    ctx.font = '600 12px "Pixelify Sans", Nunito, Arial, sans-serif';
+    ctx.fillText(c.label, c.x, H - 16);
   });
 }
 
@@ -4668,7 +4670,7 @@ function updateCertFormUI() {
   const res = validateFio(inp.value);
   if (res.valid) {
     btn.disabled = false;
-    btn.className = 'sm:mb-[22px] py-3 px-6 rounded-lg font-bold text-sm sm:text-base transition flex items-center justify-center gap-2 shrink-0 bg-cgy-ok hover:opacity-95 text-white cursor-pointer shadow-sm';
+    btn.className = 'btn-3d sm:mb-[22px] py-3 px-6 border-[#14532d] font-bold text-sm sm:text-base flex items-center justify-center gap-2 shrink-0 bg-cgy-ok text-white cursor-pointer';
     hint.textContent = res.message;
     hint.className = 'text-xs text-cgy-ok font-semibold mt-1.5';
     validIcon.classList.remove('hidden');
@@ -4676,7 +4678,7 @@ function updateCertFormUI() {
     inp.classList.add('border-cgy-ok');
   } else {
     btn.disabled = true;
-    btn.className = 'sm:mb-[22px] py-3 px-6 rounded-lg font-bold text-sm sm:text-base transition flex items-center justify-center gap-2 shrink-0 bg-slate-200 text-slate-400 cursor-not-allowed';
+    btn.className = 'sm:mb-[22px] py-3 px-6 rounded-[3px] border-2 border-slate-300 font-pixel font-bold text-sm sm:text-base flex items-center justify-center gap-2 shrink-0 bg-slate-200 text-slate-400 cursor-not-allowed';
     hint.textContent = inp.value.trim().length > 0
       ? res.message
       : (state.lang === 'en'
@@ -4794,7 +4796,7 @@ function drawCertSteve(ctx, ox, oy, scale, stars) {
   px(14, 67, 4, 4, '#1e7e34');
 }
 
-function downloadCertificatePNG() {
+async function downloadCertificatePNG() {
   const inp = document.getElementById('cert-name-input');
   const res = validateFio(inp ? inp.value : '');
   if (!res.valid) {
@@ -4802,6 +4804,10 @@ function downloadCertificatePNG() {
     showToast(state.lang === 'en' ? 'Enter First and Last Name first' : 'Сначала введи Фамилию и Имя', 'warn');
     return;
   }
+
+  try {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  } catch (_) {}
 
   const userName = res.cleaned;
   const cSum = getCardStatsSummary();
@@ -4841,13 +4847,15 @@ function downloadCertificatePNG() {
   // холмы и елки снизу
   for (let x = 0; x < W; x += 70) {
     const hh = 56 + Math.round(Math.sin(x * 0.01) * 18);
-    ctx.fillStyle = '#9fe2bf';
+    ctx.fillStyle = '#866043';
     ctx.fillRect(x, H - hh, 72, hh);
-    ctx.fillStyle = '#6ad19b';
-    ctx.fillRect(x, H - hh, 72, 10);
+    ctx.fillStyle = '#5ca904';
+    ctx.fillRect(x, H - hh, 72, 16);
+    ctx.fillStyle = '#73c712';
+    ctx.fillRect(x, H - hh, 72, 5);
   }
   const drawMiniTree = (tx, ty) => {
-    ctx.fillStyle = '#8d5b34'; ctx.fillRect(tx - 6, ty - 24, 12, 24);
+    ctx.fillStyle = '#7a4d2a'; ctx.fillRect(tx - 6, ty - 24, 12, 24);
     ctx.fillStyle = '#1e7e34'; ctx.fillRect(tx - 26, ty - 42, 52, 20);
     ctx.fillStyle = '#22a046'; ctx.fillRect(tx - 18, ty - 58, 36, 18);
     ctx.fillStyle = '#4ade80'; ctx.fillRect(tx - 10, ty - 70, 20, 14);
@@ -4857,36 +4865,34 @@ function downloadCertificatePNG() {
   drawMiniTree(W - 60, H - 16);
   drawMiniTree(W - 126, H - 12);
 
-  // 2. основная карточка диплома с рамкой
-  ctx.fillStyle = 'rgba(30, 90, 168, 0.16)';
-  roundRect(ctx, 74, 78, W - 148, H - 144, 34);
+  // 2. основная карточка диплома в пиксельной рамке майнкрафта
+  ctx.fillStyle = 'rgba(24, 42, 68, 0.24)';
+  roundRect(ctx, 74, 74, W - 128, H - 138, 8);
   ctx.fill();
 
   ctx.fillStyle = '#fffef9';
-  roundRect(ctx, 64, 64, W - 128, H - 138, 32);
+  roundRect(ctx, 64, 64, W - 128, H - 138, 8);
   ctx.fill();
-  ctx.strokeStyle = '#1e5aa8';
+  ctx.strokeStyle = '#24364d';
   ctx.lineWidth = 6;
   ctx.stroke();
 
-  // внутренняя пунктирная рамка
-  ctx.save();
-  ctx.setLineDash([12, 8]);
-  ctx.strokeStyle = '#f59e0b';
-  ctx.lineWidth = 3;
-  roundRect(ctx, 82, 82, W - 164, H - 174, 24);
+  // внутренняя объемная рамка
+  ctx.strokeStyle = '#c5d8ef';
+  ctx.lineWidth = 4;
+  roundRect(ctx, 76, 76, W - 152, H - 162, 4);
   ctx.stroke();
-  ctx.restore();
 
-  // квадратики по углам
+  // квадратики по углам (алмаз, изумруд, золото, лазурит)
   const drawGem = (gx, gy, c1, c2) => {
+    ctx.fillStyle = '#24364d'; ctx.fillRect(gx - 2, gy - 2, 28, 28);
     ctx.fillStyle = c1; ctx.fillRect(gx, gy, 24, 24);
-    ctx.fillStyle = c2; ctx.fillRect(gx + 5, gy + 5, 10, 10);
+    ctx.fillStyle = c2; ctx.fillRect(gx + 4, gy + 4, 10, 10);
   };
-  drawGem(98, 98, '#22d3ee', '#cffafe');
-  drawGem(W - 122, 98, '#22c55e', '#dcfce7');
-  drawGem(98, H - 132, '#f59e0b', '#fef08a');
-  drawGem(W - 122, H - 132, '#60a5fa', '#dbeafe');
+  drawGem(94, 94, '#22d3ee', '#cffafe');
+  drawGem(W - 118, 94, '#22c55e', '#dcfce7');
+  drawGem(94, H - 128, '#f59e0b', '#fef08a');
+  drawGem(W - 118, H - 128, '#3b82f6', '#dbeafe');
 
   // 3. верхняя полоска с названием портала
   const ribGrad = ctx.createLinearGradient(250, 0, W - 250, 0);
@@ -4894,25 +4900,27 @@ function downloadCertificatePNG() {
   ribGrad.addColorStop(0.5, '#2563eb');
   ribGrad.addColorStop(1, '#1e5aa8');
   ctx.fillStyle = ribGrad;
-  roundRect(ctx, 270, 98, W - 540, 56, 28);
+  roundRect(ctx, 260, 96, W - 520, 56, 6);
   ctx.fill();
-  ctx.strokeStyle = '#93c5fd';
-  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = '#153e75';
+  ctx.lineWidth = 4;
   ctx.stroke();
 
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';
-  ctx.font = '800 22px Rubik, Nunito, Segoe UI, Arial, sans-serif';
+  ctx.font = '700 24px "Pixelify Sans", Nunito, Arial, sans-serif';
   const portalBannerText = isEn
     ? 'DIGITAL CITIZEN OF YUGRA  •  CYBER-CARDS'
     : (isKca ? 'ЮГРА ЦИФРОВОЙ ХОЯТ  •  КИБЕР-КАРТОЧКАТ' : 'ЦИФРОВОЙ ГРАЖДАНИН ЮГРЫ  •  КИБЕР-КАРТОЧКИ ЮГРЫ');
-  ctx.fillText(portalBannerText, W / 2, 134);
+  ctx.fillText(portalBannerText, W / 2, 132);
 
-  // 4. заголовок диплома
-  ctx.fillStyle = '#1e5aa8';
-  ctx.font = '900 54px Rubik, Nunito, Segoe UI, Arial, sans-serif';
+  // 4. заголовок диплома с легкой пиксельной тенью
+  ctx.font = '700 60px "Pixelify Sans", Nunito, Arial, sans-serif';
   const mainTitle = isEn ? 'CYBER-HERO DIPLOMA' : (isKca ? 'КИБЕРГЕРОЙ ДИПЛОМ' : 'ДИПЛОМ КИБЕРГЕРОЯ');
-  ctx.fillText(mainTitle, W / 2, 224);
+  ctx.fillStyle = '#cbdcf2';
+  ctx.fillText(mainTitle, W / 2 + 3, 229);
+  ctx.fillStyle = '#1e5aa8';
+  ctx.fillText(mainTitle, W / 2, 226);
 
   // 5. слева рисуем персонажа
   drawCertSteve(ctx, 148, 300, 1.95, cSum.correct);
@@ -4920,7 +4928,7 @@ function downloadCertificatePNG() {
   // 6. справа имя, класс и звезды
   const rightCenterX = 835;
   ctx.fillStyle = '#5b6778';
-  ctx.font = '700 22px Nunito, Segoe UI, Arial, sans-serif';
+  ctx.font = '700 24px "Pixelify Sans", Nunito, Arial, sans-serif';
   ctx.fillText(
     isEn ? 'Awarded to:' : (isKca ? 'Утӆты хоят:' : 'Награждается:'),
     rightCenterX, 290
@@ -4928,35 +4936,35 @@ function downloadCertificatePNG() {
 
   // подложка под фио
   ctx.fillStyle = '#eef5ff';
-  ctx.strokeStyle = '#93c5fd';
+  ctx.strokeStyle = '#355070';
   ctx.lineWidth = 3;
-  roundRect(ctx, 415, 310, 840, 84, 22);
+  roundRect(ctx, 415, 310, 840, 84, 6);
   ctx.fill();
   ctx.stroke();
 
-  const nameFontSize = userName.length > 30 ? 34 : (userName.length > 21 ? 40 : 46);
+  const nameFontSize = userName.length > 30 ? 34 : (userName.length > 21 ? 42 : 48);
   ctx.fillStyle = '#1f2937';
-  ctx.font = `800 ${nameFontSize}px Rubik, Nunito, Segoe UI, Arial, sans-serif`;
-  ctx.fillText(userName, rightCenterX, 366);
+  ctx.font = `700 ${nameFontSize}px "Pixelify Sans", Nunito, Arial, sans-serif`;
+  ctx.fillText(userName, rightCenterX, 368);
 
   // плашка класса и звезды
   ctx.fillStyle = '#fef3c7';
-  ctx.strokeStyle = '#f59e0b';
-  ctx.lineWidth = 2;
-  roundRect(ctx, 415, 412, 165, 40, 20);
+  ctx.strokeStyle = '#b45309';
+  ctx.lineWidth = 3;
+  roundRect(ctx, 415, 412, 175, 42, 4);
   ctx.fill();
   ctx.stroke();
   ctx.fillStyle = '#92400e';
-  ctx.font = '800 18px Nunito, Arial, sans-serif';
-  ctx.fillText(`${t('grade_word')}: ${state.profile.gradeClass}`, 497, 438);
+  ctx.font = '700 20px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.fillText(`${t('grade_word')}: ${state.profile.gradeClass}`, 502, 440);
 
   // 8 звезд за карточки
   for (let s = 0; s < Math.min(8, cSum.total); s++) {
     const filled = s < cSum.correct;
     drawCanvasStar(
       ctx,
-      628 + s * 52,
-      432,
+      636 + s * 52,
+      433,
       19,
       8.5,
       filled ? '#fbbf24' : '#e2e8f0',
@@ -4969,17 +4977,17 @@ function downloadCertificatePNG() {
     {
       label: isEn ? 'CYBER-CARDS' : (isKca ? 'КАРТОЧКАТ' : 'КИБЕР-КАРТОЧКИ'),
       val: `${cSum.correct} / ${cSum.total} (${cSum.pct}%)`,
-      bg: '#eaf3ff', brd: '#60a5fa', txt: '#1e5aa8'
+      bg: '#eaf3ff', brd: '#355070', txt: '#1e5aa8'
     },
     {
       label: isEn ? 'SCAM CHATS' : (isKca ? 'ЧАТӐТ' : 'ЧАТЫ С МОШЕННИКАМИ'),
       val: `${state.chatCompleted.length} / ${SCENARIOS.length}`,
-      bg: '#e9f6ec', brd: '#4ade80', txt: '#15803d'
+      bg: '#e9f6ec', brd: '#15803d', txt: '#15803d'
     },
     {
       label: isEn ? 'HERO RANK' : (isKca ? 'РАНГ' : 'ТВОЙ РАНГ'),
       val: rank,
-      bg: '#fef7e0', brd: '#f59e0b', txt: '#b45309'
+      bg: '#fef7e0', brd: '#b45309', txt: '#b45309'
     }
   ];
 
@@ -4989,30 +4997,30 @@ function downloadCertificatePNG() {
     ctx.fillStyle = sc.bg;
     ctx.strokeStyle = sc.brd;
     ctx.lineWidth = 3;
-    roundRect(ctx, sx, sy, 264, 98, 20);
+    roundRect(ctx, sx, sy, 264, 98, 6);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = '#5b6778';
-    ctx.font = '800 14px Nunito, Arial, sans-serif';
+    ctx.fillStyle = '#475569';
+    ctx.font = '700 15px "Pixelify Sans", Nunito, Arial, sans-serif';
     ctx.fillText(sc.label, sx + 132, sy + 32);
 
     ctx.fillStyle = sc.txt;
-    ctx.font = sc.val.length > 16 ? '800 20px Rubik, Nunito, Arial, sans-serif' : '800 25px Rubik, Nunito, Arial, sans-serif';
+    ctx.font = sc.val.length > 16 ? '700 22px "Pixelify Sans", Nunito, Arial, sans-serif' : '700 27px "Pixelify Sans", Nunito, Arial, sans-serif';
     ctx.fillText(sc.val, sx + 132, sy + 72);
   });
 
-  // 8. полоска с иконками собранного лута
-  ctx.fillStyle = '#e8f1fc';
-  ctx.strokeStyle = '#93c5fd';
-  ctx.lineWidth = 2.5;
-  roundRect(ctx, 134, 616, 860, 114, 22);
+  // 8. полоска с иконками собранного лута (как инвентарь в майнкрафте)
+  ctx.fillStyle = '#dbe7f5';
+  ctx.strokeStyle = '#355070';
+  ctx.lineWidth = 3;
+  roundRect(ctx, 134, 616, 860, 114, 6);
   ctx.fill();
   ctx.stroke();
 
   ctx.textAlign = 'left';
   ctx.fillStyle = '#1e5aa8';
-  ctx.font = '800 17px Rubik, Nunito, Arial, sans-serif';
+  ctx.font = '700 19px "Pixelify Sans", Nunito, Arial, sans-serif';
   ctx.fillText(
     isEn ? 'COLLECTED TROPHIES:' : (isKca ? 'ӐКӐТӐМ ТРОФЕЙӐТ:' : 'СОБРАННЫЕ ТРОФЕИ:'),
     160, 648
@@ -5047,10 +5055,10 @@ function downloadCertificatePNG() {
     const unlocked = Boolean(state.cardResults[card.id] && state.cardResults[card.id].correct);
     const lx = 160 + idx * 102;
     const ly = 662;
-    ctx.fillStyle = unlocked ? '#ffffff' : '#dbe7f5';
-    ctx.strokeStyle = unlocked ? '#f59e0b' : '#b6cce6';
-    ctx.lineWidth = unlocked ? 3 : 2;
-    roundRect(ctx, lx, ly, 86, 52, 12);
+    ctx.fillStyle = unlocked ? '#fffdf0' : '#b7c8de';
+    ctx.strokeStyle = unlocked ? '#b45309' : '#59708e';
+    ctx.lineWidth = 3;
+    roundRect(ctx, lx, ly, 86, 52, 4);
     ctx.fill();
     ctx.stroke();
 
@@ -5059,9 +5067,9 @@ function downloadCertificatePNG() {
       drawMiniLoot(iconKey, lx + 24, ly + 7);
     } else {
       ctx.textAlign = 'center';
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = '800 22px Rubik, Arial, sans-serif';
-      ctx.fillText('?', lx + 43, ly + 34);
+      ctx.fillStyle = '#59708e';
+      ctx.font = '700 24px "Pixelify Sans", Arial, sans-serif';
+      ctx.fillText('?', lx + 43, ly + 35);
       ctx.textAlign = 'left';
     }
   });
@@ -5069,12 +5077,12 @@ function downloadCertificatePNG() {
   // 9. печать справа внизу
   ctx.save();
   ctx.translate(1152, 676);
-  ctx.rotate(-0.12);
+  ctx.rotate(-0.1);
   ctx.beginPath();
   ctx.arc(0, 0, 74, 0, Math.PI * 2);
   ctx.fillStyle = '#fef3c7';
   ctx.fill();
-  ctx.strokeStyle = '#d97706';
+  ctx.strokeStyle = '#b45309';
   ctx.lineWidth = 5;
   ctx.stroke();
   ctx.beginPath();
@@ -5085,20 +5093,20 @@ function downloadCertificatePNG() {
   drawCanvasStar(ctx, 0, -28, 13, 6, '#f59e0b', '#b45309');
   ctx.textAlign = 'center';
   ctx.fillStyle = '#1e5aa8';
-  ctx.font = '800 14px Rubik, Arial, sans-serif';
+  ctx.font = '700 16px "Pixelify Sans", Arial, sans-serif';
   ctx.fillText(isEn ? 'DIGITAL' : 'ЦИФРОВОЙ', 0, 4);
-  ctx.fillText(isEn ? 'CITIZEN' : 'ГРАЖДАНИН', 0, 22);
+  ctx.fillText(isEn ? 'CITIZEN' : 'ГРАЖДАНИН', 0, 23);
   ctx.fillStyle = '#15803d';
-  ctx.font = '800 13px Nunito, Arial, sans-serif';
-  ctx.fillText(isEn ? 'YUGRA 2026' : 'ЮГРА • 2026', 0, 43);
+  ctx.font = '700 15px "Pixelify Sans", Arial, sans-serif';
+  ctx.fillText(isEn ? 'YUGRA 2026' : 'ЮГРА • 2026', 0, 44);
   ctx.restore();
 
   // 10. дата и номер снизу
   const dateStr = new Date().toLocaleDateString(isEn ? 'en-US' : 'ru-RU');
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#64748b';
-  ctx.font = '700 16px Nunito, Segoe UI, Arial, sans-serif';
-  ctx.fillText(`${dateStr}   •   ${state.certId}   •   Цифровой гражданин Югры`, W / 2, 804);
+  ctx.fillStyle = '#475569';
+  ctx.font = '600 18px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.fillText(`${dateStr}   •   ${state.certId}   •   Цифровой гражданин Югры`, W / 2, 806);
 
   const link = document.createElement('a');
   link.download = `Diplom_Kibergeroja_Yugry_${userName.replace(/\s+/g, '_')}.png`;
@@ -5117,8 +5125,11 @@ function downloadCertificatePNG() {
   });
 
   SoundFX.playAchievement();
-  burstConfetti('big');
-  showToast(isEn ? 'Cyber-Hero Diploma saved as PNG!' : 'Диплом кибергероя сохранён в PNG!', 'success');
+  showMcAdvancement(
+    isEn ? 'Diploma Saved!' : 'Сертификат сохранён!',
+    userName,
+    'star'
+  );
 }
 
 function roundRect(ctx, x, y, w, h, r) {
@@ -5225,24 +5236,17 @@ function checkNewlyUnlockedAchievements() {
     state.unlockedAchIds.push(a.id);
     setTimeout(() => {
       SoundFX.playAchievement();
-      const prefix = state.lang === 'en' ? 'Achievement Unlocked!' : (state.lang === 'kca' ? 'Ачивка вўсы!' : 'Достижение открыто!');
-      showMcAdvancement(prefix, L(a.title), 'award', 'blue');
-    }, 450 + idx * 650);
+      const prefix = state.lang === 'en' ? 'Advancement Made!' : (state.lang === 'kca' ? 'Ачивка вўсы!' : 'Достижение получено!');
+      showMcAdvancement(prefix, L(a.title), a.pixelIcon || 'poppy');
+    }, 450 + idx * 750);
   });
   saveState();
 }
 
-// плашка достижения справа сверху
-function showMcAdvancement(title, subtitle = '', iconName = 'trophy', tone = 'green') {
+// плашка достижения справа сверху как в майнкрафте
+function showMcAdvancement(title, subtitle = '', iconName = 'poppy') {
   const layer = document.getElementById('fx-xp-layer');
   if (!layer) return;
-
-  const palettes = {
-    green: { box: 'bg-white border-[#16a34a] border-b-[#15803d]', iconBg: 'bg-[#ecfdf5] border-[#86efac] text-[#15803d]', title: 'text-[#15803d]' },
-    amber: { box: 'bg-white border-[#f59e0b] border-b-[#b45309]', iconBg: 'bg-[#fffbeb] border-[#fcd34d] text-[#b45309]', title: 'text-[#b45309]' },
-    blue:  { box: 'bg-white border-[#1e5aa8] border-b-[#133b72]', iconBg: 'bg-[#eff6ff] border-[#93c5fd] text-[#1e5aa8]', title: 'text-[#1e5aa8]' }
-  };
-  const pal = palettes[tone] || palettes.green;
 
   // максимум 2 плашки одновременно
   while (layer.children.length >= 2) {
@@ -5250,19 +5254,18 @@ function showMcAdvancement(title, subtitle = '', iconName = 'trophy', tone = 'gr
   }
 
   const el = document.createElement('div');
-  el.className = `mc-adv-toast ${pal.box} px-3 py-2.5 flex items-center gap-2.5 min-w-[210px] max-w-[300px]`;
+  el.className = 'mc-adv-toast flex items-center gap-3 min-w-[235px] max-w-[330px]';
   el.innerHTML = `
-    <div class="w-9 h-9 rounded-lg border-2 ${pal.iconBg} flex items-center justify-center shrink-0">
-      <i data-lucide="${iconName}" class="w-5 h-5"></i>
+    <div class="w-9 h-9 flex items-center justify-center shrink-0">
+      ${getLootPixelSvg(iconName, 'w-8 h-8')}
     </div>
-    <div class="min-w-0 leading-tight">
-      <div class="font-pixel text-[11px] font-extrabold uppercase tracking-wide ${pal.title} truncate">${title}</div>
-      ${subtitle ? `<div class="text-xs sm:text-[13px] font-bold text-cgy-text truncate mt-0.5">${subtitle}</div>` : ''}
+    <div class="min-w-0">
+      <div class="mc-adv-title text-sm sm:text-[15px] truncate">${title}</div>
+      ${subtitle ? `<div class="mc-adv-sub text-xs sm:text-sm truncate mt-0.5">${subtitle}</div>` : ''}
     </div>
   `;
   layer.appendChild(el);
-  refreshIcons();
-  setTimeout(() => el.remove(), 2650);
+  setTimeout(() => el.remove(), 3250);
 }
 
 let confettiAnimId = null;

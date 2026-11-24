@@ -6,7 +6,7 @@
   <title>Кибер-карточки Югры — Цифровой гражданин Югры</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
@@ -35,7 +35,7 @@
   </script>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="bg-cgy-bg text-cgy-text antialiased min-h-screen flex flex-col">
+<body class="mc-theme bg-cgy-bg text-cgy-text antialiased min-h-screen flex flex-col">
 
   <!-- фон с пиксельным небом и тайгой на канвасе -->
   <canvas id="bg-voxel-world" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
@@ -70,18 +70,18 @@
   </div>
 
   <!-- шапка сайта -->
-  <header class="bg-white/95 backdrop-blur-md border-b-2 border-[#c5daf4] sticky top-0 z-30 shadow-sm">
+  <header class="bg-white/95 backdrop-blur-md sticky top-0 z-30 shadow-sm">
     <div id="portal-brand-row" class="max-w-6xl mx-auto px-3 sm:px-6 py-2 sm:py-0 sm:h-16 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
       <!-- логотип и название -->
       <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-cgy-accent text-white flex items-center justify-center shrink-0 shadow-sm">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-[3px] bg-cgy-accent border-2 border-[#153e75] text-white flex items-center justify-center shrink-0 shadow-[inset_2px_2px_0_rgba(255,255,255,0.3),inset_-2px_-2px_0_rgba(0,0,0,0.22)]">
           <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </div>
         <div class="min-w-0">
-          <div class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-cgy-accent truncate" data-i18n="portal_name">
+          <div class="font-pixel text-[11px] sm:text-xs font-bold uppercase tracking-wider text-cgy-accent truncate" data-i18n="portal_name">
             Цифровой гражданин Югры
           </div>
-          <h1 class="font-bold text-sm sm:text-lg text-cgy-text leading-tight truncate" data-i18n="app_title">
+          <h1 class="font-bold text-base sm:text-xl text-cgy-text leading-tight truncate" data-i18n="app_title">
             Кибер-карточки Югры
           </h1>
         </div>
@@ -90,29 +90,29 @@
       <!-- кнопки справа в шапке -->
       <div class="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 w-full sm:w-auto shrink-0">
         <!-- кнопка профиля ученика -->
-        <button onclick="openStudentProfileModal()" class="flex items-center gap-1.5 sm:gap-2 pl-1.5 pr-2.5 sm:pr-3 py-1 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-xs sm:text-sm font-medium text-cgy-text transition min-w-0">
-          <span id="header-hero-mini" class="w-6 h-6 rounded-md bg-white border border-[#b6d0f2] overflow-hidden flex items-center justify-center shrink-0"></span>
-          <span id="header-profile-label" class="max-w-[125px] sm:max-w-[170px] truncate">Ученик • 5–7 кл.</span>
+        <button onclick="openStudentProfileModal()" class="flex items-center gap-1.5 sm:gap-2 pl-1.5 pr-2.5 sm:pr-3 py-1 rounded-[3px] bg-[#eef5ff] hover:bg-[#dceafb] border-2 border-[#355070] text-xs sm:text-sm font-bold text-cgy-text transition min-w-0 shadow-[inset_2px_2px_0_#fff,inset_-2px_-2px_0_rgba(140,168,204,0.45)]">
+          <span id="header-hero-mini" class="w-6 h-6 rounded-[2px] bg-white border border-[#355070] overflow-hidden flex items-center justify-center shrink-0"></span>
+          <span id="header-profile-label" class="font-pixel max-w-[125px] sm:max-w-[170px] truncate">Ученик • 5–7 кл.</span>
         </button>
 
         <div class="flex items-center gap-1.5 shrink-0">
           <!-- переключение языка -->
-          <div class="inline-flex items-center bg-cgy-bg rounded-lg p-0.5 border border-cgy-border text-[11px] sm:text-xs font-bold" title="Выбор языка: Русский / Хантыйский / English">
-            <button id="lang-ru" onclick="setLang('ru')" class="px-1.5 sm:px-2 py-1 rounded-md bg-cgy-accent text-white transition" title="Русский язык">RU</button>
-            <button id="lang-kca" onclick="setLang('kca')" class="px-1.5 sm:px-2 py-1 rounded-md text-cgy-muted hover:text-cgy-text transition" title="Хантыйский язык (Ханты ясӑӊ)">ХАН</button>
-            <button id="lang-en" onclick="setLang('en')" class="px-1.5 sm:px-2 py-1 rounded-md text-cgy-muted hover:text-cgy-text transition" title="English">EN</button>
+          <div class="inline-flex items-center bg-[#e5eef9] rounded-[3px] p-0.5 border-2 border-[#355070] font-pixel text-xs font-bold" title="Выбор языка: Русский / Хантыйский / English">
+            <button id="lang-ru" onclick="setLang('ru')" class="px-1.5 sm:px-2 py-1 rounded-[2px] bg-cgy-accent text-white transition" title="Русский язык">RU</button>
+            <button id="lang-kca" onclick="setLang('kca')" class="px-1.5 sm:px-2 py-1 rounded-[2px] text-cgy-muted hover:text-cgy-text transition" title="Хантыйский язык (Ханты ясӑӊ)">ХАН</button>
+            <button id="lang-en" onclick="setLang('en')" class="px-1.5 sm:px-2 py-1 rounded-[2px] text-cgy-muted hover:text-cgy-text transition" title="English">EN</button>
           </div>
 
           <!-- кнопка входящих смс -->
           <button id="btn-sms-inbox" onclick="openSmsModal()" title="Входящие SMS"
-            class="relative flex items-center gap-1 h-8 sm:h-9 px-2 sm:px-2.5 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-cgy-text transition">
+            class="relative flex items-center gap-1 h-8 sm:h-9 px-2 sm:px-2.5 rounded-[3px] bg-[#eef5ff] hover:bg-[#dceafb] border-2 border-[#355070] text-cgy-text transition shadow-[inset_2px_2px_0_#fff,inset_-2px_-2px_0_rgba(140,168,204,0.45)]">
             <i data-lucide="smartphone" class="w-4 h-4 text-cgy-accent"></i>
-            <span class="hidden md:inline text-xs font-semibold">SMS</span>
-            <span id="sms-unread-badge" class="hidden min-w-[18px] h-[18px] px-1 rounded-full bg-cgy-ok text-[10px] font-bold text-white items-center justify-center">0</span>
+            <span class="hidden md:inline font-pixel text-xs font-bold">SMS</span>
+            <span id="sms-unread-badge" class="hidden min-w-[18px] h-[18px] px-1 rounded-[2px] bg-cgy-ok text-[10px] font-bold text-white items-center justify-center">0</span>
           </button>
 
           <!-- вкл/выкл звука -->
-          <button onclick="toggleSound()" title="Звук" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-cgy-bg hover:bg-cgy-soft border border-cgy-border text-cgy-muted hover:text-cgy-text flex items-center justify-center transition">
+          <button onclick="toggleSound()" title="Звук" class="w-8 h-8 sm:w-9 sm:h-9 rounded-[3px] bg-[#eef5ff] hover:bg-[#dceafb] border-2 border-[#355070] text-cgy-muted hover:text-cgy-text flex items-center justify-center transition shadow-[inset_2px_2px_0_#fff,inset_-2px_-2px_0_rgba(140,168,204,0.45)]">
             <span id="sound-icon-on"><i data-lucide="volume-2" class="w-4 h-4"></i></span>
             <span id="sound-icon-off" class="hidden"><i data-lucide="volume-x" class="w-4 h-4"></i></span>
           </button>
@@ -121,37 +121,37 @@
     </div>
 
     <!-- вкладки навигации -->
-    <div class="border-t border-[#dce8f8] bg-[#f4f8ff]">
-      <div class="max-w-6xl mx-auto px-1.5 sm:px-4 lg:px-6 flex items-center justify-between gap-2">
-        <nav class="grid grid-cols-4 md:flex md:items-center gap-0.5 sm:gap-1 lg:gap-1.5 w-full md:w-auto">
-          <button id="nav-tab-cards" onclick="switchMainTab('cards')" class="nav-tab active px-1 sm:px-2.5 lg:px-3.5 py-2 md:py-2.5 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
+    <div class="border-t-2 border-[#c7daf2] bg-[#edf4fc]">
+      <div class="max-w-6xl mx-auto px-1.5 sm:px-4 lg:px-6 flex items-center justify-between gap-2 pt-1">
+        <nav class="grid grid-cols-4 md:flex md:items-center gap-1 sm:gap-1.5 w-full md:w-auto">
+          <button id="nav-tab-cards" onclick="switchMainTab('cards')" class="nav-tab active px-1 sm:px-2.5 lg:px-3.5 py-1.5 md:py-2 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
             <span class="flex items-center gap-1 md:contents">
               <i data-lucide="layout-grid" class="w-4 h-4 shrink-0 md:order-1"></i>
-              <span id="badge-cards-progress" class="px-1.5 py-0.5 rounded-full text-[10px] lg:text-[11px] font-bold bg-cgy-soft text-cgy-accent tabular-nums leading-none md:order-3">0/8</span>
+              <span id="badge-cards-progress" class="px-1.5 py-0.5 rounded-[2px] text-[10px] lg:text-[11px] font-bold bg-cgy-soft text-cgy-accent border border-cgy-border tabular-nums leading-none md:order-3">0/8</span>
             </span>
             <span class="md:hidden font-semibold leading-tight" data-i18n="tab_cards_mob">Карточки</span>
             <span class="hidden md:inline font-semibold whitespace-nowrap md:order-2" data-i18n="tab_cards">Кибер-карточки</span>
           </button>
 
-          <button id="nav-tab-chat" onclick="switchMainTab('chat')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-2 md:py-2.5 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
+          <button id="nav-tab-chat" onclick="switchMainTab('chat')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-1.5 md:py-2 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
             <span class="flex items-center gap-1 md:contents">
               <i data-lucide="messages-square" class="w-4 h-4 shrink-0 md:order-1"></i>
-              <span id="badge-chat-progress" class="px-1.5 py-0.5 rounded-full text-[10px] lg:text-[11px] font-bold bg-cgy-bg text-cgy-muted border border-cgy-border tabular-nums leading-none md:order-3">0/7</span>
+              <span id="badge-chat-progress" class="px-1.5 py-0.5 rounded-[2px] text-[10px] lg:text-[11px] font-bold bg-cgy-bg text-cgy-muted border border-cgy-border tabular-nums leading-none md:order-3">0/7</span>
             </span>
             <span class="md:hidden font-semibold leading-tight" data-i18n="tab_chat_mob">Чаты</span>
             <span class="hidden md:inline font-semibold whitespace-nowrap md:order-2" data-i18n="tab_chat">Симулятор чатов</span>
           </button>
 
-          <button id="nav-tab-blitz" onclick="switchMainTab('blitz')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-2 md:py-2.5 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
+          <button id="nav-tab-blitz" onclick="switchMainTab('blitz')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-1.5 md:py-2 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
             <span class="flex items-center gap-1 md:contents">
               <i data-lucide="zap" class="w-4 h-4 text-[#d97706] shrink-0 md:order-1"></i>
-              <span id="badge-blitz-best" class="px-1.5 py-0.5 rounded-full text-[10px] lg:text-[11px] font-bold bg-[#fef3c7] text-[#92400e] border border-[#f59e0b]/60 tabular-nums leading-none md:order-3">60с</span>
+              <span id="badge-blitz-best" class="px-1.5 py-0.5 rounded-[2px] text-[10px] lg:text-[11px] font-bold bg-[#fef3c7] text-[#92400e] border border-[#f59e0b]/60 tabular-nums leading-none md:order-3">60с</span>
             </span>
             <span class="md:hidden font-semibold leading-tight" data-i18n="tab_blitz_mob">Блиц</span>
             <span class="hidden md:inline font-semibold whitespace-nowrap md:order-2" data-i18n="tab_blitz">Блиц-атака</span>
           </button>
 
-          <button id="nav-tab-results" onclick="switchMainTab('results')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-2 md:py-2.5 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
+          <button id="nav-tab-results" onclick="switchMainTab('results')" class="nav-tab px-1 sm:px-2.5 lg:px-3.5 py-1.5 md:py-2 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
             <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0"></i>
             <span class="md:hidden font-semibold leading-tight" data-i18n="tab_results_mob">Итоги</span>
             <span class="hidden md:inline font-semibold whitespace-nowrap" data-i18n="tab_results">Аналитика и сертификат</span>
@@ -159,15 +159,17 @@
         </nav>
 
         <!-- полоска общего прогресса на широких экранах -->
-        <div class="hidden xl:flex items-center gap-2 shrink-0 pl-2" title="Общий прогресс по карточкам и чатам">
-          <span class="text-xs font-semibold text-cgy-muted whitespace-nowrap" data-i18n="overall_progress">Прогресс:</span>
-          <div class="w-24 h-2 bg-cgy-bg rounded-full overflow-hidden border border-cgy-border">
+        <div class="hidden xl:flex items-center gap-2 shrink-0 pl-2 pb-1" title="Общий прогресс по карточкам и чатам">
+          <span class="font-pixel text-xs font-bold text-cgy-muted whitespace-nowrap" data-i18n="overall_progress">Прогресс:</span>
+          <div class="w-28 h-3.5 mc-xp-bar overflow-hidden">
             <div id="overall-bar" class="h-full progress-fill-animated transition-all duration-500" style="width: 0%"></div>
           </div>
-          <span id="overall-pct" class="text-xs font-bold text-cgy-accent tabular-nums">0%</span>
+          <span id="overall-pct" class="text-xs font-bold text-[#3f7a04] tabular-nums">0%</span>
         </div>
       </div>
     </div>
+    <!-- пиксельная полоса травы и земли -->
+    <div class="mc-grass-strip"></div>
   </header>
 
   <!-- основной контент -->
@@ -176,7 +178,7 @@
     <!-- вкладка 1: кибер-карточки -->
     <section id="view-cards" class="flex-1 flex flex-col gap-4 pb-28 sm:pb-10">
       <!-- верхняя панель миссий -->
-      <div class="bg-gradient-to-r from-[#dfeeff] via-[#edf5ff] to-[#e7f7ee] border-2 border-[#b5d0f2] border-b-4 rounded-2xl p-3 sm:p-4 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3.5">
+      <div class="mc-panel bg-gradient-to-r from-[#dfeeff] via-[#edf5ff] to-[#e7f7ee] p-3 sm:p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3.5">
         <div class="flex flex-wrap items-center gap-1.5 sm:gap-2.5">
           <!-- счетчик миссий -->
           <div class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white border-2 border-[#b5d0f2] shadow-sm">
@@ -479,24 +481,24 @@
       <!-- игровой экран блица -->
       <div id="blitz-arena" class="hidden max-w-2xl w-full flex flex-col gap-4">
         <!-- таймер, сердечки и очки -->
-        <div class="bg-white border-2 border-[#93c5fd] border-b-4 rounded-2xl p-3.5 shadow-sm space-y-2.5">
+        <div class="mc-panel bg-white p-3.5 space-y-2.5">
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-2">
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#eaf3ff] border border-[#93c5fd] font-extrabold text-cgy-accent text-sm tabular-nums">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-[3px] bg-[#eaf3ff] border-2 border-[#355070] font-extrabold text-cgy-accent text-sm tabular-nums">
                 <i data-lucide="timer" class="w-4 h-4"></i>
                 <span id="blitz-timer-text">60с</span>
               </span>
               <div id="blitz-hearts" class="flex items-center gap-1 text-lg"></div>
             </div>
             <div class="flex items-center gap-2">
-              <span id="blitz-combo-pill" class="px-2.5 py-1 rounded-xl bg-[#fef3c7] border border-[#f59e0b] text-xs font-extrabold text-[#92400e]">x1</span>
-              <span class="px-3 py-1 rounded-xl bg-[#ecfdf5] border border-[#86efac] font-extrabold text-[#15803d] text-sm tabular-nums">
+              <span id="blitz-combo-pill" class="px-2.5 py-1 rounded-[3px] bg-[#fef3c7] border-2 border-[#b45309] text-xs font-extrabold text-[#92400e]">x1</span>
+              <span class="px-3 py-1 rounded-[3px] bg-[#ecfdf5] border-2 border-[#15803d] font-extrabold text-[#15803d] text-sm tabular-nums">
                 <span id="blitz-score-text">0</span> <span data-i18n="blitz_pts_short">очк.</span>
               </span>
             </div>
           </div>
-          <div class="h-2.5 bg-slate-200 rounded-full overflow-hidden">
-            <div id="blitz-timer-bar" class="h-full bg-gradient-to-r from-[#1e5aa8] via-[#38bdf8] to-[#16a34a] transition-all duration-300" style="width: 100%"></div>
+          <div class="h-3.5 mc-xp-bar overflow-hidden">
+            <div id="blitz-timer-bar" class="h-full progress-fill-animated transition-all duration-300" style="width: 100%"></div>
           </div>
         </div>
 
@@ -567,30 +569,30 @@
     <section id="view-results" class="hidden flex-1 flex flex-col gap-5 pb-28 sm:pb-10">
       <!-- карточки со статистикой -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="bg-gradient-to-br from-[#eaf3ff] to-white border-2 border-[#b8d1f0] border-b-4 rounded-2xl p-4 shadow-sm">
-          <div class="text-xs font-extrabold text-cgy-accent uppercase tracking-wide" data-i18n="kpi_cards">Кибер-карточки</div>
+        <div class="mc-box bg-gradient-to-br from-[#eaf3ff] to-white p-4">
+          <div class="font-pixel text-xs font-bold text-cgy-accent uppercase tracking-wide" data-i18n="kpi_cards">Кибер-карточки</div>
           <div id="res-cards-score" class="font-pixel text-3xl font-bold text-cgy-accent mt-1 tabular-nums">0 / 8</div>
           <div id="res-cards-pct" class="text-xs font-bold text-cgy-muted mt-0.5">0% верно</div>
         </div>
-        <div class="bg-gradient-to-br from-[#e9f6ec] to-white border-2 border-[#a7dfba] border-b-4 rounded-2xl p-4 shadow-sm">
-          <div class="text-xs font-extrabold text-cgy-ok uppercase tracking-wide" data-i18n="kpi_chats">Чаты с мошенниками</div>
+        <div class="mc-box bg-gradient-to-br from-[#e9f6ec] to-white p-4">
+          <div class="font-pixel text-xs font-bold text-cgy-ok uppercase tracking-wide" data-i18n="kpi_chats">Чаты с мошенниками</div>
           <div id="res-chats-score" class="font-pixel text-3xl font-bold text-cgy-ok mt-1 tabular-nums">0 / 7</div>
           <div id="res-chats-acc" class="text-xs font-bold text-cgy-muted mt-0.5">С 1-й попытки: 100%</div>
         </div>
-        <div class="bg-gradient-to-br from-[#fef7e0] to-white border-2 border-[#f3d078] border-b-4 rounded-2xl p-4 shadow-sm">
-          <div class="text-xs font-extrabold text-[#b45309] uppercase tracking-wide" data-i18n="kpi_loot">Собранный лут</div>
+        <div class="mc-box bg-gradient-to-br from-[#fef7e0] to-white p-4">
+          <div class="font-pixel text-xs font-bold text-[#b45309] uppercase tracking-wide" data-i18n="kpi_loot">Собранный лут</div>
           <div id="res-loot-count" class="font-pixel text-3xl font-bold text-[#b45309] mt-1 tabular-nums">0 / 8</div>
           <div id="res-errors-sub" class="text-xs font-bold text-cgy-muted mt-0.5">Ошибок: 0</div>
         </div>
-        <div class="bg-gradient-to-br from-[#eef2ff] to-white border-2 border-[#c7d2fe] border-b-4 rounded-2xl p-4 shadow-sm">
-          <div class="text-xs font-extrabold text-[#4338ca] uppercase tracking-wide" data-i18n="kpi_rank">Твой ранг</div>
+        <div class="mc-box bg-gradient-to-br from-[#eef2ff] to-white p-4">
+          <div class="font-pixel text-xs font-bold text-[#4338ca] uppercase tracking-wide" data-i18n="kpi_rank">Твой ранг</div>
           <div id="res-rank" class="font-pixel text-xl sm:text-2xl font-bold text-[#1e5aa8] mt-1 leading-tight">Новичок</div>
           <div id="res-streak-sub" class="text-xs font-bold text-cgy-muted mt-1">Серия побед: 0</div>
         </div>
       </div>
 
       <!-- форма для скачивания сертификата -->
-      <div class="bg-white border border-cgy-border rounded-xl p-5 shadow-sm">
+      <div class="mc-panel bg-white p-5">
         <div class="flex flex-col sm:flex-row sm:items-end gap-3.5">
           <div class="flex-1">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
@@ -623,7 +625,7 @@
       <!-- графики результатов -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <!-- график по типам заданий -->
-        <div class="bg-white border border-cgy-border rounded-xl p-5 shadow-sm flex flex-col">
+        <div class="mc-panel bg-white p-5 flex flex-col">
           <div class="flex items-center justify-between mb-3">
             <div>
               <h3 class="font-bold text-base text-cgy-text" data-i18n="chart_types_title">Результаты по типам заданий</h3>
@@ -637,7 +639,7 @@
         </div>
 
         <!-- график по попыткам -->
-        <div class="bg-white border border-cgy-border rounded-xl p-5 shadow-sm flex flex-col">
+        <div class="mc-panel bg-white p-5 flex flex-col">
           <div class="flex items-center justify-between mb-3">
             <div>
               <h3 class="font-bold text-base text-cgy-text" data-i18n="chart_dyn_title">Динамика прохождений</h3>
@@ -652,7 +654,7 @@
       </div>
 
       <!-- блок с ачивками -->
-      <div class="bg-white border border-cgy-border rounded-xl p-5 shadow-sm">
+      <div class="mc-panel bg-white p-5">
         <div class="flex items-center justify-between mb-4">
           <div>
             <h3 class="font-bold text-base text-cgy-text" data-i18n="ach_title">Достижения (ачивки)</h3>
@@ -1061,10 +1063,10 @@
     <!-- сам персонаж, можно перетаскивать -->
     <div id="steve-drag-handle" title="Потяни меня по экрану или кликни!"
       class="steve-body-btn pointer-events-auto cursor-grab active:cursor-grabbing flex flex-col items-center transition-transform">
-      <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-white border-[3px] border-[#1e5aa8] border-b-[5px] sm:border-b-[6px] shadow-xl overflow-hidden flex items-center justify-center">
+      <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-[4px] bg-white border-[3px] border-[#1e3a5f] border-b-[5px] sm:border-b-[6px] shadow-[4px_4px_0_rgba(24,42,68,0.22)] overflow-hidden flex items-center justify-center">
         <div id="yugorka-avatar" class="w-full h-full flex items-center justify-center yugorka-float"></div>
       </div>
-      <span id="yugorka-name-badge" class="-mt-2 px-2 sm:px-2.5 py-0.5 rounded-lg bg-[#1e5aa8] border-2 border-white text-white font-pixel text-[10px] sm:text-[11px] font-bold shadow-md">
+      <span id="yugorka-name-badge" class="-mt-2 px-2 sm:px-2.5 py-0.5 rounded-[3px] bg-[#1e5aa8] border-2 border-[#153e75] text-white font-pixel text-[10px] sm:text-[11px] font-bold shadow-[2px_2px_0_rgba(0,0,0,0.28)]">
         Кибер-Стив
       </span>
     </div>
