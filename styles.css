@@ -50,14 +50,30 @@ body {
 @media (max-width: 767px) {
   body {
     background-attachment: scroll;
-    font-size: 15px;
+    font-size: 16px;
+  }
+  #card-title {
+    font-size: 21px !important;
+    line-height: 1.25 !important;
+  }
+  #card-prompt {
+    font-size: 16px !important;
+  }
+  .card-option {
+    font-size: 15.5px !important;
+    padding: 13px 14px !important;
+  }
+  .nav-tab {
+    font-size: 12px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
   }
   .steve-speech-top::after {
     right: 24px;
   }
 }
 
-/* пиксельный шрифт для заголовков, кнопок, вкладок и ачивок */
+/* читаемый блочный игровой шрифт Tektur для заголовков, кнопок и ачивок */
 .font-pixel,
 h1, h2, h3,
 .nav-tab,
@@ -70,7 +86,7 @@ h1, h2, h3,
 #badge-chat-progress,
 #overall-pct,
 #pass-lab-time {
-  font-family: 'Pixelify Sans', 'Nunito', sans-serif;
+  font-family: 'Tektur', 'Nunito', sans-serif;
   letter-spacing: 0.01em;
 }
 
@@ -483,7 +499,7 @@ body.mc-theme .fixed.inset-0 > div {
 /* квадратные блоки-плитки миссий сверху */
 .mission-node {
   border-radius: 3px !important;
-  font-family: 'Pixelify Sans', 'Nunito', sans-serif;
+  font-family: 'Tektur', 'Nunito', sans-serif;
   box-shadow:
     inset 2px 2px 0 rgba(255, 255, 255, 0.45),
     inset -2px -2px 0 rgba(0, 0, 0, 0.2),
@@ -656,18 +672,18 @@ body.mc-theme .fixed.inset-0 > div {
   animation: mcAdvSlide 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .mc-adv-title {
-  font-family: 'Pixelify Sans', 'Nunito', sans-serif;
+  font-family: 'Tektur', 'Nunito', sans-serif;
   color: #ffff55;
   text-shadow: 2px 2px 0 #3f3f15;
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.18;
 }
 .mc-adv-sub {
-  font-family: 'Pixelify Sans', 'Nunito', sans-serif;
+  font-family: 'Tektur', 'Nunito', sans-serif;
   color: #ffffff;
   text-shadow: 2px 2px 0 #3a3a3a;
-  font-weight: 500;
-  line-height: 1.2;
+  font-weight: 600;
+  line-height: 1.24;
 }
 
 /* карточки ачивок в разделе аналитики (фулл майнкрафт как на скрине) */
@@ -859,3 +875,86 @@ body.mc-theme .fixed.inset-0 > div {
   to { opacity: 1; transform: translateY(0); }
 }
 .toast-enter { animation: toastIn 0.18s ease-out forwards; }
+
+/* стили глав-биомов (путь как в duolingo + minecraft) */
+.biome-tab {
+  border-radius: 4px;
+  border: 2px solid #355070;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 rgba(140, 168, 204, 0.45), 3px 3px 0 rgba(36, 54, 77, 0.14);
+  transition: transform 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
+}
+.biome-tab:hover {
+  transform: translateY(-2px);
+  border-color: var(--cgy-accent);
+}
+.biome-tab.active {
+  background: linear-gradient(180deg, #1e5aa8 0%, #17498c 100%);
+  border-color: #0f2e59;
+  color: #ffffff;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.25), inset -2px -2px 0 rgba(0, 0, 0, 0.25), 3px 3px 0 rgba(15, 46, 89, 0.24);
+}
+.biome-tab.active .biome-sub { color: rgba(255, 255, 255, 0.85); }
+.biome-tab.active .biome-pill {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* стили 6-й механики: кибер-верстак 3x3 (крафт защиты как в майнкрафте) */
+.craft-bench {
+  background: linear-gradient(180deg, #e5eef9 0%, #d4e2f3 100%);
+  border: 2px solid #24364d;
+  border-radius: 4px;
+  box-shadow: inset 3px 3px 0 #ffffff, inset -3px -3px 0 #95aec9, 4px 4px 0 rgba(36, 54, 77, 0.14);
+}
+.craft-cell {
+  border-radius: 3px;
+  background: #b7c8de;
+  border: 2px solid #59708e;
+  box-shadow: inset 2px 2px 0 #6f87a6, inset -2px -2px 0 #f4f8ff;
+  min-height: 62px;
+  transition: transform 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
+}
+.craft-cell.filled {
+  background: linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
+  border-color: #1e5aa8;
+  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 #b8d3f4, 2px 2px 0 rgba(30, 90, 168, 0.18);
+}
+.craft-cell.is-correct {
+  background: #e9f6ec;
+  border-color: #1e7e34;
+}
+.craft-cell.is-wrong {
+  background: #fdecec;
+  border-color: #c62828;
+}
+.craft-result-slot {
+  border-radius: 4px;
+  background: #b7c8de;
+  border: 3px solid #59708e;
+  box-shadow: inset 3px 3px 0 #6f87a6, inset -3px -3px 0 #ffffff;
+}
+.craft-result-slot.ready {
+  background: linear-gradient(180deg, #fffdf0 0%, #fef3c7 100%);
+  border-color: #d97706;
+  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 #e5a93c, 0 0 0 3px rgba(245, 158, 11, 0.24);
+}
+.craft-ingredient {
+  border-radius: 4px;
+  background: #ffffff;
+  border: 2px solid #355070;
+  border-bottom-width: 4px;
+  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 rgba(140, 168, 204, 0.4), 2px 2px 0 rgba(36, 54, 77, 0.12);
+  transition: transform 0.1s ease, border-color 0.12s ease, background-color 0.12s ease;
+}
+.craft-ingredient:hover:not(:disabled) {
+  border-color: var(--cgy-accent);
+  background: #eef6ff;
+  transform: translateY(-2px);
+}
+.craft-ingredient.picked {
+  background: #dbeafe;
+  border-color: #1e5aa8;
+  box-shadow: inset 2px 2px 0 rgba(30, 90, 168, 0.15);
+}

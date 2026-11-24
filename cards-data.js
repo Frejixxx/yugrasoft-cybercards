@@ -599,5 +599,589 @@ const DEFAULT_CARDS = [
       en: 'Key scammer tricks to watch for: lookalike domains with extra words, fake Premium checkmarks instead of real verification, and demands to hide things from parents.',
       kca: 'Мошенник вєрӑт: ӑн тәса доменӑт, Premium-галочкат па аӊки-ащийн ястӑты ӑн мӑты ясӑӊӑт.'
     }
+  },
+  // 9. кибер-верстак 3x3: защита аккаунта (глава 1)
+  {
+    id: 'card_craft_account',
+    chapter: 1,
+    type: 'craft',
+    level: 2,
+    topic: 'password',
+    topicLabel: { ru: 'Кибер-верстак', en: 'Cyber Crafting', kca: 'Кибер-верстак' },
+    loot: {
+      icon: 'shield',
+      name: { ru: 'Щит Аккаунта', en: 'Account Shield', kca: 'Аккаунт щит' },
+      desc: { ru: 'Скрафтил надёжную защиту для профиля!', en: 'Crafted strong protection for your profile!', kca: 'Аккаунт пӑта тӑк щит вєрӑн!' }
+    },
+    title: {
+      ru: 'Кибер-верстак: скрафти защиту для аккаунта',
+      en: 'Cyber Crafting Table: craft account armor',
+      kca: 'Кибер-верстак: аккаунт пӑта щит вєрэ'
+    },
+    prompt: {
+      ru: 'Собери Алмазный Щит: положи на верстак ровно 3 правильных блока защиты и не трогай опасные ловушки!',
+      en: 'Craft a Diamond Shield: place exactly 3 safe defense blocks on the crafting table and avoid traps!',
+      kca: 'Алмаз щит пӑта верстак эӆты 3 тәса блок пунэ, ӑтӑм блокӑт ӑн вўэ!'
+    },
+    mascotTip: {
+      ru: 'Для крепкого щита нужны: сложный пароль, вход по коду (2FA) и секретность — никому не давать логин!',
+      en: 'A strong shield needs: a complex password, 2FA login code, and keeping your password secret!',
+      kca: 'Тӑк щит пӑта: тӑк пароль, 2FA па пароль хәйата ӑн мӑты!'
+    },
+    craftTarget: {
+      icon: 'shield',
+      name: { ru: 'Алмазный Щит', en: 'Diamond Shield', kca: 'Алмаз щит' }
+    },
+    needCount: 3,
+    ingredients: [
+      { id: 'c1', icon: 'key', correct: true, label: { ru: 'Пароль от 12 знаков', en: '12+ char password', kca: '12 знак пароль' } },
+      { id: 'c2', icon: 'shield', correct: true, label: { ru: 'Вход по 2FA', en: '2FA protection', kca: '2FA ӆавӑӆты' } },
+      { id: 'c3', icon: 'book', correct: true, label: { ru: 'Секретность пароля', en: 'Keep password secret', kca: 'Пароль ӑн мӑты' } },
+      { id: 'c4', icon: 'chest', correct: false, label: { ru: 'Пароль «123456»', en: 'Password "123456"', kca: 'Пароль «123456»' } },
+      { id: 'c5', icon: 'emerald', correct: false, label: { ru: 'Сказать код в чате', en: 'Share SMS code', kca: 'SMS-код чатӑн мӑты' } },
+      { id: 'c6', icon: 'spyglass', correct: false, label: { ru: 'Один пароль везде', en: 'Same password everywhere', kca: 'И пароль иса тӑхийн' } }
+    ],
+    explanation: {
+      ru: 'Рецепт надёжного аккаунта простой: уникальный сложный пароль, включённая двухфакторка (2FA) и правило никогда не делиться паролем и кодами.',
+      en: 'The recipe for a safe account: a strong unique password, 2FA enabled, and never sharing passwords or SMS codes.',
+      kca: 'Тӑк аккаунт рецепт: тӑк пароль, 2FA па пароль-код хәйата ӑн мӑты.'
+    }
+  },
+  // 10. QR-фишинг на объявлении (глава 2)
+  {
+    id: 'card_qr_choice',
+    chapter: 2,
+    type: 'choice',
+    level: 2,
+    topic: 'phishing',
+    topicLabel: { ru: 'QR-фишинг', en: 'QR Phishing', kca: 'QR-фишинг' },
+    loot: {
+      icon: 'spyglass',
+      name: { ru: 'Сканер QR', en: 'QR Scanner', kca: 'QR сканер' },
+      desc: { ru: 'Умеет отличать поддельные QR-наклейки!', en: 'Spots fake QR code stickers!', kca: 'Ӑн тәса QR-кодӑт вәӆ!' }
+    },
+    title: {
+      ru: 'Странный QR-код на объявлении у школы',
+      en: 'Suspicious QR code on a poster near school',
+      kca: 'Ӑшкола хося ӑн тәса QR-код'
+    },
+    prompt: {
+      ru: 'На столбе висит объявление «Бесплатные билеты в кино», а поверх старого QR-кода криво наклеена новая наклейка с адресом kino-priz-86.xyz. Что делать?',
+      en: 'A street poster promises "Free movie tickets", with a fresh sticker pasted over the original QR pointing to kino-priz-86.xyz. What should you do?',
+      kca: 'Объявлениейн «Вух ӆыпи кино билет» хӑншӑм, QR-код эӆты йиӆуп наклейка kino-priz-86.xyz. Муй вєрӆӑн?'
+    },
+    mascotTip: {
+      ru: 'Мошенники часто клеят свой QR поверх настоящего — всегда проверяй адрес сайта до ввода данных!',
+      en: 'Scammers often paste fake QR stickers over real posters — always inspect the URL first!',
+      kca: 'Мошенникӑт ӑн тәса QR-наклейка пунӆӑт — оӆӑӊ домен вәньщэ!'
+    },
+    visual: {
+      kind: 'qr_poster',
+      heading: { ru: 'БЕСПЛАТНЫЕ БИЛЕТЫ В КИНО!', en: 'FREE MOVIE TICKETS!', kca: 'ВУХ ӅЫПИ КИНО БИЛЕТ!' },
+      url: 'https://kino-priz-86.xyz/card-pay',
+      note: {
+        ru: 'Поверх афиши криво приклеена новая наклейка — сайт просит ввести номер карты для «проверки».',
+        en: 'A crooked sticker was pasted over the poster — the page asks for a bank card number to "verify".',
+        kca: 'Афиша эӆты йиӆуп наклейка пунсы — сайт «проверка» пӑта карта номер вохӆ.'
+      }
+    },
+    clues: [
+      {
+        id: 'qr_url',
+        match: { ru: 'kino-priz-86.xyz', en: 'kino-priz-86.xyz', kca: 'kino-priz-86.xyz' },
+        note: { ru: 'Левый домен .xyz не имеет отношения к настоящему кинотеатру!', en: 'Fake .xyz domain has nothing to do with a real cinema!', kca: 'Ӑн тәса .xyz домен — мошенник сайт!' }
+      },
+      {
+        id: 'qr_card',
+        match: { ru: 'номер карты', en: 'bank card number', kca: 'карта номер' },
+        note: { ru: 'Для «бесплатных» билетов никогда не просят данные банковской карты!', en: 'Free tickets never require your bank card details!', kca: 'Вух ӆыпи билет пӑта карта номер ӑн вохӆӑт!' }
+      }
+    ],
+    options: [
+      { id: 'a', text: { ru: 'Отсканировать и ввести карту родителей — билеты же бесплатные', en: 'Scan it and enter parents’ card — tickets are free', kca: 'Сканируйтты па аӊки карта хӑншты' }, correct: false },
+      { id: 'b', text: { ru: 'Не переходить и не вводить данные — это поддельный QR-код (квишинг)', en: 'Do not open or enter data — it is a fake QR scam (quishing)', kca: 'Ӑн ӆәӊты па карта ӑн хӑншты — щит QR-мошенник' }, correct: true },
+      { id: 'c', text: { ru: 'Переслать фото кода всем друзьям в чат класса', en: 'Forward the QR photo to the whole class chat', kca: 'Иса юратна QR фото китты' }, correct: false }
+    ],
+    explanation: {
+      ru: 'Это QR-фишинг (квишинг): мошенники клеят свой код поверх афиш и ведут на поддельный сайт для кражи данных карт. Всегда смотри на домен перед переходом.',
+      en: 'This is QR phishing (quishing): scammers paste fake stickers over posters to steal card details on lookalike sites.',
+      kca: 'Щит QR-фишинг: мошенникӑт йиӆуп QR пунӆӑт па карта вух ӆӑӆьмӑты кӑншӆӑт.'
+    }
+  },
+  // 11. Открытый Wi-Fi в ТЦ (глава 2)
+  {
+    id: 'card_wifi_tf',
+    chapter: 2,
+    type: 'truefalse',
+    level: 2,
+    topic: 'phishing',
+    topicLabel: { ru: 'Открытый Wi-Fi', en: 'Public Wi-Fi', kca: 'Публичной Wi-Fi' },
+    loot: {
+      icon: 'armor',
+      name: { ru: 'Щит Трафика', en: 'Traffic Armor', kca: 'Трафик щит' },
+      desc: { ru: 'Не вводит пароли и карты в чужом открытом Wi-Fi!', en: 'Never types passwords or cards on open public Wi-Fi!', kca: 'Йиӆуп Wi-Fi-ӑн пароль ӑн хӑншӆ!' }
+    },
+    title: {
+      ru: 'Бесплатный Wi-Fi без пароля в торговом центре',
+      en: 'Free open Wi-Fi at the shopping mall',
+      kca: 'ТЦ-ӑн пароль ӆыпи Wi-Fi'
+    },
+    prompt: {
+      ru: 'Утверждение: «Через открытый бесплатный Wi-Fi без пароля в кафе или ТЦ полностью безопасно оплачивать покупки и входить в Госуслуги». Это верно?',
+      en: 'Statement: "Using free open Wi-Fi without a password in a mall is completely safe for banking and government accounts." True or False?',
+      kca: 'Ясӑӊ: «Пароль ӆыпи Wi-Fi эвӑӆт Госуслуги па банк ӆәӊты иса ёмӑщ». Тәса аӆпа ӑн тәса?'
+    },
+    mascotTip: {
+      ru: 'Подумай: кто угодно в зале может создать фейковую точку Free_WiFi_Mall и перехватывать трафик!',
+      en: 'Anyone nearby can create a fake Free_WiFi_Mall hotspot and snoop on unencrypted traffic!',
+      kca: 'Хәйат ӑн тәса Free_WiFi_Mall вєрты рӑхӆ па пароль вўты!'
+    },
+    visual: {
+      kind: 'wifi_list',
+      ssid: 'Free_WiFi_Mall_VIP',
+      note: {
+        ru: 'Открытая сеть без замка. После подключения сразу открылось окно: «Войдите через Госуслуги или VK».',
+        en: 'Unsecured network without a lock. A popup asks: "Sign in with your account password".',
+        kca: 'Замок ӆыпи Wi-Fi. Окно пуншӑс: «Госуслуги аӆпа VK пароль хӑншэ».'
+      }
+    },
+    clues: [
+      {
+        id: 'wifi_open',
+        match: { ru: 'без замка', en: 'without a lock', kca: 'Замок ӆыпи' },
+        note: { ru: 'Открытая точка без шифрования может оказаться ловушкой мошенника!', en: 'An open hotspot with no lock can be an attacker’s trap!', kca: 'Замок ӆыпи сеть мошенник тӑхи вәӆты рӑхӆ!' }
+      },
+      {
+        id: 'wifi_login',
+        match: { ru: 'Войдите через Госуслуги', en: 'Sign in with your account', kca: 'Госуслуги аӆпа VK пароль' },
+        note: { ru: 'Настоящий Wi-Fi в ТЦ не просит пароль от Госуслуг или VK!', en: 'Real mall Wi-Fi never asks for your personal account password!', kca: 'Тәса Wi-Fi Госуслуги пароль ӑн вохӆ!' }
+      }
+    ],
+    correctAnswer: false,
+    explanation: {
+      ru: 'Неверно! В открытом Wi-Fi злоумышленник может подменить точку доступа и украсть пароли. Для банков, покупок и важных аккаунтов используй мобильный интернет.',
+      en: 'False! Attackers can spoof open Wi-Fi hotspots to steal logins. Always use mobile data for banking, shopping, and important accounts.',
+      kca: 'Ӑн тәса! Пароль ӆыпи Wi-Fi-ӑн мошенник пароль вўты рӑхӆ. Банк па Госуслуги пӑта мобильной интернет юнтэ.'
+    }
+  },
+  // 12. Фейковый чит / APK с вирусом (глава 2)
+  {
+    id: 'card_apk_choice',
+    chapter: 2,
+    type: 'choice',
+    level: 2,
+    topic: 'game',
+    topicLabel: { ru: 'Вирусы и моды', en: 'Malware & Mods', kca: 'Вирусӑт' },
+    loot: {
+      icon: 'emerald',
+      name: { ru: 'Антивирус-Изумруд', en: 'Antivirus Emerald', kca: 'Антивирус' },
+      desc: { ru: 'Не качает подозрительные .apk читы из чатов!', en: 'Never installs shady .apk cheats from chats!', kca: 'Ӑтӑм .apk файлӑт ӑн вўӆ!' }
+    },
+    title: {
+      ru: '«Чит на бесконечные гемы» — файл free_gems_mod.apk',
+      en: '"Unlimited Gems Cheat" — free_gems_mod.apk file',
+      kca: '«Вух ӆыпи гемӑт» — free_gems_mod.apk файл'
+    },
+    prompt: {
+      ru: 'В комментариях под видео скинули файл free_gems_mod.apk и написали: «Отключи антивирус и дай доступ к SMS, чтобы гемы пришли». Как поступишь?',
+      en: 'A video comment shares free_gems_mod.apk saying: "Disable antivirus and allow SMS access to get gems." What do you do?',
+      kca: 'Комментарийӑн free_gems_mod.apk файл китсы: «Антивирус пӑнтэ па SMS доступ мӑэ». Муй вєрӆӑн?'
+    },
+    mascotTip: {
+      ru: 'Зачем моду для игры доступ к твоим SMS и отключение защиты? Чтобы украсть коды банка!',
+      en: 'Why would a game mod need access to your SMS and antivirus disabled? To steal codes!',
+      kca: 'Муй пӑта юнт мода SMS доступ? Банк кодӑт ӆӑӆьмӑты!'
+    },
+    visual: {
+      kind: 'apk_download',
+      filename: 'free_gems_mod_2026.apk',
+      size: '4.2 MB',
+      note: {
+        ru: 'Требуемые разрешения: «Чтение SMS», «Доступ к контактам». Автор просит отключить защиту Google Play.',
+        en: 'Requested permissions: "Read SMS", "Access Contacts". Author tells you to disable Play Protect.',
+        kca: 'Вохӆ: «SMS ӆўӊӑтты», «Контактӑт». Google Play ӆавӑӆты пӑнтты вохӆ.'
+      }
+    },
+    clues: [
+      {
+        id: 'apk_ext',
+        match: { ru: '.apk', en: '.apk', kca: '.apk' },
+        note: { ru: 'Установочный файл из неизвестного источника — главный способ заразить телефон трояном!', en: 'Installing an .apk from an unknown source is the #1 way trojans infect phones!', kca: 'Ӑн вәтӑм тӑхи эвӑӆт .apk файл — вирус!' }
+      },
+      {
+        id: 'apk_sms',
+        match: { ru: 'Чтение SMS', en: 'Read SMS', kca: 'SMS ӆўӊӑтты' },
+        note: { ru: 'Троян просит доступ к SMS, чтобы тайно перехватывать коды от банков и мессенджеров!', en: 'Trojans request SMS permission to secretly steal banking & messenger codes!', kca: 'Вирус SMS эвӑӆт кодӑт ӆӑӆьмӑты кӑншӆ!' }
+      }
+    ],
+    options: [
+      { id: 'a', text: { ru: 'Скачать и отключить защиту на 5 минут ради гемов', en: 'Download and turn off protection for 5 minutes', kca: 'Вўты па 5 минута пӑта ӆавӑӆты пӑнтты' }, correct: false },
+      { id: 'b', text: { ru: 'Не скачивать — это троян, игры и моды берут только из официальных магазинов', en: 'Do not download — it is a trojan; install apps only from official stores', kca: 'Ӑн вўты — щит вирус, иса официальной магазин эвӑӆт вўты' }, correct: true },
+      { id: 'c', text: { ru: 'Попросить друга сначала проверить файл на своём телефоне', en: 'Ask a friend to test the file on their phone first', kca: 'Юрэн телефон эӆты вәньщты вохты' }, correct: false }
+    ],
+    explanation: {
+      ru: 'Под видом «читов на гемы и робуксы» почти всегда прячут трояны. Они просят доступ к SMS и контактам, чтобы украсть аккаунты и деньги. Качай игры только с официальных площадок.',
+      en: 'Fake "free gems cheats" almost always hide trojans that steal SMS codes and accounts. Only install apps from official stores.',
+      kca: '«Вух ӆыпи гемӑт» файлӑтн вирус вәӆӆ. Иса официальной магазин эвӑӆт вўты мосӆ.'
+    }
+  },
+  // 13. Угон Telegram через голосование (глава 3)
+  {
+    id: 'card_vote_choice',
+    chapter: 3,
+    type: 'choice',
+    level: 3,
+    topic: 'phishing',
+    topicLabel: { ru: 'Угон мессенджера', en: 'Account Hijack', kca: 'Чат ӆӑӆьмӑты' },
+    loot: {
+      icon: 'book',
+      name: { ru: 'Кодекс Чатов', en: 'Chat Codex', kca: 'Потӑр книга' },
+      desc: { ru: 'Знает ловушку «Проголосуй за племянницу»!', en: 'Knows the "Vote for my niece" hijack trap!', kca: '«Голосование» мошенник вєр вәӆ!' }
+    },
+    title: {
+      ru: '«Проголосуй за мою племянницу в конкурсе!»',
+      en: '"Please vote for my niece in a contest!"',
+      kca: '«Конкурсӑн ма ӑӊкем пӑта голос мӑэ!»'
+    },
+    prompt: {
+      ru: 'Знакомый прислал ссылку на конкурс талантов. Сайт просит ввести твой номер телефона и 5-значный код, который только что пришёл от Telegram. Что происходит?',
+      en: 'An acquaintance sends a contest voting link. The site asks for your phone number and a 5-digit code that just arrived from Telegram. What is happening?',
+      kca: 'Юрэн конкурс ссылка китӑс. Сайт телефон номер па Telegram эвӑӆт юхтӑм 5 цифра код вохӆ. Муй щит?'
+    },
+    mascotTip: {
+      ru: 'Если ввести код от Telegram на чужом сайте — мошенник мгновенно войдёт в твой аккаунт!',
+      en: 'Typing a Telegram login code on a third-party site instantly hands over your account!',
+      kca: 'Telegram код йиӆуп сайтӑн хӑншӆӑн ки — аккаунтэн ӆӑӆьмӑӆӑт!'
+    },
+    visual: {
+      kind: 'chat_snippet',
+      sender: 'Дядя Коля (взломан?)',
+      tag: { ru: 'Личное сообщение', en: 'Direct message', kca: 'Потӑр' },
+      bubble: {
+        ru: 'Привет! Выручи, проголосуй за племянницу на konkurs-deti-86.ru — просто введи код из Telegram!',
+        en: 'Hi! Please vote for my niece on konkurs-deti-86.ru — just enter the code from Telegram!',
+        kca: 'Вўща! konkurs-deti-86.ru эӆты голос мӑэ — Telegram эвӑӆт код хӑншэ!'
+      }
+    },
+    clues: [
+      {
+        id: 'vote_code',
+        match: { ru: 'код из Telegram', en: 'code from Telegram', kca: 'Telegram эвӑӆт код' },
+        note: { ru: 'Код от Telegram нужен ТОЛЬКО для входа в твой аккаунт, никогда не для голосований!', en: 'A Telegram code is ONLY for logging into your account, never for voting!', kca: 'Telegram код аӆ аккаунт ӆәӊты пӑта!' }
+      },
+      {
+        id: 'vote_site',
+        match: { ru: 'konkurs-deti-86.ru', en: 'konkurs-deti-86.ru', kca: 'konkurs-deti-86.ru' },
+        note: { ru: 'Фишинговый сайт-однодневка: аккаунт знакомого уже взломали и шлют спам по его контактам!', en: 'Phishing site: your contact’s account was already hijacked!', kca: 'Фишинг сайт: юрэн аккаунт уша вєрсы!' }
+      }
+    ],
+    options: [
+      { id: 'a', text: { ru: 'Ввести код — неудобно отказывать знакомому', en: 'Enter the code to be polite', kca: 'Код хӑншты' }, correct: false },
+      { id: 'b', text: { ru: 'Закрыть сайт, никуда не вводить код и позвонить знакомому предупредить о взломе', en: 'Close the site, never enter the code, and warn the contact by phone', kca: 'Сайт пӑнтты, код ӑн хӑншты па телефонн юрэнна ястӑты' }, correct: true },
+      { id: 'c', text: { ru: 'Переслать код прямо ему в чат вместо сайта', en: 'Send the code directly to him in chat instead', kca: 'Код чатӑн китты' }, correct: false }
+    ],
+    explanation: {
+      ru: '«Проголосуй в конкурсе» — одна из самых массовых схем угона Telegram. Вводишь код входа на фейковом сайте — и через секунду твой аккаунт уже рассылает просьбы о деньгах всем друзьям.',
+      en: '"Vote in a contest" is one of the most common Telegram hijacking scams. Never enter login codes on external websites.',
+      kca: '«Конкурсӑн голос мӑэ» — Telegram ӆӑӆьмӑты мошенник вєр. Код йиӆуп сайтӑн хӑншты ӑн рӑхӆ.'
+    }
+  },
+  // 14. ИИ-дипфейк голоса друга (глава 3)
+  {
+    id: 'card_deepfake_choice',
+    chapter: 3,
+    type: 'choice',
+    level: 3,
+    topic: 'hacked',
+    topicLabel: { ru: 'ИИ-дипфейк', en: 'AI Deepfake', kca: 'ИИ-дипфейк' },
+    loot: {
+      icon: 'heart',
+      name: { ru: 'Детектор Голоса', en: 'Voice Detector', kca: 'Голос вәтты' },
+      desc: { ru: 'Не ведётся на поддельные голосовые нейросети!', en: 'Spots AI-cloned voice scams!', kca: 'ИИ-голос мошенникӑт вәӆ!' }
+    },
+    title: {
+      ru: 'Голосовое от друга: «Срочно скинь 2000 ₽ на карту брата!»',
+      en: 'Voice note from a friend: "Urgently send money to my cousin’s card!"',
+      kca: 'Юрэн эвӑӆт голос нєпек: «Щимӑщ 2000 ₽ йиӆуп картайн китэ!»'
+    },
+    prompt: {
+      ru: 'Пришло короткое голосовое — голос очень похож на твоего друга, но фраза обрывистая и просит срочно перевести деньги на чужую карту, а трубку не берёт. Что делать?',
+      en: 'A short voice note sounds just like your friend, urgently asking to send money to a stranger’s card while refusing to answer calls. What do you do?',
+      kca: 'Голос юрэн кємӑн, щит щимӑщ йиӆуп картайн 2000 ₽ вохӆ, телефон ӑн вўӆ. Муй вєрӆӑн?'
+    },
+    mascotTip: {
+      ru: 'Нейросети умеют клонировать голос по 10 секундам старых голосовых! Всегда проверяй звонком или кодовым вопросом.',
+      en: 'AI can clone a voice from 10 seconds of old voice notes! Always verify with a real call or secret question.',
+      kca: 'Нейросеть голос вєрты рӑхӆ! Телефонн вохэ аӆпа аӊки-ащийн ястӑэ.'
+    },
+    visual: {
+      kind: 'alert_banner',
+      title: { ru: 'Входящее голосовое (0:06)', en: 'Incoming Voice Note (0:06)', kca: 'Голос нєпек (0:06)' },
+      text: {
+        ru: '«Бро, срочно выручи, скинь 2000 ₽ на чужую карту 2202..., говорить не могу, вечером отдам!»',
+        en: '"Bro, urgent favor, send money to a stranger’s card right now, can’t talk on phone, I’ll pay back tonight!"',
+        kca: '«Юр, щимӑщ 2000 ₽ йиӆуп картайн китэ, телефонн потӑрты ӑн рӑхӆум!»'
+      }
+    },
+    clues: [
+      {
+        id: 'df_card',
+        match: { ru: 'чужую карту', en: 'stranger’s card', kca: 'йиӆуп картайн' },
+        note: { ru: 'Перевод на карту незнакомого человека — главный признак взломанного аккаунта!', en: 'Sending money to a stranger’s card is the #1 sign of a hacked account!', kca: 'Йиӆуп хоят карта — аккаунт взлом!' }
+      },
+      {
+        id: 'df_cant_talk',
+        match: { ru: 'говорить не могу', en: 'can’t talk on phone', kca: 'потӑрты ӑн рӑхӆум' },
+        note: { ru: 'Отказ от живого звонка нужен, чтобы ты не заметил подделку голоса нейросетью!', en: 'Refusing a live call hides the AI voice clone!', kca: 'Телефонн ӑн потӑрӆ — щит ИИ-голос!' }
+      }
+    ],
+    options: [
+      { id: 'a', text: { ru: 'Перевести деньги — ведь это точно его голос!', en: 'Send the money — it clearly sounds like him!', kca: 'Вух китты — голос юрэн кємӑн!' }, correct: false },
+      { id: 'b', text: { ru: 'Не переводить: позвонить другу по обычной связи или задать личный вопрос, который знает только он', en: 'Do not send money: call them on regular phone or ask a personal question only they know', kca: 'Вух ӑн китты: телефонн вохты аӆпа личной вопрос мӑты' }, correct: true },
+      { id: 'c', text: { ru: 'Отправить половину суммы для проверки', en: 'Send half the amount as a test', kca: 'Пєӆӑк вух китты' }, correct: false }
+    ],
+    explanation: {
+      ru: 'Мошенники взламывают аккаунт, скачивают старые голосовые и синтезируют новое сообщение через ИИ. Деньги никогда не переводят на чужую карту без живой проверки звонком.',
+      en: 'Scammers clone voices using AI from stolen voice notes. Never send money without verifying on a live phone call or with parents.',
+      kca: 'Мошенникӑт ИИ эвӑӆт голос вєрӆӑт. Телефонн ӑн вәньщӑм вух китты ӑн рӑхӆ.'
+    }
+  },
+  // 15. Сортировка: что выдаёт адрес на фото (глава 3)
+  {
+    id: 'card_geotag_sort',
+    chapter: 3,
+    type: 'sort',
+    level: 2,
+    topic: 'privacy',
+    topicLabel: { ru: 'Безопасные фото', en: 'Safe Photos', kca: 'Фото ӆавӑӆты' },
+    loot: {
+      icon: 'chest',
+      name: { ru: 'Сейф Фото', en: 'Photo Vault', kca: 'Фото сундук' },
+      desc: { ru: 'Не палит свой адрес и школу на фотографиях!', en: 'Never leaks home address or school in photos!', kca: 'Фото эвӑӆт хот адрес ӑн китӆ!' }
+    },
+    title: {
+      ru: 'Что можно выложить на фото, а что выдаст твой адрес?',
+      en: 'Safe to post in photos vs. reveals your address',
+      kca: 'Фотойн муй рӑхӆ, муй хот адрес этӑӆтӆ?'
+    },
+    prompt: {
+      ru: 'Разложи карточки по корзинам: что безопасно выкладывать в соцсеть, а что поможет незнакомцу вычислить, где ты живёшь или учишься.',
+      en: 'Sort what is safe to post publicly vs. details that let strangers track your home or school.',
+      kca: 'Карточкат корзинайн пунэ: муй выкладывать рӑхӆ, муй хот-ӑшкола этӑӆтӆ.'
+    },
+    mascotTip: {
+      ru: 'Номер школы на бейдже, табличка улицы из окна и геолокация сразу выдают, где тебя найти!',
+      en: 'School badges, street signs outside your window, and live geotags reveal your exact location!',
+      kca: 'Ӑшкола номер, улица табличка па геолокация хотэн этӑӆтӆӑт!'
+    },
+    buckets: {
+      safe: { ru: 'Безопасно для фото', en: 'Safe to post', kca: 'Рӑхӆ выкладывать' },
+      private: { ru: 'Выдаст адрес / школу', en: 'Leaks address / school', kca: 'Хот / ӑшкола этӑӆтӆ' }
+    },
+    items: [
+      { id: 'g1', text: { ru: 'Фото своего рисунка или поделки', en: 'Photo of your drawing or craft', kca: 'Нӑӊ хӑншӑм картинка фото' }, bucket: 'safe' },
+      { id: 'g2', text: { ru: 'Вид из окна с табличкой улицы и дома', en: 'Window view showing street & house sign', kca: 'Улица па хот номер пиӆа фото' }, bucket: 'private' },
+      { id: 'g3', text: { ru: 'Скриншот постройки в игре', en: 'Screenshot of your game build', kca: 'Юнтӑн вєрӑм хот скриншот' }, bucket: 'safe' },
+      { id: 'g4', text: { ru: 'Фото с геолокацией «Я дома сейчас»', en: 'Post with live geotag "Home right now"', kca: 'Геолокация «Ма хотӑн ин»' }, bucket: 'private' },
+      { id: 'g5', text: { ru: 'Бейдж с номером школы и ФИО', en: 'School ID badge with school # and full name', kca: 'Ӑшкола номер па ФИО бейдж' }, bucket: 'private' },
+      { id: 'g6', text: { ru: 'Фото заката в парке без геометки', en: 'Park sunset photo with no geotag', kca: 'Геометка ӆыпи хӑтӆ фото' }, bucket: 'safe' }
+    ],
+    explanation: {
+      ru: 'Даже без указания адреса в тексте незнакомец легко найдёт тебя по табличке дома из окна, бейджу школы или включённой геометке. Отключай геолокацию в камере для соцсетей.',
+      en: 'Strangers can locate you through street signs in window photos, school badges, or live geotags. Keep location tags off for public posts.',
+      kca: 'Хот номер, ӑшкола бейдж па геолокация хотэн этӑӆтӆӑт. Камерайн геолокация пӑнтэ.'
+    }
+  },
+  // 16. Порядок действий: настройка 2FA (глава 3)
+  {
+    id: 'card_2fa_order',
+    chapter: 3,
+    type: 'order',
+    level: 3,
+    topic: 'password',
+    topicLabel: { ru: 'Защита 2FA', en: '2FA Setup', kca: '2FA ӆавӑӆты' },
+    loot: {
+      icon: 'key',
+      name: { ru: 'Ключ 2FA', en: '2FA Master Key', kca: '2FA ключ' },
+      desc: { ru: 'Умеет настраивать двухфакторную защиту!', en: 'Knows how to set up two-factor security!', kca: '2FA тәса вєрты вәӆ!' }
+    },
+    title: {
+      ru: 'Как правильно включить двухфакторную защиту (2FA)?',
+      en: 'How to enable Two-Factor Authentication (2FA) properly?',
+      kca: '2FA ӆавӑӆты хуты тәса вєрты?'
+    },
+    prompt: {
+      ru: 'Расставь 4 шага в правильном порядке, чтобы надёжно защитить свой мессенджер или игровой аккаунт.',
+      en: 'Put the 4 steps in the right order to secure your messenger or gaming account.',
+      kca: 'Аккаунт тӑк ӆавӑӆты пӑта 4 вєр тәса тӑхийн пунэ.'
+    },
+    mascotTip: {
+      ru: 'Сначала заходим в настройки безопасности, затем включаем 2FA, придумываем облачный пароль и сохраняем резерв с родителями!',
+      en: 'First open Security Settings, enable 2FA, set a strong cloud password, and save backup access with parents!',
+      kca: 'Оӆӑӊ настройки пуншэ, 2FA вєрэ, пароль хӑншэ па аӊки-ащи пиӆа ӆавӑӆэ!'
+    },
+    steps: [
+      { id: 'f1', text: { ru: 'Открыть раздел «Настройки → Конфиденциальность / Безопасность»', en: 'Open "Settings → Privacy & Security"', kca: '«Настройки → Безопасность» пуншты' }, correctPos: 0 },
+      { id: 'f2', text: { ru: 'Включить «Двухэтапная аутентификация (2FA)»', en: 'Turn on "Two-Step Verification (2FA)"', kca: '«2FA» (Двухэтапная защита) вєрты' }, correctPos: 1 },
+      { id: 'f3', text: { ru: 'Задать сложный облачный пароль (отличный от пароля почты)', en: 'Create a strong cloud password (different from email)', kca: 'Тӑк облачной пароль хӑншты' }, correctPos: 2 },
+      { id: 'f4', text: { ru: 'Привязать почту восстановления и записать резерв вместе с родителями', en: 'Link recovery email and save backup with parents', kca: 'Почта пунты па аӊки-ащи пиӆа ӆавӑӆты' }, correctPos: 3 }
+    ],
+    explanation: {
+      ru: 'С включённой 2FA мошенник не сможет войти в твой аккаунт, даже если узнает основной пароль или перехватит SMS — без второго пароля вход заблокирован!',
+      en: 'With 2FA enabled, a scammer cannot log in even if they steal your password or SMS code!',
+      kca: '2FA пиӆа мошенник аккаунтэна ӆәӊты ӑн рӑхӆ!'
+    }
+  },
+  // 17. Кибер-верстак 3x3: защита нового смартфона (глава 3)
+  {
+    id: 'card_craft_phone',
+    chapter: 3,
+    type: 'craft',
+    level: 3,
+    topic: 'privacy',
+    topicLabel: { ru: 'Кибер-верстак', en: 'Cyber Crafting', kca: 'Кибер-верстак' },
+    loot: {
+      icon: 'armor',
+      name: { ru: 'Броня Смартфона', en: 'Phone Armor', kca: 'Телефон броня' },
+      desc: { ru: 'Скрафтил идеальную настройку смартфона!', en: 'Crafted the ultimate phone security setup!', kca: 'Телефон пӑта тӑк броня вєрӑн!' }
+    },
+    title: {
+      ru: 'Кибер-верстак: защити новый смартфон!',
+      en: 'Cyber Crafting Table: armor up your new phone!',
+      kca: 'Кибер-верстак: йиӆуп телефон ӆавӑӆэ!'
+    },
+    prompt: {
+      ru: 'Тебе подарили новый телефон. Положи на верстак ровно 3 правильных блока, чтобы скрафтить Броню Смартфона!',
+      en: 'You got a new phone. Place exactly 3 right security blocks on the table to craft Phone Armor!',
+      kca: 'Йиӆуп телефон мӑсы. Броня пӑта верстак эӆты 3 тәса блок пунэ!'
+    },
+    mascotTip: {
+      ru: 'Смартфону нужны: блокировка экрана, приложения только из официального магазина и выключенные геотеги в соцсетях!',
+      en: 'A safe phone needs: screen lock, official app store only, and geotags turned off for social posts!',
+      kca: 'Телефон пӑта: экран пароль, официальной магазин па геолокация пӑнтты!'
+    },
+    craftTarget: {
+      icon: 'armor',
+      name: { ru: 'Броня Смартфона', en: 'Phone Armor', kca: 'Телефон броня' }
+    },
+    needCount: 3,
+    ingredients: [
+      { id: 'p1', icon: 'key', correct: true, label: { ru: 'PIN / отпечаток экрана', en: 'Screen PIN / fingerprint', kca: 'Экран PIN-код' } },
+      { id: 'p2', icon: 'shield', correct: true, label: { ru: 'Только официальный Store', en: 'Official App Store only', kca: 'Официальной магазин' } },
+      { id: 'p3', icon: 'spyglass', correct: true, label: { ru: 'Выкл. геотеги в постах', en: 'Disable post geotags', kca: 'Геолокация пӑнтты' } },
+      { id: 'p4', icon: 'emerald', correct: false, label: { ru: 'Качать .apk из комментов', en: 'Install .apk from comments', kca: 'Коммент эвӑӆт .apk' } },
+      { id: 'p5', icon: 'chest', correct: false, label: { ru: 'Без пароля на экране', en: 'No screen lock', kca: 'Пароль ӆыпи экран' } },
+      { id: 'p6', icon: 'book', correct: false, label: { ru: 'Авто-вход в открытый Wi-Fi', en: 'Auto-join open Wi-Fi', kca: 'Иса Wi-Fi ӆәӊты' } }
+    ],
+    explanation: {
+      ru: 'Правильная защита телефона: блокировка экрана, установка приложений только из официальных магазинов и отключённые геометки для публичных фото.',
+      en: 'Smart phone protection: screen lock, official app stores only, and geotags disabled for public photos.',
+      kca: 'Телефон ӆавӑӆты: экран PIN, официальной магазин па геолокация ӆыпи фото.'
+    }
+  },
+  // 18. ФИНАЛЬНЫЙ БОСС-КРАФТ: Полный Кибер-Щит Югры (глава 3)
+  {
+    id: 'card_craft_boss',
+    chapter: 3,
+    type: 'craft',
+    level: 3,
+    topic: 'hacked',
+    topicLabel: { ru: 'Финал • Босс-крафт', en: 'Final Boss Craft', kca: 'Финал • Верстак' },
+    loot: {
+      icon: 'star',
+      name: { ru: 'Звезда КиберЩита', en: 'CyberShield Star', kca: 'КиберЩит звезда' },
+      desc: { ru: 'Собрал финальный Кибер-Щит Югры!', en: 'Forged the final Yugra CyberShield!', kca: 'Югра Кибер-Щит вєрӑн!' }
+    },
+    title: {
+      ru: 'Финальный крафт: собери Главный Кибер-Щит Югры!',
+      en: 'Final Craft: forge the Ultimate Yugra CyberShield!',
+      kca: 'Финал верстак: Югра Вән Кибер-Щит вєрэ!'
+    },
+    prompt: {
+      ru: 'Против тебя все уловки мошенников сразу! Положи на верстак 4 главных правила кибергероя и отбей финальную атаку!',
+      en: 'Every scammer trick at once! Place the 4 golden rules of a cyber-hero on the table to win the final mission!',
+      kca: 'Иса мошенникӑт юхӑтсӑт! 4 вән правило верстак эӆты пунэ па щит вєрэ!'
+    },
+    mascotTip: {
+      ru: 'Выбирай всё, что про проверку, секретность кодов и помощь родителей — и никаких «секретных» переводов!',
+      en: 'Pick verification, keeping codes secret, checking domains, and telling parents!',
+      kca: 'Вәньщты, код ӑн мӑты, домен вәньщты па аӊки-ащийн ястӑты пириэ!'
+    },
+    craftTarget: {
+      icon: 'star',
+      name: { ru: 'Звезда КиберЩита', en: 'CyberShield Star', kca: 'КиберЩит звезда' }
+    },
+    needCount: 4,
+    ingredients: [
+      { id: 'b1', icon: 'shield', correct: true, label: { ru: 'Никому не давать SMS-код', en: 'Never share SMS codes', kca: 'SMS-код ӑн мӑты' } },
+      { id: 'b2', icon: 'spyglass', correct: true, label: { ru: 'Проверять адрес сайта', en: 'Always inspect URLs', kca: 'Домен вәньщты' } },
+      { id: 'b3', icon: 'heart', correct: true, label: { ru: 'Звонить и говорить взрослым', en: 'Verify by call & tell parents', kca: 'Телефонн па аӊки-ащийн ястӑты' } },
+      { id: 'b4', icon: 'key', correct: true, label: { ru: 'Сложный пароль + 2FA', en: 'Strong password + 2FA', kca: 'Тӑк пароль + 2FA' } },
+      { id: 'b5', icon: 'chest', correct: false, label: { ru: 'Скрыть всё от родителей', en: 'Hide it from parents', kca: 'Аӊки-ащийн ӑн ястӑты' } },
+      { id: 'b6', icon: 'emerald', correct: false, label: { ru: 'Оплатить «доставку приза»', en: 'Pay "prize delivery fee"', kca: 'Приз доставка пӑта китты' } }
+    ],
+    explanation: {
+      ru: 'Поздравляем! Ты собрал Главный Кибер-Щит Югры: проверяй ссылки, береги пароли и 2FA, никому не диктуй SMS-коды и всегда советуйся с родителями.',
+      en: 'Congrats! You forged the Ultimate Yugra CyberShield: check URLs, protect passwords & 2FA, never share SMS codes, and verify with parents.',
+      kca: 'Ёмӑщ вєр! Нӑӊ Югра Вән Кибер-Щит вєрӑн!'
+    }
   }
 ];
+
+// описание 3 глав-биомов (по 6 карточек в каждой главе = 18 миссий)
+const CARD_CHAPTERS = [
+  {
+    id: 1,
+    icon: 'trees',
+    badge: '1',
+    title: { ru: 'Деревня Югры', en: 'Yugra Village', kca: 'Югра кәрт' },
+    sub: { ru: 'База: игры, пароли, данные', en: 'Basics: games, passwords, privacy', kca: 'Оӆӑӊ вєрӑт' }
+  },
+  {
+    id: 2,
+    icon: 'pickaxe',
+    badge: '2',
+    title: { ru: 'Пещера Фишинга', en: 'Phishing Cave', kca: 'Фишинг тӑхи' },
+    sub: { ru: 'QR, Wi-Fi, вирусы и ссылки', en: 'QR, Wi-Fi, mods & links', kca: 'QR, Wi-Fi, ссылкат' }
+  },
+  {
+    id: 3,
+    icon: 'castle',
+    badge: '3',
+    title: { ru: 'Цитадель Профи', en: 'Pro Citadel', kca: 'Вән тӑхи' },
+    sub: { ru: 'Дипфейки, 2FA, верстак-босс', en: 'Deepfakes, 2FA & final craft', kca: 'Дипфейк, 2FA, финал' }
+  }
+];
+
+// назначаем главы первым 8 базовым карточкам и сортируем по порядку глав
+(function assignChapters() {
+  const chMap = {
+    card_game_scam: 1,
+    card_password_tf: 1,
+    card_personal_sort: 1,
+    card_bullying_choice: 1,
+    card_shopping_tf: 1,
+    card_craft_account: 1,
+    card_phishing_match: 2,
+    card_qr_choice: 2,
+    card_wifi_tf: 2,
+    card_apk_choice: 2,
+    card_domains_match: 2,
+    card_hacked_order: 2,
+    card_vote_choice: 3,
+    card_deepfake_choice: 3,
+    card_geotag_sort: 3,
+    card_2fa_order: 3,
+    card_craft_phone: 3,
+    card_craft_boss: 3
+  };
+  const orderList = Object.keys(chMap);
+  DEFAULT_CARDS.forEach(c => {
+    if (!c.chapter) c.chapter = chMap[c.id] || 1;
+  });
+  DEFAULT_CARDS.sort((a, b) => {
+    const ia = orderList.indexOf(a.id);
+    const ib = orderList.indexOf(b.id);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
+})();

@@ -28,7 +28,7 @@ const I18N = {
     btn_read_aloud: 'Озвучить',
     btn_stop_aloud: 'Стоп',
     btn_hint: 'Подсказка',
-    yugorka_name: 'Кибер-Стив',
+    yugorka_name: 'Кибер-Стёпа',
     yugorka_role: 'Кибер-герой Югры',
     detective_bar: 'Найди подозрительные места на картинке:',
     detective_done: 'Все улики найдены! Молодец, кибердетектив!',
@@ -119,8 +119,9 @@ const I18N = {
     btn_download_cert: 'Скачать сертификат (PNG)',
     chart_types_title: 'Результаты по типам заданий',
     chart_types_sub: 'Сколько верно в каждом типе',
-    chart_dyn_title: 'Динамика прохождений',
-    chart_dyn_sub: 'Твои попытки',
+    chart_skills_title: 'Карта кибер-навыков',
+    chart_skills_sub: 'Твои сильные стороны и темы на отработку',
+    btn_train_weak: 'Потренировать',
     ach_title: 'Достижения (ачивки)',
     ach_sub: 'Выполняй задания без ошибок, чтобы открыть все значки',
     btn_reset_all: 'Сбросить весь прогресс',
@@ -140,14 +141,16 @@ const I18N = {
       truefalse: 'Верно / Неверно',
       sort: 'Сортировка',
       match: 'Сопоставление',
-      order: 'Порядок действий'
+      order: 'Порядок действий',
+      craft: 'Кибер-верстак'
     },
     typesShort: {
       choice: 'Выбор',
       truefalse: 'Верно/Нет',
       sort: 'Сортировка',
       match: 'Пары',
-      order: 'Порядок'
+      order: 'Порядок',
+      craft: 'Верстак'
     },
     of_word: 'из',
     student_default: 'Ученик',
@@ -215,7 +218,7 @@ const I18N = {
     btn_read_aloud: 'Read aloud',
     btn_stop_aloud: 'Stop',
     btn_hint: 'Hint',
-    yugorka_name: 'Cyber-Steve',
+    yugorka_name: 'Cyber-Stepa',
     yugorka_role: 'Yugra Cyber-Hero',
     detective_bar: 'Tap the suspicious clues in the picture:',
     detective_done: 'All clues found! Awesome detective work!',
@@ -306,8 +309,9 @@ const I18N = {
     btn_download_cert: 'Download Certificate (PNG)',
     chart_types_title: 'Accuracy by Task Type',
     chart_types_sub: 'Correct answers by type',
-    chart_dyn_title: 'Progress Dynamics',
-    chart_dyn_sub: 'Your attempts',
+    chart_skills_title: 'Cyber Skills Map',
+    chart_skills_sub: 'Your strengths and topics to practice',
+    btn_train_weak: 'Practice',
     ach_title: 'Achievements',
     ach_sub: 'Complete tasks accurately to unlock every badge',
     btn_reset_all: 'Reset all progress',
@@ -327,14 +331,16 @@ const I18N = {
       truefalse: 'True / False',
       sort: 'Categorize',
       match: 'Matching',
-      order: 'Action Order'
+      order: 'Action Order',
+      craft: 'Cyber Crafting'
     },
     typesShort: {
       choice: 'Choice',
       truefalse: 'True/False',
       sort: 'Sorting',
       match: 'Matching',
-      order: 'Order'
+      order: 'Order',
+      craft: 'Craft'
     },
     of_word: 'of',
     student_default: 'Student',
@@ -402,7 +408,7 @@ const I18N = {
     btn_read_aloud: 'Ӆўӊӑтты',
     btn_stop_aloud: 'Пӑнтты',
     btn_hint: 'Нётты ясӑӊ',
-    yugorka_name: 'Кибер-Стив',
+    yugorka_name: 'Кибер-Стёпа',
     yugorka_role: 'Югра кибер-герой',
     detective_bar: 'Детектив лупа: картинкайн ӑн тәса тӑхет пириэ!',
     detective_done: 'Иса уликайт кӑншсыйт! Ёмӑщ вєр!',
@@ -487,8 +493,9 @@ const I18N = {
     btn_download_cert: 'Сертификат вўты (PNG)',
     chart_types_title: 'Вєр тӑхи эвӑӆт результат',
     chart_types_sub: 'Иса тип эвӑӆт тәса ястӑпсэт (%)',
-    chart_dyn_title: 'Прогресс динамика',
-    chart_dyn_sub: 'Попыткат эвӑӆт результат (%)',
+    chart_skills_title: 'Кибер-навыкӑт карта',
+    chart_skills_sub: 'Тәса па ӆӑвӑрт вєрӑт',
+    btn_train_weak: 'Вєрты',
     ach_title: 'Ачивкат (достиженият)',
     ach_sub: 'Ӑн тәса ӆыпи вєрӑт вєрэ — иса значокӑт вўӆӑн',
     btn_reset_all: 'Иса прогресс єсӑӆты',
@@ -508,14 +515,16 @@ const I18N = {
       truefalse: 'Тәса / Ӑн тәса',
       sort: 'Пєӆӑкн пунты',
       match: 'Кимӑӆтӑты',
-      order: 'Вєрӑт тӑхи'
+      order: 'Вєрӑт тӑхи',
+      craft: 'Кибер-верстак'
     },
     typesShort: {
       choice: 'Пириты',
       truefalse: 'Тәса/Ӑн',
       sort: 'Пєӆӑкн',
       match: 'Кимӑӆтӑты',
-      order: 'Тӑхи'
+      order: 'Тӑхи',
+      craft: 'Верстак'
     },
     of_word: 'эвӑӆт',
     student_default: 'Утӆты хоят',
@@ -1032,7 +1041,7 @@ function updateProfileHeroPickerUI(statusKind = 'auto') {
       : 'flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-cgy-border bg-white hover:bg-cgy-bg text-left transition';
     const titleEl = cardSteve.querySelector('.font-bold');
     const subEl = cardSteve.querySelector('.text-\\[11px\\]');
-    if (titleEl) titleEl.textContent = isEn ? 'Cyber-Steve' : 'Кибер-Стив';
+    if (titleEl) titleEl.textContent = isEn ? 'Cyber-Stepa' : 'Кибер-Стёпа';
     if (subEl) subEl.textContent = isEn ? 'Male buddy' : 'Напарник';
   }
   if (cardAlex) {
@@ -1042,7 +1051,7 @@ function updateProfileHeroPickerUI(statusKind = 'auto') {
       : 'flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-cgy-border bg-white hover:bg-cgy-bg text-left transition';
     const titleEl = cardAlex.querySelector('.font-bold');
     const subEl = cardAlex.querySelector('.text-\\[11px\\]');
-    if (titleEl) titleEl.textContent = isEn ? 'Cyber-Alex' : 'Кибер-Алекс';
+    if (titleEl) titleEl.textContent = isEn ? 'Cyber-Alena' : 'Кибер-Алёна';
     if (subEl) subEl.textContent = isEn ? 'Female buddy' : 'Напарница';
   }
 
@@ -1127,20 +1136,31 @@ function saveStudentProfile(e) {
   state.heroSkinManual = modalHeroManual;
 
   if (state.profile.gradeClass !== prevGrade) {
+    let targetCh = 1;
     if (state.profile.gradeClass === '1-4') {
       state.adaptiveLevel = 1;
       state.supportMode = true;
+      targetCh = 1;
     } else if (state.profile.gradeClass === '8-11') {
       state.adaptiveLevel = 3;
       state.supportMode = false;
-    } else if (Object.keys(state.cardResults || {}).length === 0) {
-      state.adaptiveLevel = 1;
+      targetCh = 3;
+    } else {
+      state.adaptiveLevel = 2;
       state.supportMode = false;
+      targetCh = 2;
     }
-    // обновляем текущую карточку если поменяли класс
-    const curRes = state.cardResults[state.currentCardId];
-    if (!curRes || !curRes.answered || state.cardDraft.retrying) {
-      state.cardDraft = { retrying: Boolean(state.cardDraft.retrying) };
+    // переключаемся на рекомендованную главу под выбранный класс
+    const chCards = getChapterCards(targetCh);
+    if (chCards.length > 0) {
+      const nextInCh = chCards.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || chCards[0];
+      state.currentCardId = nextInCh.id;
+      state.cardDraft = {};
+    } else {
+      const curRes = state.cardResults[state.currentCardId];
+      if (!curRes || !curRes.answered || state.cardDraft.retrying) {
+        state.cardDraft = { retrying: Boolean(state.cardDraft.retrying) };
+      }
     }
   }
   saveState();
@@ -1161,8 +1181,8 @@ function saveStudentProfile(e) {
     SoundFX.playConnect();
     const isAlex = state.heroSkin === 'alex';
     const greet = state.lang === 'en'
-      ? (isAlex ? 'Hey! I am Cyber-Alex — ready to catch scammers together!' : 'Hey! Cyber-Steve is on patrol with you!')
-      : (isAlex ? 'Привет! Я Кибер-Алекс — погнали ловить мошенников вместе!' : 'Привет! Я Кибер-Стив — погнали ловить мошенников!');
+      ? (isAlex ? 'Hey! I am Cyber-Alena — ready to catch scammers together!' : 'Hey! Cyber-Stepa is on patrol with you!')
+      : (isAlex ? 'Привет! Я Кибер-Алёна — погнали ловить мошенников вместе!' : 'Привет! Я Кибер-Стёпа — погнали ловить мошенников!');
     updateMascot('happy', greet, true);
   } else {
     updateMascot('idle', null, false);
@@ -1198,11 +1218,75 @@ function getCardStatsSummary() {
   return { total, answered, correct, firstTryCorrect, totalErrors, pct };
 }
 
+function getActiveChapterId() {
+  const card = getCardById(state.currentCardId);
+  return (card && card.chapter) ? card.chapter : 1;
+}
+
+function getChapterCards(chId) {
+  return CARDS.filter(c => (c.chapter || 1) === chId);
+}
+
+function renderBiomeTabs() {
+  const bar = document.getElementById('biome-tabs-bar');
+  if (!bar || typeof CARD_CHAPTERS === 'undefined') return;
+  const activeCh = getActiveChapterId();
+
+  bar.innerHTML = CARD_CHAPTERS.map(ch => {
+    const chCards = getChapterCards(ch.id);
+    const doneCount = chCards.filter(c => state.cardResults[c.id] && state.cardResults[c.id].correct).length;
+    const isAct = ch.id === activeCh;
+    const allOk = chCards.length > 0 && doneCount === chCards.length;
+    return `
+      <button type="button" onclick="selectBiomeChapter(${ch.id})"
+        class="biome-tab ${isAct ? 'active' : ''} px-3 py-2.5 text-left flex items-center justify-between gap-2.5">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-[3px] flex items-center justify-center shrink-0 border-2 ${
+            isAct ? 'bg-white/20 border-white/40 text-white' : (allOk ? 'bg-[#e9f6ec] border-[#1e7e34] text-[#1e7e34]' : 'bg-[#eef5ff] border-[#93c5fd] text-cgy-accent')
+          }">
+            <i data-lucide="${allOk ? 'check-circle-2' : ch.icon}" class="w-4 h-4"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="font-pixel text-xs sm:text-sm font-bold leading-tight truncate">${ch.id}. ${L(ch.title)}</div>
+            <div class="biome-sub text-[11px] font-semibold text-cgy-muted truncate mt-0.5">${L(ch.sub)}</div>
+          </div>
+        </div>
+        <span class="biome-pill px-2 py-0.5 rounded-[3px] text-xs font-pixel font-bold border tabular-nums shrink-0 ${
+          allOk ? 'bg-[#e9f6ec] text-[#1e7e34] border-[#86efac]' : 'bg-[#f1f5f9] text-cgy-accent border-[#cbd5e1]'
+        }">${doneCount}/${chCards.length}</span>
+      </button>
+    `;
+  }).join('');
+}
+
+function selectBiomeChapter(chId) {
+  const chCards = getChapterCards(chId);
+  if (!chCards.length) return;
+  const target = chCards.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || chCards[0];
+  selectCardById(target.id);
+}
+
+function jumpToMistakeCard() {
+  const wrong = CARDS.find(c => {
+    const r = state.cardResults[c.id];
+    return r && r.answered && !r.correct;
+  });
+  if (!wrong) return;
+  stopReadAloud();
+  state.currentCardId = wrong.id;
+  state.cardDraft = { retrying: true };
+  state.supportMode = true;
+  SoundFX.playPick();
+  renderCurrentCard(true);
+}
+
 function renderCardsStepper() {
   const box = document.getElementById('cards-stepper');
+  if (!box) return;
   box.innerHTML = '';
 
-  CARDS.forEach((c, idx) => {
+  const chCards = getChapterCards(getActiveChapterId());
+  chCards.forEach((c, idx) => {
     const r = state.cardResults[c.id];
     const isCurrent = c.id === state.currentCardId;
     let cls = 'bg-[#f8fafc] text-cgy-muted border-[#cbd5e1] hover:border-cgy-accent hover:text-cgy-accent';
@@ -1248,6 +1332,11 @@ function isSupportModeActive(card) {
 }
 
 function getNextAdaptiveTarget() {
+  const chCards = getChapterCards(getActiveChapterId());
+  const chUnanswered = chCards.filter(c => !(state.cardResults[c.id] && state.cardResults[c.id].answered));
+  if (chUnanswered.length > 0) {
+    return { card: chUnanswered[0], reason: 'adaptive' };
+  }
   const unanswered = CARDS.filter(c => !(state.cardResults[c.id] && state.cardResults[c.id].answered));
   if (unanswered.length > 0) {
     unanswered.sort((a, b) => Math.abs((a.level || 1) - state.adaptiveLevel) - Math.abs((b.level || 1) - state.adaptiveLevel));
@@ -1334,6 +1423,16 @@ function initCardDraftIfNeeded(card) {
       state.cardDraft.order = ids.length === 4 ? [ids[2], ids[0], ids[3], ids[1]] : [...ids].reverse();
       state.cardDraft.lockedFirst = false;
     }
+  } else if (card.type === 'craft') {
+    state.cardDraft.selectedIds = [];
+    state.cardDraft.lockedIds = [];
+    if (supportOn && Array.isArray(card.ingredients)) {
+      const firstGood = card.ingredients.find(ing => ing.correct);
+      if (firstGood) {
+        state.cardDraft.selectedIds.push(firstGood.id);
+        state.cardDraft.lockedIds.push(firstGood.id);
+      }
+    }
   }
 }
 
@@ -1372,7 +1471,8 @@ function renderCurrentCard(animateEntrance = false) {
     truefalse: 'scale',
     sort: 'folder-input',
     match: 'git-compare-arrows',
-    order: 'list-ordered'
+    order: 'list-ordered',
+    craft: 'hammer'
   };
   document.getElementById('card-type-pill').innerHTML = `
     <i data-lucide="${typeIcons[card.type] || 'check-square'}" class="w-3.5 h-3.5"></i>
@@ -1396,7 +1496,7 @@ function renderCurrentCard(animateEntrance = false) {
   const bannerEl = document.getElementById('card-banner');
   const stageEl = document.getElementById('card-stage');
   if (bannerEl) {
-    bannerEl.className = `bg-gradient-to-r ${theme.banner} border-b-2 px-4 sm:px-7 py-3.5 flex flex-wrap items-center justify-between gap-2`;
+    bannerEl.className = `bg-gradient-to-r ${theme.banner} border-b-2 px-3.5 sm:px-6 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2`;
   }
   if (stageEl) {
     stageEl.className = `mc-panel bg-white border-2 ${theme.stage} overflow-hidden flex flex-col`;
@@ -1404,6 +1504,20 @@ function renderCurrentCard(animateEntrance = false) {
 
   document.getElementById('card-title').textContent = L(card.title);
   document.getElementById('card-prompt').textContent = L(card.prompt);
+
+  // обновляем кнопку отработки ошибок (как в duolingo)
+  const wrongCount = CARDS.filter(c => {
+    const r = state.cardResults[c.id];
+    return r && r.answered && !r.correct;
+  }).length;
+  const revBtn = document.getElementById('btn-review-mistakes');
+  const revLbl = document.getElementById('btn-review-mistakes-label');
+  if (revBtn && revLbl) {
+    revBtn.classList.toggle('hidden', wrongCount === 0);
+    revLbl.textContent = state.lang === 'en'
+      ? `Fix mistakes (${wrongCount})`
+      : (state.lang === 'kca' ? `Ӑн тәса (${wrongCount})` : `Отработать ошибки (${wrongCount})`);
+  }
 
   // меняем фразу и эмоцию персонажа
   if (isEvaluated) {
@@ -1415,9 +1529,7 @@ function renderCurrentCard(animateEntrance = false) {
     updateMascot(res.correct ? 'happy' : 'oops', speech, false);
   } else {
     const idleList = t('yugorka_idle');
-    const defaultMsg = (card.clues && card.clues.length)
-      ? `${idleList[idx % idleList.length]}`
-      : idleList[idx % idleList.length];
+    const defaultMsg = idleList[idx % idleList.length];
     updateMascot('idle', defaultMsg, false);
   }
 
@@ -1433,14 +1545,31 @@ function renderCurrentCard(animateEntrance = false) {
     }
   }
 
-  // рисуем сценку (чат, браузер, пароль или предупреждение)
+  // на ПК если есть сценка + choice/truefalse — ставим сценку слева и кнопки справа, чтобы не было пустого места
+  const contentGrid = document.getElementById('card-content-grid');
+  const visualSlot = document.getElementById('card-visual-slot');
+  const body = document.getElementById('card-interactive-body');
+  const useSplitLayout = Boolean(card.visual && (card.type === 'choice' || card.type === 'truefalse'));
+  if (contentGrid) {
+    contentGrid.className = useSplitLayout
+      ? 'grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start'
+      : 'flex flex-col gap-4';
+  }
+  if (visualSlot) {
+    visualSlot.className = useSplitLayout ? 'lg:col-span-7' : '';
+  }
+  if (body) {
+    body.className = useSplitLayout ? 'lg:col-span-5 flex flex-col justify-center' : 'pt-1';
+  }
+
+  // рисуем сценку (чат, браузер, пароль, qr, wifi, apk или предупреждение)
   renderCardVisual(card);
 
+  renderBiomeTabs();
   renderCardsStepper();
   renderLootHotbar();
   updateReadAloudAvailability();
 
-  const body = document.getElementById('card-interactive-body');
   body.innerHTML = '';
 
   // рендерим нужное задание по типу карточки
@@ -1454,6 +1583,8 @@ function renderCurrentCard(animateEntrance = false) {
     renderMatchTask(card, body, isEvaluated);
   } else if (card.type === 'order') {
     renderOrderTask(card, body, isEvaluated);
+  } else if (card.type === 'craft') {
+    renderCraftTask(card, body, isEvaluated);
   }
 
   // настройка кнопок проверить / дальше / еще раз
@@ -1488,7 +1619,7 @@ function renderCurrentCard(animateEntrance = false) {
     retryBtn.classList.add('hidden');
     nextBtn.classList.add('hidden');
     // в choice и truefalse проверка сразу по клику, в остальных по кнопке
-    if (card.type === 'sort' || card.type === 'match' || card.type === 'order') {
+    if (card.type === 'sort' || card.type === 'match' || card.type === 'order' || card.type === 'craft') {
       checkBtn.classList.remove('hidden');
       updateCheckBtnReadiness(card);
     } else {
@@ -1723,8 +1854,8 @@ function updateMascot(mood = 'idle', speechText = '', animate = true) {
   const stars = getCardStatsSummary().correct;
   const isAlex = state.heroSkin === 'alex';
   const heroLabel = state.lang === 'en'
-    ? (isAlex ? 'Cyber-Alex' : 'Cyber-Steve')
-    : (isAlex ? 'Кибер-Алекс' : 'Кибер-Стив');
+    ? (isAlex ? 'Cyber-Alena' : 'Cyber-Stepa')
+    : (isAlex ? 'Кибер-Алёна' : 'Кибер-Стёпа');
 
   avatar.innerHTML = getYugorkaSvg(mood, stars);
   if (nameBadge) nameBadge.textContent = heroLabel;
@@ -1963,7 +2094,8 @@ function renderLootHotbar() {
   if (!wrap) return;
   wrap.innerHTML = '';
 
-  CARDS.slice(0, 8).forEach((card, idx) => {
+  const chCards = getChapterCards(getActiveChapterId());
+  chCards.slice(0, 6).forEach((card, idx) => {
     const res = state.cardResults[card.id];
     const unlocked = Boolean(res && res.answered && res.correct);
     const isCurr = card.id === state.currentCardId;
@@ -1994,11 +2126,16 @@ function inspectLootItem(cardId, unlocked, loot) {
   }
 }
 
+const STUDIO_VOICED_CARDS = new Set([
+  'card_game_scam', 'card_password_tf', 'card_personal_sort', 'card_bullying_choice',
+  'card_phishing_match', 'card_hacked_order', 'card_shopping_tf', 'card_domains_match'
+]);
+
 function updateReadAloudAvailability() {
   const card = getCardById(state.currentCardId);
-  const isDefaultCard = !card || !String(card.id).startsWith('custom_');
+  const hasStudio = card && STUDIO_VOICED_CARDS.has(card.id);
   const langPref = state.lang === 'en' ? 'en' : 'ru';
-  const hasGoodVoice = isDefaultCard || (SoundFX.hasNeuralVoice && SoundFX.hasNeuralVoice(langPref));
+  const hasGoodVoice = hasStudio || (SoundFX.hasNeuralVoice && SoundFX.hasNeuralVoice(langPref)) || ('speechSynthesis' in window);
   ['btn-read-aloud', 'btn-card-read-aloud'].forEach(id => {
     const btn = document.getElementById(id);
     if (btn) btn.classList.toggle('hidden', !hasGoodVoice);
@@ -2040,7 +2177,7 @@ function getHeroCardAudioUrl(cardId, kind, audioLang) {
 function getHeroReactionAudioUrl(card, isCorrect) {
   const isAlex = state.heroSkin === 'alex';
   const audioLang = state.lang === 'en' ? 'en' : 'ru';
-  const isDefaultCard = card && !String(card.id).startsWith('custom_');
+  const hasStudio = card && STUDIO_VOICED_CARDS.has(card.id);
 
   if (isCorrect) {
     const maxIdx = audioLang === 'en' ? 2 : 4;
@@ -2054,12 +2191,13 @@ function getHeroReactionAudioUrl(card, isCorrect) {
       : `audio/steve_win_${pick}_${audioLang}.mp3`;
   }
 
-  // если ошибка на русском — включаем озвучку разбора этой карточки
-  if (audioLang === 'ru' && isDefaultCard) {
+  // если ошибка на русском на студийной карточке — включаем разбор этой карточки
+  if (audioLang === 'ru' && hasStudio) {
     return isAlex
       ? `audio/alex/fail_${card.id}_ru.mp3`
       : `audio/steve_fail_${card.id}_ru.mp3`;
   }
+  if (audioLang === 'ru') return null;
 
   const failIdx = Math.floor(Math.random() * 2) + 1;
   return isAlex
@@ -2072,6 +2210,7 @@ function playHeroReactionVoice(card, isCorrect) {
   stopReadAloud();
   const targetCardId = card ? card.id : null;
   const audioUrl = getHeroReactionAudioUrl(card, isCorrect);
+  if (!audioUrl) return;
   reactionVoiceTimer = setTimeout(() => {
     reactionVoiceTimer = null;
     if (!SoundFX.isEnabled() || state.activeTab !== 'cards') return;
@@ -2104,14 +2243,13 @@ function toggleReadAloud() {
       toRead = `${res.correct ? t('correct_title') : t('wrong_title')}. ${L(card.explanation)}`;
     }
     const speechLang = state.lang === 'en' ? 'en-US' : 'ru-RU';
-    const started = SoundFX.speakVoice(toRead, { lang: speechLang, neuralOnly: true, rate: 1.0, pitch: 1.0 }, () => stopReadAloud());
+    const started = SoundFX.speakVoice(toRead, { lang: speechLang, neuralOnly: false, rate: 1.0, pitch: 1.0 }, () => stopReadAloud());
     if (started) setHeroSpeakingUI(true);
     else stopReadAloud();
   };
 
-  // включаем mp3-озвучку для стива или алекс
-  const isDefaultCard = !String(card.id).startsWith('custom_');
-  if (isDefaultCard && SoundFX.playAudioFile) {
+  // включаем mp3-озвучку для студийных карточек (стёпа или алёна)
+  if (STUDIO_VOICED_CARDS.has(card.id) && SoundFX.playAudioFile) {
     const audioLang = state.lang === 'en' ? 'en' : 'ru';
     const audioUrl = getHeroCardAudioUrl(card.id, isEvaluated ? 'e' : 'q', audioLang);
     setHeroSpeakingUI(true);
@@ -2154,7 +2292,9 @@ function generateSuperPassword() {
     'CyberBear!86Pro',
     'DiamondLock$2026',
     'TaigaGuard@77!',
-    'SteveCraft#86!'
+    'StepaShield#86!',
+    'AlenaTaiga@94!',
+    'Khanty!K9#mP2x'
   ];
   const inp = document.getElementById('pass-lab-input');
   if (!inp) return;
@@ -2164,6 +2304,56 @@ function generateSuperPassword() {
   if (inp.value === current) inp.value = pick;
   SoundFX.playPick();
   evaluatePasswordLab();
+}
+
+function normalizePasswordLeet(str) {
+  return String(str || '')
+    .toLowerCase()
+    .replace(/@/g, 'a')
+    .replace(/0/g, 'o')
+    .replace(/[1!|]/g, 'i')
+    .replace(/3/g, 'e')
+    .replace(/[$5]/g, 's')
+    .replace(/7/g, 't')
+    .replace(/4/g, 'a');
+}
+
+function detectWeakPasswordPattern(val) {
+  const lower = val.toLowerCase();
+  const leet = normalizePasswordLeet(val);
+  // убираем типичные хвосты вроде 123, 2026, !@#
+  const stripped = leet.replace(/[\d!@#$%^&*()_+\-=.,?]+$/g, '').replace(/^[\d!@#$%^&*()_+\-=.,?]+/g, '');
+  const dict = [
+    'password', 'pass', 'qwerty', 'qwertyuiop', 'asdfgh', 'zxcvbn', 'admin', 'root', 'login',
+    'welcome', 'monkey', 'dragon', 'football', 'iloveyou', 'master', 'letmein', 'sunshine',
+    'minecraft', 'roblox', 'standoff', 'brawl', 'fortnit', 'cyber', 'yugra', 'russia', 'school',
+    'пароль', 'йцукен', 'фывапр', 'ячсмит', 'привет', 'админ', 'майнкрафт', 'роблокс', 'югра', 'школа', 'любовь', 'котик'
+  ];
+  const matchedWord = dict.find(w => stripped === w || (w.length >= 5 && leet.includes(w)));
+  const isOnlySeq = /^(?:0123|1234|2345|3456|4567|5678|6789|9876|8765|abcd|qwer|йцук)/.test(lower) || /^(.)\1+$/.test(lower);
+  const hasPredictableTail = /(123|1234|12345|321|000|111|202\d|199\d|200\d|201\d)[!@#$%^&*]*$/.test(lower);
+  if (matchedWord) {
+    return { weak: true, reasonRu: `Словарное слово («${matchedWord}») — даже с цифрами и «!» в конце его взламывают по словарю за секунды!`, reasonEn: `Dictionary word ("${matchedWord}") — adding digits or "!" at the end still gets cracked in seconds!` };
+  }
+  if (isOnlySeq) {
+    return { weak: true, reasonRu: 'Клавиатурный ряд или повтор символов — боты проверяют это в первую секунду!', reasonEn: 'Keyboard walk or repeated characters — bots guess this instantly!' };
+  }
+  if (hasPredictableTail && val.length <= 12) {
+    return { weak: true, reasonRu: 'Предсказуемый хвост (123 или год) в конце легко подбирается словарями!', reasonEn: 'Predictable ending (123 or a year) is easily cracked by wordlists!' };
+  }
+  return { weak: false };
+}
+
+function formatCrackSeconds(seconds, isEn) {
+  if (seconds < 1) return isEn ? 'Instantly (< 1 sec)' : 'Мгновенно (< 1 сек)';
+  if (seconds < 60) return isEn ? `~${Math.max(1, Math.round(seconds))} sec` : `Около ${Math.max(1, Math.round(seconds))} сек.`;
+  if (seconds < 3600) return isEn ? `~${Math.max(1, Math.round(seconds / 60))} min` : `Около ${Math.max(1, Math.round(seconds / 60))} мин.`;
+  if (seconds < 86400) return isEn ? `~${Math.max(1, Math.round(seconds / 3600))} hours` : `Около ${Math.max(1, Math.round(seconds / 3600))} ч.`;
+  if (seconds < 86400 * 30) return isEn ? `~${Math.max(1, Math.round(seconds / 86400))} days` : `Около ${Math.max(1, Math.round(seconds / 86400))} дн.`;
+  if (seconds < 86400 * 365) return isEn ? `~${Math.max(1, Math.round(seconds / (86400 * 30)))} months` : `Около ${Math.max(1, Math.round(seconds / (86400 * 30)))} мес.`;
+  const yrs = seconds / (86400 * 365);
+  if (yrs < 1000) return isEn ? `~${Math.max(1, Math.round(yrs))} years` : `Около ${Math.max(1, Math.round(yrs))} лет`;
+  return isEn ? 'Centuries! Unbreakable' : 'Сотни лет! Не взломать';
 }
 
 function evaluatePasswordLab() {
@@ -2186,8 +2376,8 @@ function evaluatePasswordLab() {
     const el = document.getElementById(id);
     if (!el) return;
     el.className = ok
-      ? 'flex items-center gap-2 px-3 py-2 rounded-xl bg-[#ecfdf5] text-[#14532d] border-2 border-[#86efac]'
-      : 'flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 text-slate-500 border border-slate-200';
+      ? 'flex items-center gap-2 px-3 py-2 rounded-[3px] bg-[#ecfdf5] text-[#14532d] border-2 border-[#86efac]'
+      : 'flex items-center gap-2 px-3 py-2 rounded-[3px] bg-slate-100 text-slate-500 border border-slate-200';
     const ic = el.querySelector('svg, i');
     if (ic) ic.outerHTML = `<i data-lucide="${ok ? 'check-circle-2' : 'circle'}" class="w-4 h-4 shrink-0 ${ok ? 'text-[#16a34a]' : ''}"></i>`;
   };
@@ -2209,65 +2399,98 @@ function evaluatePasswordLab() {
     return;
   }
 
-  // проверка на частые простые пароли
-  const lower = val.toLowerCase();
-  const commonList = ['123456', '12345678', '123456789', 'qwerty', 'password', 'admin', 'minecraft', 'roblox', 'standoff', '000000', '111111', 'йцукен'];
-  const isCommon = commonList.some(w => lower === w || (val.length <= 8 && lower.includes(w)));
+  // реальная проверка библиотекой zxcvbn (от Dropbox) + офлайн-анализ русских слов и leet-замен
+  const customWeak = detectWeakPasswordPattern(val);
+  let score = 0; // 0..4
+  let seconds = 0.01;
+  let extraWarning = '';
 
-  // примерный расчет времени перебора пароля
-  let pool = 0;
-  if (/[a-z]/.test(val)) pool += 26;
-  if (/[A-Z]/.test(val)) pool += 26;
-  if (/[а-яё]/.test(val)) pool += 33;
-  if (/[А-ЯЁ]/.test(val)) pool += 33;
-  if (/\d/.test(val)) pool += 10;
-  if (hasSym) pool += 32;
-  if (pool === 0) pool = 10;
+  if (typeof window.zxcvbn === 'function') {
+    const z = window.zxcvbn(val, ['yugra', 'югра', 'cyber', 'кибер', 'stepa', 'alena', 'стёпа', 'алёна', 'minecraft', 'roblox', 'school', 'школа']);
+    score = z.score;
+    seconds = (z.crack_times_seconds && typeof z.crack_times_seconds.offline_fast_hashing_1e10_per_second === 'number')
+      ? z.crack_times_seconds.offline_fast_hashing_1e10_per_second
+      : 0.01;
+    if (customWeak.weak && score > 1) {
+      score = 1;
+      seconds = Math.min(seconds, 5);
+    }
+    if (customWeak.weak) {
+      extraWarning = isEn ? customWeak.reasonEn : customWeak.reasonRu;
+    } else if (z.feedback && z.feedback.warning) {
+      const warnMap = {
+        'This is a top-10 common password': 'Это пароль из топ-10 самых взламываемых в мире!',
+        'This is a top-100 common password': 'Это пароль из топ-100 самых популярных — боты подберут его мгновенно!',
+        'This is a very common password': 'Очень популярный пароль — в базах взломщиков на первом месте!',
+        'This is similar to a commonly used password': 'Слишком похож на популярный пароль из словаря (заглавные буквы и «123!» не спасают)!',
+        'A word by itself is easy to guess': 'Одно обычное слово легко подобрать по словарю!',
+        'Names and surnames by themselves are easy to guess': 'Имя или фамилию очень легко угадать!',
+        'Common names and surnames are easy to guess': 'Популярные имена и фамилии быстро перебираются по словарю!',
+        'Dates are often easy to guess': 'Даты и годы рождения перебираются за секунды!',
+        'Straight rows of keys are easy to guess': 'Ряды клавиш (qwerty / 12345) подбираются мгновенно!',
+        'Short keyboard patterns are easy to guess': 'Короткие комбинации с клавиатуры легко взломать!',
+        'Repeats like "aaa" are easy to guess': 'Повторяющиеся символы почти не дают защиты!',
+        'Sequences like abc or 6543 are easy to guess': 'Последовательности вроде abc или 1234 легко угадать!'
+      };
+      extraWarning = isEn ? z.feedback.warning : (warnMap[z.feedback.warning] || 'Есть предсказуемый шаблон — замени слова на случайный набор букв и знаков.');
+    }
+  } else {
+    // офлайн-фолбэк если cdn zxcvbn недоступен
+    let pool = 0;
+    if (/[a-z]/.test(val)) pool += 26;
+    if (/[A-Z]/.test(val)) pool += 26;
+    if (/[а-яё]/.test(val)) pool += 33;
+    if (/[А-ЯЁ]/.test(val)) pool += 33;
+    if (/\d/.test(val)) pool += 10;
+    if (hasSym) pool += 32;
+    if (pool === 0) pool = 10;
+    const uniqueRatio = new Set(val.toLowerCase()).size / Math.max(1, val.length);
+    const effLen = Math.max(1, val.length * (0.55 + 0.45 * uniqueRatio));
+    seconds = customWeak.weak ? 0.05 : (Math.pow(pool, effLen) / 1e10);
+    if (customWeak.weak) {
+      score = 0;
+      extraWarning = isEn ? customWeak.reasonEn : customWeak.reasonRu;
+    } else if (seconds < 10) score = 0;
+    else if (seconds < 3600) score = 1;
+    else if (seconds < 86400 * 30) score = 2;
+    else if (seconds < 86400 * 365 * 50) score = 3;
+    else score = 4;
+  }
 
-  const combos = Math.pow(pool, val.length);
-  const seconds = isCommon ? 0.001 : (combos / 1e10);
+  const timeTxt = formatCrackSeconds(seconds, isEn);
+  let lvlTxt = '', commentTxt = '', pct = 15, barCls = 'danger-meter-bar', badgeCls = 'bg-[#fee2e2] text-cgy-err';
 
-  let timeTxt = '', lvlTxt = '', commentTxt = '', pct = 15, barCls = 'danger-meter-bar', badgeCls = 'bg-[#fee2e2] text-cgy-err';
-  if (seconds < 1) {
-    timeTxt = isEn ? 'Instantly (0.01 sec)' : 'Мгновенно (0.01 сек)';
-    lvlTxt = isEn ? 'Very Weak' : 'Очень слабый';
-    commentTxt = isEn ? 'Hacker bots crack this before you blink! Add length, numbers, and symbols.' : 'Такой пароль программы подбирают быстрее, чем ты моргнёшь! Добавь длину, буквы и символы.';
-    pct = 15;
-  } else if (seconds < 3600) {
-    const mins = Math.max(1, Math.round(seconds / 60));
-    timeTxt = isEn ? `~${mins} minutes` : `Около ${mins} мин.`;
-    lvlTxt = isEn ? 'Weak' : 'Слабый';
-    commentTxt = isEn ? 'Too easy! Add UPPERCASE letters and a symbol like ! or #.' : 'Маловато! Сделай длиннее и добавь заглавные буквы или знак вроде ! или #.';
-    pct = 36;
+  if (score <= 0) {
+    lvlTxt = isEn ? 'Very Weak (0/4)' : 'Очень слабый';
+    commentTxt = extraWarning || (isEn ? 'Cracked in a blink! Avoid dictionary words and simple numbers.' : 'Взломают мгновенно! Убери популярные слова, 123 и добавь случайные символы.');
+    pct = 14;
+  } else if (score === 1) {
+    lvlTxt = isEn ? 'Weak (1/4)' : 'Слабый';
+    commentTxt = extraWarning || (isEn ? 'Still easy for wordlists! Mix unrelated words + random digits and symbols.' : 'Всё ещё легко подобрать по словарю! Смешай необычные слова, цифры и спецзнаки в середине.');
+    pct = 34;
     barCls = 'bg-[#f97316]';
     badgeCls = 'bg-[#ffedd5] text-[#c2410c]';
-  } else if (seconds < 86400 * 365) {
-    const days = Math.max(1, Math.round(seconds / 86400));
-    timeTxt = isEn ? `~${days} days` : `Около ${days} дн.`;
-    lvlTxt = isEn ? 'Medium' : 'Неплохо';
-    commentTxt = isEn ? 'Getting better! Add 2–3 more characters to reach Diamond level.' : 'Уже неплохо! Добавь ещё пару символов и спецзнак — и будет алмазная защита.';
-    pct = 66;
+  } else if (score === 2) {
+    lvlTxt = isEn ? 'Fair (2/4)' : 'Средний';
+    commentTxt = extraWarning || (isEn ? 'Decent start, but add 2–3 random symbols to reach Diamond level.' : 'Уже лучше, но для алмазной защиты добавь ещё 2–3 случайных символа.');
+    pct = 60;
     barCls = 'bg-[#f59e0b]';
     badgeCls = 'bg-[#fef3c7] text-[#b45309]';
-  } else if (seconds < 86400 * 365 * 500) {
-    const yrs = Math.max(1, Math.round(seconds / (86400 * 365)));
-    timeTxt = isEn ? `~${yrs} years!` : `Около ${yrs} лет!`;
-    lvlTxt = isEn ? 'Strong' : 'Надёжный';
-    commentTxt = isEn ? 'Awesome password! Almost impossible to guess.' : 'Отличный надёжный пароль — взломщикам не по зубам!';
-    pct = 86;
+  } else if (score === 3) {
+    lvlTxt = isEn ? 'Strong (3/4)' : 'Надёжный';
+    commentTxt = extraWarning || (isEn ? 'Strong password! Hard to crack even with modern hardware.' : 'Надёжный пароль — обычным перебором его не взять!');
+    pct = 84;
     barCls = 'bg-[#22c55e]';
     badgeCls = 'bg-[#dcfce7] text-[#15803d]';
   } else {
-    timeTxt = isEn ? 'Centuries! Unbreakable' : 'Сотни лет! Не взломать';
-    lvlTxt = isEn ? 'Diamond Shield' : 'Алмазная защита';
-    commentTxt = isEn ? 'Even a supercomputer would give up! That’s a true Cyber-Hero password.' : 'Даже суперкомпьютер сдастся! Вот это настоящий пароль кибергероя.';
+    lvlTxt = isEn ? 'Diamond Shield (4/4)' : 'Алмазная защита';
+    commentTxt = isEn ? 'Passed zxcvbn check! Even a GPU cluster would spend centuries.' : 'Прошёл проверку zxcvbn! Даже мощный кластер будет подбирать его столетиями.';
     pct = 100;
     barCls = 'bg-gradient-to-r from-[#1e5aa8] via-[#06b6d4] to-[#16a34a]';
     badgeCls = 'bg-[#cffafe] text-[#0e7490]';
     if (!passLabCelebrated) {
       passLabCelebrated = true;
       SoundFX.playWin(2);
-      burstConfetti('small');
     }
   }
 
@@ -2442,23 +2665,23 @@ function renderCardVisual(card) {
   } else if (v.kind === 'password_box') {
     const sampleHtml = applyClueHotspots(v.sample, card);
     sceneHtml = `
-      <div class="rounded-2xl bg-gradient-to-br from-[#fff7ed] to-[#ffffff] border-2 border-[#fed7aa] p-4 max-w-lg space-y-3 shadow-sm">
-        <div class="flex items-center justify-between text-xs font-extrabold text-[#9a3412]">
+      <div class="rounded-[4px] bg-gradient-to-br from-[#fff7ed] to-[#ffffff] border-2 border-[#f59e0b] p-4 space-y-3 shadow-sm">
+        <div class="flex items-center justify-between text-xs sm:text-sm font-extrabold text-[#9a3412]">
           <span class="flex items-center gap-1.5">
             <i data-lucide="shield-alert" class="w-4 h-4 text-cgy-err"></i>
             ${L(v.label)}
           </span>
-          <span class="px-2 py-0.5 rounded-full bg-[#fee2e2] text-cgy-err">${t('chars_6')}</span>
+          <span class="px-2 py-0.5 rounded-[3px] bg-[#fee2e2] text-cgy-err">${t('chars_6')}</span>
         </div>
-        <div class="bg-white border-2 border-[#fca5a5] rounded-xl px-4 py-3 font-mono text-xl font-extrabold tracking-widest text-cgy-text flex items-center justify-between gap-2 shadow-inner">
+        <div class="bg-white border-2 border-[#fca5a5] rounded-[4px] px-4 py-3 font-mono text-xl sm:text-2xl font-extrabold tracking-widest text-cgy-text flex items-center justify-between gap-2 shadow-inner">
           <span>${sampleHtml}</span>
           <i data-lucide="lock-open" class="w-5 h-5 text-cgy-err shrink-0"></i>
         </div>
-        <div class="h-3.5 bg-[#e2e8f0] rounded-full overflow-hidden p-0.5">
-          <div class="h-full danger-meter-bar rounded-full" style="width: 22%"></div>
+        <div class="h-3.5 bg-[#e2e8f0] rounded-[3px] overflow-hidden p-0.5">
+          <div class="h-full danger-meter-bar rounded-[2px]" style="width: 22%"></div>
         </div>
-        <div class="text-xs font-extrabold text-cgy-err flex items-center gap-1.5">
-          <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+        <div class="text-xs sm:text-sm font-extrabold text-cgy-err flex items-center gap-1.5">
+          <i data-lucide="zap" class="w-4 h-4 shrink-0"></i>
           <span>${L(v.meterText)}</span>
         </div>
       </div>
@@ -2466,16 +2689,16 @@ function renderCardVisual(card) {
   } else if (v.kind === 'alert_banner') {
     const textHtml = applyClueHotspots(L(v.text), card);
     sceneHtml = `
-      <div class="rounded-2xl bg-gradient-to-r from-[#fef2f2] via-[#fff5f5] to-[#fffbeb] border-2 border-[#fca5a5] p-4 flex items-start gap-3.5 shadow-sm">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#dc2626] to-[#ef4444] text-white flex items-center justify-center shrink-0 shadow-md">
+      <div class="rounded-[4px] bg-gradient-to-r from-[#fef2f2] via-[#fff5f5] to-[#fffbeb] border-2 border-[#fca5a5] p-4 flex items-start gap-3.5 shadow-sm">
+        <div class="w-11 h-11 rounded-[4px] bg-gradient-to-br from-[#dc2626] to-[#ef4444] text-white flex items-center justify-center shrink-0 shadow-md">
           <i data-lucide="shield-alert" class="w-6 h-6"></i>
         </div>
         <div class="flex-1 min-w-0">
           <div class="flex flex-wrap items-center gap-2">
-            <span class="font-extrabold text-sm text-cgy-err">${L(v.title)}</span>
-            <span class="px-2 py-0.5 rounded-full bg-[#fee2e2] text-[#991b1b] text-[10px] font-extrabold uppercase">SOS</span>
+            <span class="font-extrabold text-sm sm:text-base text-cgy-err">${L(v.title)}</span>
+            <span class="px-2 py-0.5 rounded-[3px] bg-[#fee2e2] text-[#991b1b] text-[10px] font-extrabold uppercase">SOS</span>
           </div>
-          <div class="text-sm sm:text-[15px] text-[#7f1d1d] font-semibold mt-1 leading-relaxed">${textHtml}</div>
+          <div class="text-sm sm:text-base text-[#7f1d1d] font-semibold mt-1 leading-relaxed">${textHtml}</div>
         </div>
       </div>
     `;
@@ -2483,21 +2706,72 @@ function renderCardVisual(card) {
     const urlHtml = applyClueHotspots(v.url, card);
     const noteHtml = applyClueHotspots(L(v.note), card);
     sceneHtml = `
-      <div class="rounded-2xl bg-white border-2 border-[#fca5a5] overflow-hidden shadow-sm">
+      <div class="rounded-[4px] bg-white border-2 border-[#fca5a5] overflow-hidden shadow-sm">
         <div class="px-3 sm:px-3.5 py-2 sm:py-2.5 bg-gradient-to-r from-[#fee2e2] to-[#fef3c7] border-b-2 border-[#fecaca] flex items-center gap-2">
-          <div class="flex-1 min-w-0 bg-white border-2 border-[#fca5a5] rounded-xl px-2.5 sm:px-3 py-1.5 font-mono text-[11px] sm:text-xs text-cgy-err font-bold flex items-center gap-1.5 flex-wrap break-all shadow-inner">
+          <div class="flex-1 min-w-0 bg-white border-2 border-[#fca5a5] rounded-[3px] px-2.5 sm:px-3 py-1.5 font-mono text-xs sm:text-sm text-cgy-err font-bold flex items-center gap-1.5 flex-wrap break-all shadow-inner">
             <i data-lucide="lock-open" class="w-4 h-4 shrink-0 text-cgy-err"></i>
             <span class="min-w-0 break-all">${urlHtml}</span>
           </div>
         </div>
-        <div class="p-3 sm:p-4 bg-[#fffbfb] text-sm sm:text-[15px] text-cgy-text font-semibold leading-relaxed">${noteHtml}</div>
+        <div class="p-3.5 sm:p-4 bg-[#fffbfb] text-sm sm:text-base text-cgy-text font-semibold leading-relaxed">${noteHtml}</div>
+      </div>
+    `;
+  } else if (v.kind === 'qr_poster') {
+    const urlHtml = applyClueHotspots(v.url, card);
+    const noteHtml = applyClueHotspots(L(v.note), card);
+    sceneHtml = `
+      <div class="rounded-[4px] bg-gradient-to-br from-[#fffbeb] to-[#ffffff] border-2 border-[#f59e0b] p-3.5 sm:p-4 flex flex-col sm:flex-row items-start gap-3.5 shadow-sm">
+        <div class="w-24 h-24 rounded-[4px] bg-white border-2 border-[#24364d] p-2 shrink-0 relative shadow-sm">
+          <svg viewBox="0 0 16 16" class="w-full h-full" shape-rendering="crispEdges">
+            <rect x="0" y="0" width="5" height="5" fill="#1f2937"/><rect x="1" y="1" width="3" height="3" fill="#fff"/><rect x="2" y="2" width="1" height="1" fill="#1f2937"/>
+            <rect x="11" y="0" width="5" height="5" fill="#1f2937"/><rect x="12" y="1" width="3" height="3" fill="#fff"/><rect x="13" y="2" width="1" height="1" fill="#1f2937"/>
+            <rect x="0" y="11" width="5" height="5" fill="#1f2937"/><rect x="1" y="12" width="3" height="3" fill="#fff"/><rect x="2" y="13" width="1" height="1" fill="#1f2937"/>
+            <rect x="7" y="1" width="2" height="2" fill="#1f2937"/><rect x="6" y="5" width="3" height="3" fill="#1f2937"/><rect x="10" y="7" width="4" height="2" fill="#1f2937"/>
+            <rect x="7" y="10" width="2" height="4" fill="#1f2937"/><rect x="11" y="11" width="4" height="4" fill="#1f2937"/><rect x="12" y="12" width="2" height="2" fill="#fff"/>
+          </svg>
+          <span class="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-[2px] bg-cgy-err text-white text-[9px] font-bold">NEW</span>
+        </div>
+        <div class="flex-1 min-w-0 space-y-2">
+          <div class="font-pixel font-bold text-sm sm:text-base text-[#b45309]">${L(v.heading)}</div>
+          <div class="bg-white border-2 border-[#fca5a5] rounded-[3px] px-2.5 py-1.5 font-mono text-xs text-cgy-err font-bold break-all">${urlHtml}</div>
+          <div class="text-sm text-cgy-text font-semibold leading-snug">${noteHtml}</div>
+        </div>
+      </div>
+    `;
+  } else if (v.kind === 'wifi_list') {
+    const noteHtml = applyClueHotspots(L(v.note), card);
+    sceneHtml = `
+      <div class="rounded-[4px] bg-white border-2 border-[#93c5fd] overflow-hidden shadow-sm">
+        <div class="px-3.5 py-2.5 bg-[#eef5ff] border-b border-[#bfdbfe] flex items-center justify-between gap-2">
+          <span class="font-pixel font-bold text-xs sm:text-sm text-cgy-accent flex items-center gap-1.5">
+            <i data-lucide="wifi" class="w-4 h-4"></i>
+            <span>Wi-Fi • ${v.ssid}</span>
+          </span>
+          <span class="px-2 py-0.5 rounded-[3px] bg-[#fee2e2] text-cgy-err text-[11px] font-bold">OPEN</span>
+        </div>
+        <div class="p-3.5 sm:p-4 text-sm sm:text-base text-cgy-text font-semibold leading-relaxed">${noteHtml}</div>
+      </div>
+    `;
+  } else if (v.kind === 'apk_download') {
+    const fileHtml = applyClueHotspots(v.filename, card);
+    const noteHtml = applyClueHotspots(L(v.note), card);
+    sceneHtml = `
+      <div class="rounded-[4px] bg-gradient-to-br from-[#fef2f2] to-[#ffffff] border-2 border-[#fca5a5] p-3.5 sm:p-4 space-y-2.5 shadow-sm">
+        <div class="flex items-center justify-between gap-2 bg-white border-2 border-[#fca5a5] rounded-[3px] px-3 py-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <i data-lucide="file-warning" class="w-5 h-5 text-cgy-err shrink-0"></i>
+            <span class="font-mono text-xs sm:text-sm font-bold text-cgy-text break-all">${fileHtml}</span>
+          </div>
+          <span class="text-xs font-bold text-cgy-muted shrink-0">${v.size || '4.2 MB'}</span>
+        </div>
+        <div class="text-sm sm:text-base text-cgy-text font-semibold leading-relaxed">${noteHtml}</div>
       </div>
     `;
   }
 
   const shellDoneCls = (clues.length === 0 || allCluesFound) ? 'detective-done' : '';
   slot.innerHTML = `
-    <div class="detective-shell ${shellDoneCls} rounded-2xl p-3 sm:p-4 max-w-2xl">
+    <div class="detective-shell ${shellDoneCls} p-3 sm:p-4 w-full">
       ${detectiveHeader}
       ${sceneHtml}
       ${evidenceLog}
@@ -2508,7 +2782,7 @@ function renderCardVisual(card) {
 // 1. выбор ответа
 function renderChoiceTask(card, container, isEvaluated, res) {
   const wrap = document.createElement('div');
-  wrap.className = 'flex flex-col gap-3';
+  wrap.className = 'flex flex-col gap-2.5';
   const letters = ['A', 'B', 'C', 'D'];
   const pillColors = [
     'bg-[#1e5aa8] text-white',
@@ -2530,11 +2804,11 @@ function renderChoiceTask(card, container, isEvaluated, res) {
       extra = 'opacity-45 cursor-not-allowed';
     }
     btn.disabled = isEvaluated || isEliminated;
-    btn.className = `card-option ${extra} w-full text-left px-3 sm:px-5 py-3 sm:py-4 flex items-start gap-2.5 sm:gap-3.5 text-sm sm:text-base font-bold`;
+    btn.className = `card-option ${extra} w-full text-left px-3.5 sm:px-4 py-3 flex items-start gap-2.5 sm:gap-3 text-sm sm:text-[15px] font-bold`;
     btn.innerHTML = `
-      <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl ${isEliminated ? 'bg-slate-400 text-white' : pillColors[i % pillColors.length]} text-xs sm:text-sm font-extrabold flex items-center justify-center shrink-0 mt-0.5 shadow-sm">${letters[i] || (i + 1)}</span>
+      <span class="w-7 h-7 rounded-[3px] ${isEliminated ? 'bg-slate-400 text-white' : pillColors[i % pillColors.length]} text-xs sm:text-sm font-extrabold flex items-center justify-center shrink-0 mt-0.5 shadow-sm">${letters[i] || (i + 1)}</span>
       <span class="leading-snug flex-1 min-w-0 break-words ${isEliminated ? 'line-through text-slate-500' : ''}">${L(opt.text)}</span>
-      ${isEliminated ? `<span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-600 text-[10px] sm:text-[11px] font-extrabold shrink-0 self-center">${state.lang === 'en' ? '50/50' : '50/50'}</span>` : ''}
+      ${isEliminated ? `<span class="px-2 py-0.5 rounded-[2px] bg-slate-200 text-slate-600 text-[10px] font-extrabold shrink-0 self-center">50/50</span>` : ''}
     `;
     if (!isEliminated) {
       btn.onclick = () => evaluateCardResult(card, opt.correct, { chosenId: opt.id });
@@ -2545,10 +2819,10 @@ function renderChoiceTask(card, container, isEvaluated, res) {
   container.appendChild(wrap);
 }
 
-// 2. верно / неверно
+// 2. верно / неверно (компактные аккуратные кнопки)
 function renderTrueFalseTask(card, container, isEvaluated, res) {
   const wrap = document.createElement('div');
-  wrap.className = 'grid grid-cols-2 gap-2.5 sm:gap-3.5';
+  wrap.className = card.visual ? 'grid grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-3' : 'grid grid-cols-2 gap-3 max-w-lg';
 
   [
     { val: true, label: t('true_btn'), icon: 'check-circle-2', cls: 'tf-true-opt', iconColor: 'text-[#1e7e34]' },
@@ -2561,7 +2835,7 @@ function renderTrueFalseTask(card, container, isEvaluated, res) {
       else if (res && res.chosenBool === item.val) extra = 'is-wrong';
     }
     btn.disabled = isEvaluated;
-    btn.className = `card-option ${extra} py-4 sm:py-5 px-3 sm:px-5 flex items-center justify-center gap-2 sm:gap-3 text-base sm:text-lg font-extrabold`;
+    btn.className = `card-option ${extra} py-3.5 sm:py-4 px-4 flex items-center justify-center gap-2.5 text-base sm:text-lg font-extrabold`;
     btn.innerHTML = `
       <i data-lucide="${item.icon}" class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 ${isEvaluated ? '' : item.iconColor}"></i>
       <span>${item.label}</span>
@@ -3092,6 +3366,153 @@ function moveOrderStep(pos, delta) {
   renderCurrentCard();
 }
 
+// 6. кибер-верстак 3x3 (крафт защиты как в майнкрафте)
+function renderCraftTask(card, container, isEvaluated) {
+  const selected = state.cardDraft.selectedIds || [];
+  const locked = !isEvaluated ? (state.cardDraft.lockedIds || []) : [];
+  const need = card.needCount || 3;
+  const isEn = state.lang === 'en';
+  const ready = selected.length === need;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'grid grid-cols-1 lg:grid-cols-12 gap-4 items-start';
+
+  // левая часть: сам верстак 3x3 + стрелка + итоговый щит
+  const bench = document.createElement('div');
+  bench.className = 'craft-bench lg:col-span-6 p-3.5 sm:p-4 flex flex-col gap-3';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'flex items-center justify-between gap-2';
+  hdr.innerHTML = `
+    <span class="font-pixel text-xs sm:text-sm font-bold text-cgy-accent flex items-center gap-1.5">
+      <i data-lucide="hammer" class="w-4 h-4"></i>
+      <span>${isEn ? 'Crafting Table (3×3)' : 'Кибер-верстак (3×3)'}</span>
+    </span>
+    <span class="font-pixel text-xs font-bold px-2 py-0.5 rounded-[3px] ${ready ? 'bg-[#dcfce7] text-[#14532d] border border-[#16a34a]' : 'bg-white text-cgy-text border border-[#93c5fd]'} tabular-nums">
+      ${selected.length} / ${need}
+    </span>
+  `;
+  bench.appendChild(hdr);
+
+  const row = document.createElement('div');
+  row.className = 'flex flex-col sm:flex-row items-center justify-center gap-3.5';
+
+  // сетка 3x3 (слоты заполняются по центру/по порядку)
+  const grid = document.createElement('div');
+  grid.className = 'grid grid-cols-3 gap-2 w-full max-w-[234px]';
+  const slotMap = [1, 3, 4, 5, 7, 0, 2, 6, 8];
+  const cellItems = new Array(9).fill(null);
+  selected.forEach((id, i) => {
+    const ing = card.ingredients.find(x => x.id === id);
+    if (ing && i < slotMap.length) cellItems[slotMap[i]] = ing;
+  });
+
+  cellItems.forEach(ing => {
+    const cell = document.createElement('button');
+    cell.type = 'button';
+    let cls = 'craft-cell flex flex-col items-center justify-center p-1.5 text-center';
+    if (ing) {
+      const isOk = isEvaluated && ing.correct;
+      const isBad = isEvaluated && !ing.correct;
+      cls += isOk ? ' is-correct' : (isBad ? ' is-wrong' : ' filled');
+      cell.title = L(ing.label);
+      cell.innerHTML = `
+        ${getLootPixelSvg(ing.icon || 'shield', 'w-7 h-7')}
+        <span class="text-[9px] font-bold text-cgy-text leading-tight line-clamp-2 mt-0.5">${L(ing.label)}</span>
+      `;
+      if (!isEvaluated && !locked.includes(ing.id)) {
+        cell.onclick = () => toggleCraftIngredient(ing.id);
+      } else {
+        cell.disabled = true;
+      }
+    } else {
+      cell.disabled = true;
+      cell.innerHTML = '<span class="text-xs font-bold text-slate-500/50">·</span>';
+    }
+    grid.appendChild(cell);
+  });
+  row.appendChild(grid);
+
+  // стрелка и слот результата крафта
+  const resArea = document.createElement('div');
+  resArea.className = 'flex sm:flex-col items-center justify-center gap-2.5';
+  resArea.innerHTML = `
+    <i data-lucide="arrow-right" class="w-6 h-6 text-[#355070] sm:rotate-0 rotate-90 shrink-0"></i>
+    <div class="craft-result-slot ${ready ? 'ready' : ''} w-20 h-20 flex flex-col items-center justify-center p-2 text-center">
+      ${ready ? getLootPixelSvg((card.craftTarget && card.craftTarget.icon) || 'shield', 'w-10 h-10') : '<span class="font-pixel text-xl font-bold text-slate-500">?</span>'}
+    </div>
+    <div class="font-pixel text-xs font-bold text-cgy-text text-center max-w-[110px] leading-tight">
+      ${L((card.craftTarget && card.craftTarget.name) || { ru: 'Кибер-Щит', en: 'Cyber Shield', kca: 'Щит' })}
+    </div>
+  `;
+  row.appendChild(resArea);
+  bench.appendChild(row);
+  wrap.appendChild(bench);
+
+  // правая часть: доступные блоки для крафта
+  const picker = document.createElement('div');
+  picker.className = 'lg:col-span-6 space-y-2.5';
+  const pickHdr = document.createElement('div');
+  pickHdr.className = 'text-xs sm:text-sm font-bold text-cgy-accent';
+  pickHdr.textContent = isEn
+    ? `Pick ${need} right defense blocks (tap to place/remove):`
+    : `Выбери ${need} правильных блока защиты (нажми, чтобы положить или убрать):`;
+  picker.appendChild(pickHdr);
+
+  const list = document.createElement('div');
+  list.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+  card.ingredients.forEach(ing => {
+    const isPicked = selected.includes(ing.id);
+    const isLocked = locked.includes(ing.id);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    let stCls = isPicked ? 'picked' : '';
+    if (isEvaluated) {
+      if (ing.correct && isPicked) stCls = 'is-correct bg-[#e9f6ec] border-[#1e7e34]';
+      else if (!ing.correct && isPicked) stCls = 'is-wrong bg-[#fdecec] border-[#c62828]';
+      else if (ing.correct && !isPicked) stCls = 'border-[#16a34a] border-dashed';
+    }
+    btn.disabled = isEvaluated || isLocked;
+    btn.className = `craft-ingredient ${stCls} px-3 py-2.5 text-left flex items-center gap-2.5 text-sm font-bold text-cgy-text`;
+    btn.innerHTML = `
+      ${getLootPixelSvg(ing.icon || 'shield', 'w-7 h-7')}
+      <span class="flex-1 min-w-0 leading-snug break-words">${L(ing.label)}</span>
+      ${isLocked ? `<span class="px-1.5 py-0.5 rounded-[2px] bg-[#eff6ff] border border-[#93c5fd] text-[10px] font-bold text-cgy-accent shrink-0">${isEn ? 'Hint' : 'Пример'}</span>` : ''}
+      ${isPicked && !isLocked && !isEvaluated ? '<i data-lucide="check" class="w-4 h-4 text-cgy-accent shrink-0"></i>' : ''}
+    `;
+    if (!isEvaluated && !isLocked) {
+      btn.onclick = () => toggleCraftIngredient(ing.id);
+    }
+    list.appendChild(btn);
+  });
+  picker.appendChild(list);
+  wrap.appendChild(picker);
+
+  container.appendChild(wrap);
+}
+
+function toggleCraftIngredient(ingId) {
+  const card = getCardById(state.currentCardId);
+  if (!card || card.type !== 'craft') return;
+  const need = card.needCount || 3;
+  const locked = state.cardDraft.lockedIds || [];
+  if (locked.includes(ingId)) return;
+  state.cardDraft.selectedIds = state.cardDraft.selectedIds || [];
+  const idx = state.cardDraft.selectedIds.indexOf(ingId);
+  if (idx >= 0) {
+    state.cardDraft.selectedIds.splice(idx, 1);
+    SoundFX.playPick();
+  } else {
+    if (state.cardDraft.selectedIds.length >= need) {
+      showToast(state.lang === 'en' ? `Max ${need} blocks — remove one first` : `Можно положить ровно ${need} блока — убери лишний`, 'info');
+      return;
+    }
+    state.cardDraft.selectedIds.push(ingId);
+    SoundFX.playDrop();
+  }
+  renderCurrentCard();
+}
+
 function updateCheckBtnReadiness(card) {
   const btn = document.getElementById('btn-card-check');
   let ready = false;
@@ -3101,11 +3522,13 @@ function updateCheckBtnReadiness(card) {
     ready = Object.keys(state.cardDraft.pairs || {}).length === card.pairs.length;
   } else if (card.type === 'order') {
     ready = true;
+  } else if (card.type === 'craft') {
+    ready = (state.cardDraft.selectedIds || []).length === (card.needCount || 3);
   }
   btn.disabled = !ready;
   btn.className = ready
-    ? 'btn-3d w-full sm:w-auto px-6 py-3 bg-cgy-accent hover:bg-cgy-accentHover border-[#153e75] text-white font-bold text-base cursor-pointer text-center'
-    : 'w-full sm:w-auto px-6 py-3 rounded-[3px] border-2 border-slate-300 bg-slate-200 text-slate-400 font-pixel font-bold text-base cursor-not-allowed text-center';
+    ? 'btn-3d w-full sm:w-auto px-5 py-2.5 bg-cgy-accent hover:bg-cgy-accentHover border-[#153e75] text-white font-bold text-sm sm:text-base cursor-pointer text-center'
+    : 'w-full sm:w-auto px-5 py-2.5 rounded-[3px] border-2 border-slate-300 bg-slate-200 text-slate-400 font-pixel font-bold text-sm sm:text-base cursor-not-allowed text-center';
 }
 
 function submitCurrentCard() {
@@ -3122,6 +3545,10 @@ function submitCurrentCard() {
   } else if (card.type === 'order') {
     const ord = state.cardDraft.order || [];
     isCorrect = card.steps.every(step => ord[step.correctPos] === step.id);
+  } else if (card.type === 'craft') {
+    const sel = state.cardDraft.selectedIds || [];
+    const req = card.ingredients.filter(ing => ing.correct).map(ing => ing.id);
+    isCorrect = sel.length === req.length && req.every(id => sel.includes(id));
   }
 
   const savedDraft = {};
@@ -3131,6 +3558,7 @@ function submitCurrentCard() {
     savedDraft.rightOrder = [...(state.cardDraft.rightOrder || card.pairs.map(p => p.id))];
   }
   if (card.type === 'order') savedDraft.order = [...(state.cardDraft.order || [])];
+  if (card.type === 'craft') savedDraft.selectedIds = [...(state.cardDraft.selectedIds || [])];
 
   evaluateCardResult(card, isCorrect, { savedDraft });
 }
@@ -4421,11 +4849,11 @@ function renderResultsDashboard() {
 
   updateCertFormUI();
   drawTaskTypesChart();
-  drawDynamicsChart();
+  drawSkillsMapChart();
   refreshIcons();
 }
 
-// первый график: столбцы по типам заданий
+// первый график: столбцы по всем 6 типам заданий (включая кибер-верстак)
 function drawTaskTypesChart() {
   const canvas = document.getElementById('chart-task-types');
   if (!canvas) return;
@@ -4433,13 +4861,13 @@ function drawTaskTypesChart() {
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0, 0, W, H);
 
-  const types = ['choice', 'truefalse', 'sort', 'match', 'order'];
-  const padL = 48, padR = 20, padT = 28, padB = 42;
+  const types = ['choice', 'truefalse', 'sort', 'match', 'order', 'craft'];
+  const padL = 44, padR = 14, padT = 28, padB = 42;
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
 
   // сетка 0, 50, 100%
-  ctx.font = '600 12px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.font = '600 12px "Tektur", Nunito, Arial, sans-serif';
   [0, 50, 100].forEach(val => {
     const y = padT + chartH - (val / 100) * chartH;
     ctx.strokeStyle = '#d7e3f2';
@@ -4455,7 +4883,7 @@ function drawTaskTypesChart() {
   });
 
   const colW = chartW / types.length;
-  const barW = Math.min(48, colW * 0.56);
+  const barW = Math.min(42, colW * 0.56);
 
   types.forEach((tp, i) => {
     const cardsOfType = CARDS.filter(c => c.type === tp);
@@ -4473,7 +4901,7 @@ function drawTaskTypesChart() {
     ctx.fillStyle = '#e7eff8';
     ctx.fillRect(bx, padT, barW, chartH);
 
-    // сам столбец в пиксельном стиле
+    // сам столбец
     ctx.fillStyle = answered === 0 ? '#b7c8de' : (pct >= 80 ? '#5ca904' : (pct >= 50 ? '#1e5aa8' : '#c62828'));
     ctx.fillRect(bx, by, barW, bh);
     ctx.fillStyle = 'rgba(255,255,255,0.28)';
@@ -4484,101 +4912,151 @@ function drawTaskTypesChart() {
 
     // процент сверху
     ctx.fillStyle = '#1f2937';
-    ctx.font = '700 13px "Pixelify Sans", Nunito, Arial, sans-serif';
+    ctx.font = '700 12px "Tektur", Nunito, Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(answered === 0 ? '—' : `${pct}%`, cx, by - 7);
 
     // подпись снизу
     ctx.fillStyle = '#334155';
-    ctx.font = '600 12.5px "Pixelify Sans", Nunito, Arial, sans-serif';
+    ctx.font = '600 11.5px "Tektur", Nunito, Arial, sans-serif';
     ctx.fillText(t('typesShort')[tp], cx, H - 16);
   });
 }
 
-// второй график: линия по попыткам
-function drawDynamicsChart() {
-  const canvas = document.getElementById('chart-dynamics');
+// второй график: карта кибер-навыков по реальным жизненным темам
+let weakestSkillTarget = null;
+
+function drawSkillsMapChart() {
+  const canvas = document.getElementById('chart-skills');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0, 0, W, H);
 
-  const cSum = getCardStatsSummary();
-  const points = [...state.sessionHistory];
-  // добавляем текущую попытку
-  if (points.length === 0 || cSum.answered < cSum.total) {
-    points.push({
-      label: state.lang === 'en' ? 'Current' : (state.lang === 'kca' ? 'Ин' : 'Сейчас'),
-      pct: cSum.answered > 0 ? Math.round((cSum.correct / cSum.answered) * 100) : 0
-    });
-  }
-  // добавляем стартовую точку 0% чтобы линия рисовалась сразу
-  const series = points.length === 1
-    ? [{ label: state.lang === 'en' ? 'Start' : (state.lang === 'kca' ? 'Оӆӑӊ' : 'Старт'), pct: 0 }, points[0]]
-    : points;
+  const isEn = state.lang === 'en';
+  const isKca = state.lang === 'kca';
+  const activeSc = getActiveGradeScenarios();
+  const chatDone = activeSc.filter(s => state.chatCompleted.includes(s.id)).length;
 
-  const padL = 48, padR = 24, padT = 30, padB = 42;
-  const chartW = W - padL - padR;
-  const chartH = H - padT - padB;
-  // отступы по бокам чтобы подписи не обрезались
-  const innerPadX = 42;
-  const plotW = Math.max(40, chartW - innerPadX * 2);
+  const groups = [
+    {
+      key: 'phishing',
+      label: isEn ? 'Phishing, QR & Wi-Fi' : (isKca ? 'Фишинг, QR, Wi-Fi' : 'Фишинг, QR и Wi-Fi'),
+      topics: ['phishing']
+    },
+    {
+      key: 'password',
+      label: isEn ? 'Passwords & 2FA' : (isKca ? 'Пароль па 2FA' : 'Пароли и 2FA'),
+      topics: ['password']
+    },
+    {
+      key: 'privacy',
+      label: isEn ? 'Personal Data & Photos' : (isKca ? 'Нєм па фото' : 'Личные данные'),
+      topics: ['privacy']
+    },
+    {
+      key: 'game',
+      label: isEn ? 'Games, Mods & Shopping' : (isKca ? 'Юнтӑт па покупки' : 'Игры и покупки'),
+      topics: ['game', 'shopping']
+    },
+    {
+      key: 'hacked',
+      label: isEn ? 'Deepfakes & Bullying' : (isKca ? 'Дипфейк па травля' : 'Дипфейки и травля'),
+      topics: ['hacked', 'bullying']
+    },
+    {
+      key: 'chats',
+      label: isEn ? 'Scam Chat Simulator' : (isKca ? 'Потӑр симулятор' : 'Симулятор чатов'),
+      isChat: true
+    }
+  ];
 
-  ctx.font = '600 12px "Pixelify Sans", Nunito, Arial, sans-serif';
-  [0, 50, 100].forEach(val => {
-    const y = padT + chartH - (val / 100) * chartH;
-    ctx.strokeStyle = '#d7e3f2';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(padL, y);
-    ctx.lineTo(W - padR, y);
-    ctx.stroke();
-
-    ctx.fillStyle = '#64748b';
-    ctx.textAlign = 'right';
-    ctx.fillText(val + '%', padL - 10, y + 4);
+  const rows = groups.map(g => {
+    if (g.isChat) {
+      const total = activeSc.length || 1;
+      const pct = Math.round((chatDone / total) * 100);
+      return { ...g, done: chatDone, total, pct, firstTargetCard: null };
+    }
+    const list = CARDS.filter(c => g.topics.includes(c.topic));
+    const ok = list.filter(c => state.cardResults[c.id] && state.cardResults[c.id].correct).length;
+    const total = list.length || 1;
+    const pct = Math.round((ok / total) * 100);
+    const todo = list.find(c => !(state.cardResults[c.id] && state.cardResults[c.id].correct)) || list[0];
+    return { ...g, done: ok, total, pct, firstTargetCard: todo ? todo.id : null };
   });
 
-  const coords = series.map((pt, i) => ({
-    x: padL + innerPadX + (series.length === 1 ? plotW / 2 : (i / (series.length - 1)) * plotW),
-    y: padT + chartH - (pt.pct / 100) * chartH,
-    label: pt.label,
-    pct: pt.pct
-  }));
+  const padL = 165, padR = 56, padT = 10, padB = 10;
+  const barMaxW = W - padL - padR;
+  const rowH = (H - padT - padB) / rows.length;
 
-  // заливка под линией
-  ctx.beginPath();
-  ctx.moveTo(coords[0].x, padT + chartH);
-  coords.forEach(c => ctx.lineTo(c.x, c.y));
-  ctx.lineTo(coords[coords.length - 1].x, padT + chartH);
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(30, 90, 168, 0.12)';
-  ctx.fill();
+  rows.forEach((r, idx) => {
+    const cy = padT + idx * rowH + rowH / 2;
+    const barH = 16;
+    const by = cy - barH / 2;
 
-  // сама линия
-  ctx.beginPath();
-  coords.forEach((c, i) => (i === 0 ? ctx.moveTo(c.x, c.y) : ctx.lineTo(c.x, c.y)));
-  ctx.strokeStyle = '#1e5aa8';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  // квадратные пиксельные точки и проценты
-  coords.forEach(c => {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(c.x - 5, c.y - 5, 10, 10);
-    ctx.strokeStyle = '#1e5aa8';
-    ctx.lineWidth = 2.5;
-    ctx.strokeRect(c.x - 5, c.y - 5, 10, 10);
-
+    // название темы слева
     ctx.fillStyle = '#1f2937';
-    ctx.font = '700 13px "Pixelify Sans", Nunito, Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(c.pct + '%', c.x, c.y - 11);
+    ctx.font = '600 12.5px "Tektur", Nunito, Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(r.label, padL - 12, cy + 4);
 
-    ctx.fillStyle = '#334155';
-    ctx.font = '600 12px "Pixelify Sans", Nunito, Arial, sans-serif';
-    ctx.fillText(c.label, c.x, H - 16);
+    // фон полоски
+    ctx.fillStyle = '#e7eff8';
+    ctx.fillRect(padL, by, barMaxW, barH);
+    ctx.strokeStyle = '#b6c8df';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(padL, by, barMaxW, barH);
+
+    // заполнение полоски
+    const fillW = Math.max(r.done > 0 ? 8 : 0, (r.pct / 100) * barMaxW);
+    if (fillW > 0) {
+      ctx.fillStyle = r.pct >= 80 ? '#5ca904' : (r.pct >= 45 ? '#1e5aa8' : '#d97706');
+      ctx.fillRect(padL, by, fillW, barH);
+      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx.fillRect(padL, by, fillW, 4);
+      ctx.strokeStyle = '#24364d';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(padL, by, fillW, barH);
+    }
+
+    // счётчик справа
+    ctx.fillStyle = r.pct >= 80 ? '#15803d' : '#334155';
+    ctx.font = '700 12px "Tektur", Nunito, Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${r.done}/${r.total}`, padL + barMaxW + 10, cy + 4);
   });
+
+  // подсказка "что подтянуть" с переходом в 1 клик
+  const weakBox = document.getElementById('skills-weak-box');
+  const weakText = document.getElementById('skills-weak-text');
+  const unfinished = rows.filter(r => r.pct < 100).sort((a, b) => a.pct - b.pct);
+  if (weakBox && weakText) {
+    if (unfinished.length > 0) {
+      const w = unfinished[0];
+      weakestSkillTarget = w;
+      weakBox.classList.remove('hidden');
+      weakText.textContent = isEn
+        ? `Best next skill to level up: ${w.label} (${w.done}/${w.total})`
+        : (isKca ? `Ин вєрты: ${w.label} (${w.done}/${w.total})` : `Что лучше подтянуть сейчас: ${w.label} (${w.done}/${w.total})`);
+    } else {
+      weakestSkillTarget = null;
+      weakBox.classList.add('hidden');
+    }
+  }
+}
+
+function jumpToWeakestTopic() {
+  if (!weakestSkillTarget) return;
+  if (weakestSkillTarget.isChat) {
+    switchMainTab('chat');
+    return;
+  }
+  if (weakestSkillTarget.firstTargetCard) {
+    state.currentCardId = weakestSkillTarget.firstTargetCard;
+    state.cardDraft = {};
+    switchMainTab('cards');
+    renderCurrentCard(true);
+  }
 }
 
 // проверка фио и генерация png-сертификата на canvas
@@ -4862,14 +5340,14 @@ async function downloadCertificatePNG() {
 
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';
-  ctx.font = '700 24px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.font = '700 24px "Tektur", Nunito, Arial, sans-serif';
   const portalBannerText = isEn
     ? 'DIGITAL CITIZEN OF YUGRA  •  CYBER-CARDS'
     : (isKca ? 'ЮГРА ЦИФРОВОЙ ХОЯТ  •  КИБЕР-КАРТОЧКАТ' : 'ЦИФРОВОЙ ГРАЖДАНИН ЮГРЫ  •  КИБЕР-КАРТОЧКИ ЮГРЫ');
   ctx.fillText(portalBannerText, W / 2, 132);
 
   // 4. заголовок диплома с легкой пиксельной тенью
-  ctx.font = '700 60px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.font = '700 60px "Tektur", Nunito, Arial, sans-serif';
   const mainTitle = isEn ? 'CYBER-HERO DIPLOMA' : (isKca ? 'КИБЕРГЕРОЙ ДИПЛОМ' : 'ДИПЛОМ КИБЕРГЕРОЯ');
   ctx.fillStyle = '#cbdcf2';
   ctx.fillText(mainTitle, W / 2 + 3, 229);
@@ -4882,7 +5360,7 @@ async function downloadCertificatePNG() {
   // 6. справа имя, класс и звезды
   const rightCenterX = 835;
   ctx.fillStyle = '#5b6778';
-  ctx.font = '700 24px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.font = '700 24px "Tektur", Nunito, Arial, sans-serif';
   ctx.fillText(
     isEn ? 'Awarded to:' : (isKca ? 'Утӆты хоят:' : 'Награждается:'),
     rightCenterX, 290
@@ -4898,7 +5376,7 @@ async function downloadCertificatePNG() {
 
   const nameFontSize = userName.length > 30 ? 34 : (userName.length > 21 ? 42 : 48);
   ctx.fillStyle = '#1f2937';
-  ctx.font = `700 ${nameFontSize}px "Pixelify Sans", Nunito, Arial, sans-serif`;
+  ctx.font = `700 ${nameFontSize}px "Tektur", Nunito, Arial, sans-serif`;
   ctx.fillText(userName, rightCenterX, 368);
 
   // плашка класса и звезды
@@ -4909,7 +5387,7 @@ async function downloadCertificatePNG() {
   ctx.fill();
   ctx.stroke();
   ctx.fillStyle = '#92400e';
-  ctx.font = '700 20px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.font = '700 20px "Tektur", Nunito, Arial, sans-serif';
   ctx.fillText(`${t('grade_word')}: ${state.profile.gradeClass}`, 502, 440);
 
   // 8 звезд за карточки
@@ -4956,11 +5434,11 @@ async function downloadCertificatePNG() {
     ctx.stroke();
 
     ctx.fillStyle = '#475569';
-    ctx.font = '700 15px "Pixelify Sans", Nunito, Arial, sans-serif';
+    ctx.font = '700 15px "Tektur", Nunito, Arial, sans-serif';
     ctx.fillText(sc.label, sx + 132, sy + 32);
 
     ctx.fillStyle = sc.txt;
-    ctx.font = sc.val.length > 16 ? '700 22px "Pixelify Sans", Nunito, Arial, sans-serif' : '700 27px "Pixelify Sans", Nunito, Arial, sans-serif';
+    ctx.font = sc.val.length > 16 ? '700 22px "Tektur", Nunito, Arial, sans-serif' : '700 27px "Tektur", Nunito, Arial, sans-serif';
     ctx.fillText(sc.val, sx + 132, sy + 72);
   });
 
@@ -4974,7 +5452,7 @@ async function downloadCertificatePNG() {
 
   ctx.textAlign = 'left';
   ctx.fillStyle = '#1e5aa8';
-  ctx.font = '700 19px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.font = '700 19px "Tektur", Nunito, Arial, sans-serif';
   ctx.fillText(
     isEn ? 'COLLECTED TROPHIES:' : (isKca ? 'ӐКӐТӐМ ТРОФЕЙӐТ:' : 'СОБРАННЫЕ ТРОФЕИ:'),
     160, 648
@@ -5022,7 +5500,7 @@ async function downloadCertificatePNG() {
     } else {
       ctx.textAlign = 'center';
       ctx.fillStyle = '#59708e';
-      ctx.font = '700 24px "Pixelify Sans", Arial, sans-serif';
+      ctx.font = '700 24px "Tektur", Arial, sans-serif';
       ctx.fillText('?', lx + 43, ly + 35);
       ctx.textAlign = 'left';
     }
@@ -5047,11 +5525,11 @@ async function downloadCertificatePNG() {
   drawCanvasStar(ctx, 0, -28, 13, 6, '#f59e0b', '#b45309');
   ctx.textAlign = 'center';
   ctx.fillStyle = '#1e5aa8';
-  ctx.font = '700 16px "Pixelify Sans", Arial, sans-serif';
+  ctx.font = '700 16px "Tektur", Arial, sans-serif';
   ctx.fillText(isEn ? 'DIGITAL' : 'ЦИФРОВОЙ', 0, 4);
   ctx.fillText(isEn ? 'CITIZEN' : 'ГРАЖДАНИН', 0, 23);
   ctx.fillStyle = '#15803d';
-  ctx.font = '700 15px "Pixelify Sans", Arial, sans-serif';
+  ctx.font = '700 15px "Tektur", Arial, sans-serif';
   ctx.fillText(isEn ? 'YUGRA 2026' : 'ЮГРА • 2026', 0, 44);
   ctx.restore();
 
@@ -5059,7 +5537,7 @@ async function downloadCertificatePNG() {
   const dateStr = new Date().toLocaleDateString(isEn ? 'en-US' : 'ru-RU');
   ctx.textAlign = 'center';
   ctx.fillStyle = '#475569';
-  ctx.font = '600 18px "Pixelify Sans", Nunito, Arial, sans-serif';
+  ctx.font = '600 18px "Tektur", Nunito, Arial, sans-serif';
   ctx.fillText(`${dateStr}   •   ${state.certId}   •   Цифровой гражданин Югры`, W / 2, 806);
 
   const link = document.createElement('a');
