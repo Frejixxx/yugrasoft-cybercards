@@ -4,14 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Цифровой гражданин Югры — Кибербезопасность детей</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Tektur:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/tailwind.min.css" />
+  <script src="vendor/lucide.min.js"></script>
   <style>
     body { font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    h1, h2, h3 { font-family: 'Rubik', 'Nunito', sans-serif; }
+    h1, h2, h3 { font-family: 'Tektur', 'Nunito', sans-serif; }
   </style>
 </head>
 <body class="bg-[#eef4fb] text-[#1f2937] antialiased min-h-screen flex flex-col">
@@ -115,13 +113,21 @@
       if (first) { logEl.innerHTML = ''; first = false; }
       const el = document.createElement('div');
       el.className = 'p-2.5 rounded-xl bg-[#f4f8ff] border border-[#c6daf2] break-words';
-      el.innerHTML = `
-        <div class="flex items-center justify-between text-[10.5px] text-[#1e5aa8] font-bold mb-1">
-          <span class="uppercase">${d.event}</span>
-          <span class="text-[#5b6778] font-normal">${new Date(d.timestamp).toLocaleTimeString('ru-RU')}</span>
-        </div>
-        <pre class="text-[10.5px] whitespace-pre-wrap text-[#1f2937] leading-snug">${JSON.stringify(d.payload, null, 2)}</pre>
-      `;
+      const hdr = document.createElement('div');
+      hdr.className = 'flex items-center justify-between text-[10.5px] text-[#1e5aa8] font-bold mb-1';
+      const evSpan = document.createElement('span');
+      evSpan.className = 'uppercase';
+      evSpan.textContent = String(d.event || '');
+      const tmSpan = document.createElement('span');
+      tmSpan.className = 'text-[#5b6778] font-normal';
+      tmSpan.textContent = d.timestamp ? new Date(d.timestamp).toLocaleTimeString('ru-RU') : '';
+      hdr.appendChild(evSpan);
+      hdr.appendChild(tmSpan);
+      const pre = document.createElement('pre');
+      pre.className = 'text-[10.5px] whitespace-pre-wrap text-[#1f2937] leading-snug';
+      pre.textContent = JSON.stringify(d.payload ?? {}, null, 2);
+      el.appendChild(hdr);
+      el.appendChild(pre);
       logEl.prepend(el);
     });
 
