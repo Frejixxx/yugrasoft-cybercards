@@ -4,37 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Кибер-карточки Югры — Цифровой гражданин Югры</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Tektur:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js" defer></script>
-  <script>
-    if (window.tailwind) {
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              cgy: {
-                bg: '#f5f7fa',
-                card: '#ffffff',
-                accent: '#1e5aa8',
-                accentHover: '#17498c',
-                soft: '#eaf1fb',
-                text: '#1f2937',
-                muted: '#5b6778',
-                border: '#d1d5db',
-                ok: '#1e7e34',
-                err: '#c62828'
-              }
-            }
-          }
-        }
-      };
-    }
-  </script>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/tailwind.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="vendor/lucide.min.js"></script>
+  <script src="vendor/zxcvbn.js" defer></script>
 </head>
 <body class="mc-theme bg-cgy-bg text-cgy-text antialiased min-h-screen flex flex-col">
 
@@ -128,7 +102,7 @@
           <button id="nav-tab-cards" onclick="switchMainTab('cards')" class="nav-tab active px-1 sm:px-2.5 lg:px-3.5 py-1.5 md:py-2 text-[11px] sm:text-xs lg:text-sm flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 min-w-0">
             <span class="flex items-center gap-1 md:contents">
               <i data-lucide="layout-grid" class="w-4 h-4 shrink-0 md:order-1"></i>
-              <span id="badge-cards-progress" class="px-1.5 py-0.5 rounded-[2px] text-[10px] lg:text-[11px] font-bold bg-cgy-soft text-cgy-accent border border-cgy-border tabular-nums leading-none md:order-3">0/8</span>
+              <span id="badge-cards-progress" class="px-1.5 py-0.5 rounded-[2px] text-[10px] lg:text-[11px] font-bold bg-cgy-soft text-cgy-accent border border-cgy-border tabular-nums leading-none md:order-3">0/18</span>
             </span>
             <span class="md:hidden font-semibold leading-tight" data-i18n="tab_cards_mob">Карточки</span>
             <span class="hidden md:inline font-semibold whitespace-nowrap md:order-2" data-i18n="tab_cards">Кибер-карточки</span>
@@ -168,7 +142,7 @@
   <main id="app-main" class="relative z-10 flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-5 sm:py-6 flex flex-col">
 
     <!-- вкладка 1: кибер-карточки (карта-тропинка duolingo в стиле minecraft + режим урока) -->
-    <section id="view-cards" class="flex-1 flex flex-col gap-3.5 pb-28 sm:pb-10">
+    <section id="view-cards" class="flex-1 flex flex-col gap-3.5 pb-36 sm:pb-44">
 
       <!-- ЭКРАН А: КАРТА-ТРОПИНКА УРОВНЕЙ ПО БИОМАМ (DUOLINGO x MINECRAFT) -->
       <div id="cards-map-view" class="flex flex-col gap-3.5">
@@ -226,8 +200,8 @@
             </div>
           </div>
 
-          <!-- сама дорожка узлов (змейка из блоков minecraft) -->
-          <div id="biome-path-nodes" class="relative px-4 sm:px-8 py-6 sm:py-8 flex flex-col items-center"></div>
+          <!-- сама дорожка узлов (змейка 2x3 на ПК, вертикальная на мобилке) -->
+          <div id="biome-path-nodes" class="relative px-3.5 sm:px-6 py-5 sm:py-7 flex flex-col items-stretch"></div>
         </div>
 
         <!-- нижний хотбар с лутом за карточки текущей главы -->
@@ -343,7 +317,7 @@
                 <strong id="cards-live-score" class="font-pixel text-base text-[#1e7e34] tabular-nums">0 / 18</strong>
               </div>
 
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:ml-auto w-full sm:w-auto">
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:ml-auto sm:pr-24 2xl:pr-0 w-full sm:w-auto">
                 <button id="btn-card-check" onclick="submitCurrentCard()" class="hidden btn-3d w-full sm:w-auto px-5 py-2.5 bg-cgy-accent hover:bg-cgy-accentHover border-[#133b72] text-white font-bold text-sm sm:text-base text-center">
                   Проверить ответ
                 </button>
@@ -504,12 +478,12 @@
     </section>
 
     <!-- вкладка 3: аналитика и сертификат -->
-    <section id="view-results" class="hidden flex-1 flex flex-col gap-5 pb-28 sm:pb-10">
+    <section id="view-results" class="hidden flex-1 flex flex-col gap-5 pb-36 sm:pb-44">
       <!-- карточки со статистикой -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="mc-box bg-gradient-to-br from-[#eaf3ff] to-white p-4">
           <div class="font-pixel text-xs font-bold text-cgy-accent uppercase tracking-wide" data-i18n="kpi_cards">Кибер-карточки</div>
-          <div id="res-cards-score" class="font-pixel text-3xl font-bold text-cgy-accent mt-1 tabular-nums">0 / 8</div>
+          <div id="res-cards-score" class="font-pixel text-3xl font-bold text-cgy-accent mt-1 tabular-nums">0 / 18</div>
           <div id="res-cards-pct" class="text-xs font-bold text-cgy-muted mt-0.5">0% верно</div>
         </div>
         <div class="mc-box bg-gradient-to-br from-[#e9f6ec] to-white p-4">
@@ -519,7 +493,7 @@
         </div>
         <div class="mc-box bg-gradient-to-br from-[#fef7e0] to-white p-4">
           <div class="font-pixel text-xs font-bold text-[#b45309] uppercase tracking-wide" data-i18n="kpi_loot">Собранный лут</div>
-          <div id="res-loot-count" class="font-pixel text-3xl font-bold text-[#b45309] mt-1 tabular-nums">0 / 8</div>
+          <div id="res-loot-count" class="font-pixel text-3xl font-bold text-[#b45309] mt-1 tabular-nums">0 / 18</div>
           <div id="res-errors-sub" class="text-xs font-bold text-cgy-muted mt-0.5">Ошибок: 0</div>
         </div>
         <div class="mc-box bg-gradient-to-br from-[#eef2ff] to-white p-4">
@@ -1011,7 +985,7 @@
       </p>
     </div>
 
-    <!-- сам персонаж, можно перетаскивать -->
+    <!-- сам персонаж, можно перетаскивать (привязан к bottom/right) -->
     <div id="steve-drag-handle" title="Потяни меня по экрану или кликни!"
       class="steve-body-btn pointer-events-auto cursor-grab active:cursor-grabbing flex flex-col items-center transition-transform">
       <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-[4px] bg-white border-[3px] border-[#1e3a5f] border-b-[5px] sm:border-b-[6px] shadow-[4px_4px_0_rgba(24,42,68,0.22)] overflow-hidden flex items-center justify-center">
@@ -1027,11 +1001,11 @@
   <div id="toast-container" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[65] flex flex-col items-center gap-2 pointer-events-none px-4 w-full max-w-md"></div>
 
   <!-- подключение скриптов -->
-  <script src="sound.js"></script>
-  <script src="fio-gender.js"></script>
-  <script src="cards-data.js"></script>
-  <script src="scenarios.js"></script>
-  <script src="scenarios-i18n.js"></script>
-  <script src="app.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/fio-gender.js"></script>
+  <script src="js/cards-data.js"></script>
+  <script src="js/scenarios.js"></script>
+  <script src="js/scenarios-i18n.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

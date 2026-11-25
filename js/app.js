@@ -405,7 +405,7 @@ const I18N = {
     tab_chat: 'Потӑр симулятор',
     tab_cards_mob: 'Карточкат',
     tab_chat_mob: 'Потӑр',
-    tab_results_mob: 'Итоги',
+    tab_results_mob: 'Вєрӑт',
     tab_results: 'Аналитика па сертификат',
     overall_progress: 'Иса вєр:',
     card_counter_label: 'Миссия:',
@@ -666,7 +666,7 @@ const TG_SVG = {
       </svg>
     </span>
   `,
-  botTag: () => `<span class="px-1.5 py-[1px] rounded text-[10px] font-bold bot-pill">бот</span>`,
+  botTag: () => `<span class="px-1.5 py-[1px] rounded text-[10px] font-bold bot-pill">${t('chat_bot')}</span>`,
   doubleCheck: () => `<svg class="w-3.5 h-3.5 inline-block text-[#1e5aa8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 13 5 17 14 8"/><polyline points="7 13 11 17 22 6"/></svg>`
 };
 
@@ -1051,6 +1051,7 @@ function updateProfileHeroPickerUI(statusKind = 'auto') {
   const cardSteve = document.getElementById('prof-hero-card-steve');
   const cardAlex = document.getElementById('prof-hero-card-alex');
   const isEn = state.lang === 'en';
+  const isKca = state.lang === 'kca';
   if (cardSteve) {
     const active = modalHeroDraft === 'steve';
     cardSteve.className = active
@@ -1059,7 +1060,7 @@ function updateProfileHeroPickerUI(statusKind = 'auto') {
     const titleEl = cardSteve.querySelector('.font-bold');
     const subEl = cardSteve.querySelector('.text-\\[11px\\]');
     if (titleEl) titleEl.textContent = isEn ? 'Cyber-Stepa' : 'Кибер-Стёпа';
-    if (subEl) subEl.textContent = isEn ? 'Male buddy' : 'Напарник';
+    if (subEl) subEl.textContent = isEn ? 'Male buddy' : (isKca ? 'Юр (ики)' : 'Напарник');
   }
   if (cardAlex) {
     const active = modalHeroDraft === 'alex';
@@ -1069,22 +1070,22 @@ function updateProfileHeroPickerUI(statusKind = 'auto') {
     const titleEl = cardAlex.querySelector('.font-bold');
     const subEl = cardAlex.querySelector('.text-\\[11px\\]');
     if (titleEl) titleEl.textContent = isEn ? 'Cyber-Alena' : 'Кибер-Алёна';
-    if (subEl) subEl.textContent = isEn ? 'Female buddy' : 'Напарница';
+    if (subEl) subEl.textContent = isEn ? 'Female buddy' : (isKca ? 'Юр (эви)' : 'Напарница');
   }
 
   const badge = document.getElementById('prof-hero-auto-badge');
   if (badge) {
     if (statusKind === 'manual') {
-      badge.textContent = isEn ? 'Picked manually' : 'Выбрано вручную';
+      badge.textContent = isEn ? 'Picked manually' : (isKca ? 'Нӑӊ пирисэн' : 'Выбрано вручную');
       badge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-cgy-text border border-slate-300';
     } else if (statusKind === 'androgynous') {
-      badge.textContent = isEn ? 'Unisex name — pick one' : 'Подходит обоим — выбери сам';
+      badge.textContent = isEn ? 'Unisex name — pick one' : (isKca ? 'Кӑт юр пӑта — пириэ' : 'Подходит обоим — выбери сам');
       badge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e] border border-[#f59e0b]/60';
     } else if (statusKind === 'detected') {
-      badge.textContent = isEn ? 'Auto-matched by name' : 'Подобрано по имени';
+      badge.textContent = isEn ? 'Auto-matched by name' : (isKca ? 'Нєм эвӑӆт пирисы' : 'Подобрано по имени');
       badge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#ecfdf5] text-[#15803d] border border-[#86efac]';
     } else {
-      badge.textContent = isEn ? 'Auto by name' : 'Автовыбор по имени';
+      badge.textContent = isEn ? 'Auto by name' : (isKca ? 'Нєм эвӑӆт' : 'Автовыбор по имени');
       badge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#eef5ff] text-cgy-accent border border-[#bfd7f5]';
     }
   }
@@ -1283,10 +1284,13 @@ function isCardUnlocked(card) {
 function notifyLockedMission(prevNum) {
   SoundFX.playFail();
   const isEn = state.lang === 'en';
+  const isKca = state.lang === 'kca';
   showToast(
     isEn
       ? `Complete Mission #${prevNum} first to unlock this level!`
-      : `Сначала пройди миссию #${prevNum}, чтобы открыть этот уровень!`,
+      : (isKca
+        ? `Оӆӑӊӑн #${prevNum} миссия вєрэ — щи юпийн тӑм миссия пуншӆ!`
+        : `Сначала пройди миссию #${prevNum}, чтобы открыть этот уровень!`),
     'warn'
   );
 }
@@ -1428,7 +1432,8 @@ function renderBiomePathMap() {
 
   nodesBox.innerHTML = '';
 
-  chCards.forEach((c, idx) => {
+  // формируем змейку рядами по 3 миссии на ПК (1→2→3 ↓ 6←5←4) и вертикальную тропинку на мобилке
+  const buildCardHtml = (c, idx) => {
     const res = state.cardResults[c.id];
     const isDone = Boolean(res && res.answered && res.correct);
     const isWrong = Boolean(res && res.answered && !res.correct);
@@ -1437,37 +1442,12 @@ function renderBiomePathMap() {
     const isBoss = c.type === 'craft';
     const lootIcon = (c.loot && c.loot.icon) || 'shield';
 
-    // соединительная пиксельная дорожка из 3 кубиков между узлами
-    if (idx > 0) {
-      const prevRes = state.cardResults[chCards[idx - 1].id];
-      const prevLit = Boolean(prevRes && prevRes.answered && prevRes.correct);
-      const trail = document.createElement('div');
-      trail.className = `flex flex-col items-center gap-1.5 my-1 path-row-${idx}`;
-      trail.innerHTML = `
-        <span class="path-step-dot ${prevLit ? 'lit' : ''}"></span>
-        <span class="path-step-dot ${prevLit ? 'lit' : ''}"></span>
-        <span class="path-step-dot ${prevLit ? 'lit' : ''}"></span>
-      `;
-      nodesBox.appendChild(trail);
-    }
-
-    const row = document.createElement('div');
-    row.className = `relative flex items-center justify-center gap-3 sm:gap-4 py-1.5 w-full max-w-[520px] path-row-${idx % 6}`;
-
-    // класс кубического блока-узла (закрытые — каменный блок с замком)
     let nodeCls = 'path-node-idle';
     if (!unlocked) nodeCls = 'path-node-locked';
     else if (isDone) nodeCls = 'path-node-done';
     else if (isWrong) nodeCls = 'path-node-wrong';
     else if (isNext) nodeCls = 'path-node-current';
     else if (isBoss) nodeCls = 'path-node-boss';
-
-    // мини-напарник рядом с активной миссией
-    const heroHtml = isNext ? `
-      <div class="hidden sm:flex items-center justify-center w-16 h-16 shrink-0 -ml-2 drop-shadow-sm" aria-hidden="true">
-        ${getYugorkaSvg('idle', stats.correct)}
-      </div>
-    ` : '';
 
     const playTag = isNext
       ? `<span class="path-play-tag">${isEn ? 'PLAY!' : (isKca ? 'ВЄРТЫ!' : 'ИГРАТЬ!')}</span>`
@@ -1500,33 +1480,109 @@ function renderBiomePathMap() {
       : `notifyLockedMission(${idx})`;
 
     const lvlStars = '★'.repeat(c.level || 1) + '☆'.repeat(Math.max(0, 3 - (c.level || 1)));
+    const lockTitle = unlocked
+      ? `${idx + 1}. ${L(c.title)}`
+      : (isEn ? `Locked: finish Mission #${idx} first` : (isKca ? `Пӑнтсы: оӆӑӊӑн #${idx} миссия вєрэ` : `Закрыто: сначала пройди миссию #${idx}`));
 
-    row.innerHTML = `
-      ${heroHtml}
-      <button type="button" onclick="${clickAttr}"
-        class="path-node-btn ${nodeCls} w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 ${unlocked ? 'cursor-pointer' : 'cursor-not-allowed'}"
-        title="${unlocked ? `${idx + 1}. ${L(c.title)}` : (isEn ? `Locked: finish Mission #${idx} first` : `Закрыто: сначала пройди миссию #${idx}`)}">
-        ${playTag}
-        ${nodeInner}
-      </button>
-      <button type="button" onclick="${clickAttr}"
-        class="flex-1 max-w-[260px] sm:max-w-[300px] text-left ${unlocked ? 'bg-white/95 hover:bg-white cursor-pointer' : 'bg-slate-100/80 opacity-75 cursor-not-allowed'} border-2 ${!unlocked ? 'border-slate-300' : (isNext ? 'border-[#4a9603] shadow-md' : (isDone ? 'border-[#d97706]/70' : 'border-[#bfd4ec]'))} rounded-[4px] px-3 py-2 transition">
-        <div class="flex items-center justify-between gap-1.5 flex-wrap">
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="font-pixel text-[10px] font-bold px-1.5 py-0.5 rounded-[2px] border ${badgeTone}">
-              #${idx + 1} • ${t('typesShort')[c.type] || c.type}
-            </span>
-            ${!unlocked ? `<span class="text-[11px] font-bold text-slate-500">🔒</span>` : ''}
-            ${isDone ? `<span class="text-[11px] font-extrabold text-[#16a34a]">★ ${isEn ? 'Done' : (isKca ? 'Вєрсы' : 'Пройдено')}</span>` : ''}
-          </div>
-          <span class="text-[10px] font-bold text-[#b45309]">${lvlStars}</span>
+    const cardBorder = !unlocked
+      ? 'border-slate-300 bg-slate-100/85 opacity-80 cursor-not-allowed'
+      : (isNext
+        ? 'border-[#4a9603] bg-white shadow-[0_6px_0_rgba(74,150,3,0.18)] cursor-pointer hover:-translate-y-0.5'
+        : (isDone
+          ? 'border-[#d97706]/80 bg-[#fffdf7] cursor-pointer hover:bg-white hover:-translate-y-0.5'
+          : (isBoss
+            ? 'border-[#1e5aa8] bg-[#f4f9ff] cursor-pointer hover:bg-white hover:-translate-y-0.5'
+            : 'border-[#bfd4ec] bg-white/95 cursor-pointer hover:bg-white hover:-translate-y-0.5')));
+
+    const miniHero = isNext ? `
+      <div class="hidden xl:flex items-center justify-center w-11 h-11 shrink-0 -mr-1 drop-shadow-sm" aria-hidden="true">
+        ${getYugorkaSvg('idle', stats.correct)}
+      </div>
+    ` : '';
+
+    return `
+      <div class="snake-mission-card relative flex items-center gap-3 p-3 sm:p-3.5 rounded-[5px] border-2 ${cardBorder} transition flex-1 min-w-0"
+        onclick="${clickAttr}" role="button" tabindex="0" title="${lockTitle}">
+        <div class="path-node-btn ${nodeCls} w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center shrink-0">
+          ${playTag}
+          ${nodeInner}
         </div>
-        <div class="font-bold text-xs sm:text-sm ${unlocked ? 'text-cgy-text' : 'text-slate-500'} leading-snug mt-1 line-clamp-2">${L(c.title)}</div>
-      </button>
+        <div class="flex-1 min-w-0 text-left">
+          <div class="flex items-center justify-between gap-1.5 flex-wrap">
+            <div class="flex items-center gap-1 flex-wrap">
+              <span class="font-pixel text-[10px] font-bold px-1.5 py-0.5 rounded-[2px] border ${badgeTone}">
+                #${idx + 1} • ${t('typesShort')[c.type] || c.type}
+              </span>
+              ${!unlocked ? `<span class="text-[11px] font-bold text-slate-500">🔒</span>` : ''}
+              ${isDone ? `<span class="text-[11px] font-extrabold text-[#16a34a]">★ ${isEn ? 'Done' : (isKca ? 'Вєрсы' : 'Пройдено')}</span>` : ''}
+            </div>
+            <span class="text-[10px] font-bold text-[#b45309] shrink-0">${lvlStars}</span>
+          </div>
+          <div class="font-bold text-xs sm:text-[13.5px] ${unlocked ? 'text-cgy-text' : 'text-slate-500'} leading-snug mt-1.5 line-clamp-2">${L(c.title)}</div>
+        </div>
+        ${miniHero}
+      </div>
     `;
+  };
 
-    nodesBox.appendChild(row);
-  });
+  const makeConn = (lit, dir) => {
+    const arrowIcon = dir === 'left' ? 'arrow-left' : (dir === 'down' ? 'arrow-down' : 'arrow-right');
+    const isVert = dir === 'down';
+    const iconHtml = isVert
+      ? `<i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>`
+      : `<i data-lucide="arrow-down" class="w-3.5 h-3.5 lg:hidden"></i><i data-lucide="${arrowIcon}" class="hidden lg:block w-3.5 h-3.5"></i>`;
+    return `
+      <div class="snake-conn ${isVert ? 'flex-col py-1' : 'flex-col lg:flex-row py-1 lg:py-0'} flex items-center justify-center gap-1.5 shrink-0">
+        <span class="path-step-dot ${lit ? 'lit' : ''}"></span>
+        <span class="w-5 h-5 rounded-[3px] flex items-center justify-center border ${lit ? 'bg-[#dcfce7] border-[#16a34a] text-[#15803d]' : 'bg-white/90 border-[#9cb6d4] text-[#496587]'}">
+          ${iconHtml}
+        </span>
+        <span class="path-step-dot ${lit ? 'lit' : ''}"></span>
+      </div>
+    `;
+  };
+
+  const rowSize = 3;
+  for (let r = 0; r < chCards.length; r += rowSize) {
+    const rowIdx = Math.floor(r / rowSize);
+    const isReverse = rowIdx % 2 === 1;
+    const slice = chCards.slice(r, r + rowSize);
+
+    // вертикальный поворот змейки между рядами (справа для чётного->нечётного, слева для нечётного->чётного)
+    if (rowIdx > 0) {
+      const prevCard = chCards[r - 1];
+      const prevLit = Boolean(prevCard && state.cardResults[prevCard.id] && state.cardResults[prevCard.id].correct);
+      const turn = document.createElement('div');
+      turn.className = `w-full grid grid-cols-1 lg:grid-cols-3 gap-3 my-1`;
+      if (isReverse) {
+        turn.innerHTML = `<div class="hidden lg:block"></div><div class="hidden lg:block"></div><div class="flex justify-center">${makeConn(prevLit, 'down')}</div>`;
+      } else {
+        turn.innerHTML = `<div class="flex justify-center">${makeConn(prevLit, 'down')}</div><div class="hidden lg:block"></div><div class="hidden lg:block"></div>`;
+      }
+      nodesBox.appendChild(turn);
+    }
+
+    const rowEl = document.createElement('div');
+    rowEl.className = `w-full flex flex-col ${isReverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-stretch lg:items-center gap-1.5 lg:gap-2.5`;
+
+    slice.forEach((c, sIdx) => {
+      const globalIdx = r + sIdx;
+      const cellWrap = document.createElement('div');
+      cellWrap.className = 'flex-1 min-w-0 flex';
+      cellWrap.innerHTML = buildCardHtml(c, globalIdx);
+      rowEl.appendChild(cellWrap);
+
+      if (sIdx < slice.length - 1) {
+        const lit = Boolean(state.cardResults[c.id] && state.cardResults[c.id].correct);
+        const connWrap = document.createElement('div');
+        connWrap.className = 'flex items-center justify-center shrink-0';
+        connWrap.innerHTML = makeConn(lit, isReverse ? 'left' : 'right');
+        rowEl.appendChild(connWrap);
+      }
+    });
+
+    nodesBox.appendChild(rowEl);
+  }
 }
 
 function openMissionFromMap(cardId) {
@@ -1542,6 +1598,10 @@ function openMissionFromMap(cardId) {
   state.cardsViewMode = 'play';
   state.lessonHearts = 3;
   state.cardDraft = {};
+  if (window.innerWidth < 1440) {
+    const bubble = document.getElementById('yugorka-bubble');
+    if (bubble) bubble.classList.add('hidden');
+  }
   saveState();
   SoundFX.playPick();
   renderCurrentCard(true);
@@ -1577,10 +1637,13 @@ function selectBiomeChapter(chId) {
   if (!isChapterUnlocked(chId)) {
     SoundFX.playFail();
     const isEn = state.lang === 'en';
+    const isKca = state.lang === 'kca';
     showToast(
       isEn
         ? `Chapter ${chId} is locked! Pass Chapter ${chId - 1} or raise your adaptive level with correct answers.`
-        : `Глава ${chId} пока закрыта! Пройди Главу ${chId - 1} или отвечай верно подряд, чтобы поднять уровень сложности.`,
+        : (isKca
+          ? `Глава ${chId} пӑнтсы! Глава ${chId - 1} вєрэ аӆпа тәса ястӑты!`
+          : `Глава ${chId} пока закрыта! Пройди Главу ${chId - 1} или отвечай верно подряд, чтобы поднять уровень сложности.`),
       'warn',
       3400
     );
@@ -1839,12 +1902,13 @@ function renderCurrentCard(animateEntrance = false) {
   const adaptBadge = document.getElementById('card-adapt-badge');
   if (adaptBadge) {
     const isEn = state.lang === 'en';
+    const isKca = state.lang === 'kca';
     if (supportApplied) {
       adaptBadge.className = 'inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-[3px] bg-[#ecfdf5] border-2 border-[#16a34a] text-[#15803d] text-[11px] sm:text-xs font-bold';
-      adaptBadge.textContent = isEn ? '↓ Adaptive Help ON' : '↓ Помощь (проще)';
+      adaptBadge.textContent = isEn ? '↓ Adaptive Help ON' : (isKca ? '↓ Нётты вєр' : '↓ Помощь (проще)');
     } else if (state.adaptiveLevel >= 3) {
       adaptBadge.className = 'inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-[3px] bg-[#ede9fe] border-2 border-[#7c3aed] text-[#5b21b6] text-[11px] sm:text-xs font-bold';
-      adaptBadge.textContent = isEn ? '↑ Pro Mode (3/3)' : '↑ Уровень Профи (3/3)';
+      adaptBadge.textContent = isEn ? '↑ Pro Mode (3/3)' : (isKca ? '↑ Профи (3/3)' : '↑ Уровень Профи (3/3)');
     } else {
       adaptBadge.className = 'hidden';
       adaptBadge.textContent = '';
@@ -1973,7 +2037,7 @@ function renderCurrentCard(animateEntrance = false) {
     if (!nextTarget) {
       nextLblEl.textContent = t('to_results');
     } else if (nextTarget.reason === 'review') {
-      nextLblEl.textContent = state.lang === 'en' ? 'Retry missed card' : 'Закрепить задание';
+      nextLblEl.textContent = state.lang === 'en' ? 'Retry missed card' : (state.lang === 'kca' ? 'Иӆпийн вєрты' : 'Закрепить задание');
     } else {
       nextLblEl.textContent = t('next_card');
     }
@@ -1988,6 +2052,10 @@ function renderCurrentCard(animateEntrance = false) {
     nextBtn.classList.toggle('hidden', !canGoNext);
   } else {
     fb.classList.add('hidden');
+    const fbTitle = document.getElementById('card-feedback-title');
+    const fbText = document.getElementById('card-feedback-text');
+    if (fbTitle) fbTitle.textContent = '';
+    if (fbText) fbText.textContent = '';
     retryBtn.classList.add('hidden');
     nextBtn.classList.add('hidden');
     // в choice и truefalse проверка сразу по клику, в остальных по кнопке
@@ -2244,8 +2312,10 @@ function updateMascot(mood = 'idle', speechText = '', animate = true) {
     else bubble.classList.add('border-[#cfe0f5]');
   }
 
+  // на небольших экранах и в режиме урока не перекрываем облачком кнопки и текст
+  const inCompactViewport = window.innerWidth < 1440 && state.cardsViewMode === 'play';
   if (animate) {
-    if (bubble && window.innerWidth >= 640) bubble.classList.remove('hidden');
+    if (bubble && window.innerWidth >= 640 && !inCompactViewport) bubble.classList.remove('hidden');
     avatar.classList.remove('yugorka-float', 'yugorka-jump', 'yugorka-oops');
     void avatar.offsetWidth;
     if (mood === 'happy') {
@@ -2279,14 +2349,29 @@ function petYugorka() {
   updateMascot('happy', msg, true);
 }
 
+function clampHeroToViewport() {
+  const host = document.getElementById('floating-steve');
+  if (!host || (!host.style.right && !host.style.bottom)) return;
+  const curR = parseFloat(host.style.right);
+  const curB = parseFloat(host.style.bottom);
+  if (!Number.isFinite(curR) || !Number.isFinite(curB)) return;
+  const w = host.offsetWidth || 100;
+  const h = host.offsetHeight || 100;
+  const maxR = Math.max(8, window.innerWidth - w - 8);
+  const maxB = Math.max(8, window.innerHeight - h - 8);
+  host.style.right = `${Math.max(8, Math.min(maxR, curR))}px`;
+  host.style.bottom = `${Math.max(8, Math.min(maxB, curB))}px`;
+}
+
 function toggleSteveBubble() {
   const bubble = document.getElementById('yugorka-bubble');
   if (!bubble) return;
   bubble.classList.toggle('hidden');
+  clampHeroToViewport();
   SoundFX.playPick();
 }
 
-// перетаскивание персонажа мышкой и пальцем
+// перетаскивание персонажа мышкой и пальцем с привязкой к bottom/right (облачко никогда не выталкивает героя за экран)
 function initDraggableSteve() {
   const host = document.getElementById('floating-steve');
   const handle = document.getElementById('steve-drag-handle');
@@ -2298,22 +2383,18 @@ function initDraggableSteve() {
     bubble.classList.add('hidden');
   }
 
-  // если окно сжали — возвращаем персонажа внутрь экрана
+  // при сужении окна сворачиваем облачко на мобилке и удерживаем героя внутри экрана
   window.addEventListener('resize', () => {
-    if (host.style.left && host.style.top) {
-      const maxL = Math.max(8, window.innerWidth - host.offsetWidth - 8);
-      const maxT = Math.max(8, window.innerHeight - host.offsetHeight - 8);
-      const curL = parseFloat(host.style.left) || 8;
-      const curT = parseFloat(host.style.top) || 8;
-      host.style.left = Math.max(8, Math.min(maxL, curL)) + 'px';
-      host.style.top = Math.max(8, Math.min(maxT, curT)) + 'px';
+    if (bubble && window.innerWidth < 640) {
+      bubble.classList.add('hidden');
     }
+    clampHeroToViewport();
   });
 
   let dragging = false;
   let moved = false;
   let startX = 0, startY = 0;
-  let origLeft = 0, origTop = 0;
+  let origRight = 16, origBottom = 16;
 
   handle.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button !== 0) return;
@@ -2322,13 +2403,8 @@ function initDraggableSteve() {
     const rect = host.getBoundingClientRect();
     startX = e.clientX;
     startY = e.clientY;
-    origLeft = rect.left;
-    origTop = rect.top;
-    host.style.left = `${origLeft}px`;
-    host.style.top = `${origTop}px`;
-    host.style.right = 'auto';
-    host.style.bottom = 'auto';
-    host.classList.add('is-dragging');
+    origRight = Math.max(8, window.innerWidth - rect.right);
+    origBottom = Math.max(8, window.innerHeight - rect.bottom);
     try { handle.setPointerCapture(e.pointerId); } catch (err) {}
   });
 
@@ -2336,17 +2412,22 @@ function initDraggableSteve() {
     if (!dragging) return;
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
-    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) moved = true;
+    if (!moved && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+      moved = true;
+      host.classList.add('is-dragging');
+      host.style.left = 'auto';
+      host.style.top = 'auto';
+    }
     if (!moved) return;
 
     const w = host.offsetWidth || 100;
     const h = host.offsetHeight || 100;
-    const maxL = Math.max(8, window.innerWidth - w - 8);
-    const maxT = Math.max(8, window.innerHeight - h - 8);
-    const nextL = Math.min(maxL, Math.max(8, origLeft + dx));
-    const nextT = Math.min(maxT, Math.max(8, origTop + dy));
-    host.style.left = `${nextL}px`;
-    host.style.top = `${nextT}px`;
+    const maxR = Math.max(8, window.innerWidth - w - 8);
+    const maxB = Math.max(8, window.innerHeight - h - 8);
+    const nextR = Math.min(maxR, Math.max(8, origRight - dx));
+    const nextB = Math.min(maxB, Math.max(8, origBottom - dy));
+    host.style.right = `${nextR}px`;
+    host.style.bottom = `${nextB}px`;
   });
 
   const endDrag = (e) => {
@@ -2358,22 +2439,24 @@ function initDraggableSteve() {
     if (moved) {
       SoundFX.playDrop();
       const dragLines = t('yugorka_drag');
-      const bubble = document.getElementById('yugorka-bubble');
       if (bubble) bubble.classList.remove('hidden');
       updateMascot('idle', dragLines[Math.floor(Math.random() * dragLines.length)], true);
+      clampHeroToViewport();
     } else {
       petYugorka();
+      clampHeroToViewport();
     }
   };
 
   handle.addEventListener('pointerup', endDrag);
   handle.addEventListener('pointercancel', endDrag);
 
-  // легкий поворот всей карточки персонажа (рамка + имя вместе) за курсором и блик на очках
+  // легкий поворот всей карточки персонажа (рамка + имя вместе) за курсором и блик на очках (только на ПК)
   window.addEventListener('mousemove', (e) => {
+    if (window.innerWidth < 768 || dragging) return;
     const avatar = document.getElementById('yugorka-avatar');
     const cardBox = handle.firstElementChild;
-    if (!avatar || !cardBox || dragging) return;
+    if (!avatar || !cardBox) return;
     const r = handle.getBoundingClientRect();
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
@@ -2508,7 +2591,10 @@ function inspectLootItem(cardId, unlocked, loot) {
 
 const STUDIO_VOICED_CARDS = new Set([
   'card_game_scam', 'card_password_tf', 'card_personal_sort', 'card_bullying_choice',
-  'card_phishing_match', 'card_hacked_order', 'card_shopping_tf', 'card_domains_match'
+  'card_phishing_match', 'card_hacked_order', 'card_shopping_tf', 'card_domains_match',
+  'card_craft_account', 'card_qr_choice', 'card_wifi_tf', 'card_apk_choice',
+  'card_vote_choice', 'card_deepfake_choice', 'card_geotag_sort', 'card_2fa_order',
+  'card_craft_phone', 'card_craft_boss'
 ]);
 
 function updateReadAloudAvailability() {
@@ -2820,8 +2906,10 @@ function evaluatePasswordLab() {
   let score = 0; // 0..4
   let seconds = 0.01;
   let extraWarning = '';
+  let usedZxcvbn = false;
 
   if (typeof window.zxcvbn === 'function') {
+    usedZxcvbn = true;
     const z = window.zxcvbn(val, ZXCVBN_RU_WORDS);
     score = z.score;
     // используем offline_slow_hashing_1e4_per_second (bcrypt/Argon2) — именно по ней zxcvbn считает score 0..4
@@ -2830,7 +2918,7 @@ function evaluatePasswordLab() {
       : 0.01;
     extraWarning = translateZxcvbnFeedback(z, isEn);
   } else {
-    // офлайн-фолбэк если cdn zxcvbn недоступен (честная энтропия без грубых запретов)
+    // офлайн-фолбэк если zxcvbn недоступен (честная энтропия без грубых запретов)
     let pool = 0;
     if (/[a-z]/.test(val)) pool += 26;
     if (/[A-Z]/.test(val)) pool += 26;
@@ -2850,34 +2938,37 @@ function evaluatePasswordLab() {
     else score = 4;
   }
 
+  const isKca = state.lang === 'kca';
   const timeTxt = formatCrackSeconds(seconds, isEn);
   let lvlTxt = '', commentTxt = '', pct = 15, barCls = 'danger-meter-bar', badgeCls = 'bg-[#fee2e2] text-cgy-err';
 
   if (score <= 0) {
-    lvlTxt = isEn ? 'Very Weak (0/4)' : 'Очень слабый (0/4)';
+    lvlTxt = isEn ? 'Very Weak (0/4)' : (isKca ? 'Ӑн тӑк (0/4)' : 'Очень слабый (0/4)');
     commentTxt = extraWarning || (isEn ? 'Cracked almost instantly! Try a longer combination without common words.' : 'Взломают почти мгновенно! Сделай пароль длиннее и без простых слов.');
     pct = 14;
   } else if (score === 1) {
-    lvlTxt = isEn ? 'Weak (1/4)' : 'Слабый (1/4)';
+    lvlTxt = isEn ? 'Weak (1/4)' : (isKca ? 'Кєв ӑнтєм (1/4)' : 'Слабый (1/4)');
     commentTxt = extraWarning || (isEn ? 'Too easy for modern wordlists. Add length and unpredictable characters.' : 'Слишком лёгкий для словарей взломщиков. Увеличь длину и убери частые слова.');
     pct = 34;
     barCls = 'bg-[#f97316]';
     badgeCls = 'bg-[#ffedd5] text-[#c2410c]';
   } else if (score === 2) {
-    lvlTxt = isEn ? 'Fair (2/4)' : 'Средний (2/4)';
+    lvlTxt = isEn ? 'Fair (2/4)' : (isKca ? 'Кәтӆ (2/4)' : 'Средний (2/4)');
     commentTxt = extraWarning || (isEn ? 'Okay for minor sites, but add 2–3 random symbols to make it strong.' : 'Неплохо, но для важного аккаунта добавь ещё 2–3 случайных символа или слово.');
     pct = 58;
     barCls = 'bg-[#f59e0b]';
     badgeCls = 'bg-[#fef3c7] text-[#b45309]';
   } else if (score === 3) {
-    lvlTxt = isEn ? 'Strong (3/4)' : 'Надёжный (3/4)';
+    lvlTxt = isEn ? 'Strong (3/4)' : (isKca ? 'Тӑк (3/4)' : 'Надёжный (3/4)');
     commentTxt = extraWarning || (isEn ? 'Strong password! Hard to crack even with offline brute-force.' : 'Надёжный пароль — обычным подбором его уже не взять!');
     pct = 82;
     barCls = 'bg-[#22c55e]';
     badgeCls = 'bg-[#dcfce7] text-[#15803d]';
   } else {
-    lvlTxt = isEn ? 'Diamond Shield (4/4)' : 'Алмазная защита (4/4)';
-    commentTxt = extraWarning || (isEn ? 'Top zxcvbn score! Very resistant to both dictionary and brute-force attacks.' : 'Максимальная оценка zxcvbn (4/4)! Отлично держит и словари, и перебор.');
+    lvlTxt = isEn ? 'Diamond Shield (4/4)' : (isKca ? 'Алмаз ӆавӑӆты (4/4)' : 'Алмазная защита (4/4)');
+    commentTxt = extraWarning || (usedZxcvbn
+      ? (isEn ? 'Top zxcvbn score! Very resistant to both dictionary and brute-force attacks.' : 'Максимальная оценка zxcvbn (4/4)! Отлично держит и словари, и перебор.')
+      : (isEn ? 'Maximum strength score (4/4)! High entropy and strong resistance to brute-force.' : 'Максимальная стойкость (4/4)! Высокая энтропия — перебором не взломать.'));
     pct = 100;
     barCls = 'bg-gradient-to-r from-[#1e5aa8] via-[#06b6d4] to-[#16a34a]';
     badgeCls = 'bg-[#cffafe] text-[#0e7490]';
@@ -2963,9 +3054,10 @@ function inspectClue(clueId) {
   const totalClues = card.clues.length;
   const foundNow = state.cardDraft.foundClues.length;
   const isEn = state.lang === 'en';
+  const isKca = state.lang === 'kca';
   showMcAdvancement(
-    isEn ? 'Clue Found!' : (state.lang === 'kca' ? 'Улика кӑншсы!' : 'Улика найдена!'),
-    isEn ? `Evidence (${foundNow}/${totalClues})` : `Найдено ${foundNow} из ${totalClues}`,
+    isEn ? 'Clue Found!' : (isKca ? 'Улика кӑншсы!' : 'Улика найдена!'),
+    isEn ? `Evidence (${foundNow}/${totalClues})` : (isKca ? `Кӑншсы: ${foundNow} / ${totalClues}` : `Найдено ${foundNow} из ${totalClues}`),
     'spyglass'
   );
 
@@ -3774,11 +3866,12 @@ function renderCraftTask(card, container, isEvaluated) {
   const bench = document.createElement('div');
   bench.className = 'craft-bench lg:col-span-6 p-3.5 sm:p-5 flex flex-col gap-3';
 
+  const isKca = state.lang === 'kca';
   const hdr = document.createElement('div');
   hdr.className = 'flex items-center justify-between gap-2';
   hdr.innerHTML = `
     <span class="font-pixel text-sm sm:text-base font-bold text-[#3f3f3f]">
-      ${isEn ? 'Crafting' : 'Создание'}
+      ${isEn ? 'Crafting' : (isKca ? 'Вєрты' : 'Создание')}
     </span>
     <span class="font-pixel text-xs font-bold px-2 py-0.5 rounded-[2px] ${ready ? 'bg-[#dcfce7] text-[#14532d] border-2 border-[#16a34a]' : 'bg-[#8b8b8b] text-white border-2 border-[#373737]'} tabular-nums">
       ${selected.length} / ${need}
@@ -3858,8 +3951,8 @@ function renderCraftTask(card, container, isEvaluated) {
   const foot = document.createElement('div');
   foot.className = 'flex items-center justify-between gap-2 pt-1 border-t-2 border-[#a8a8a8] text-xs font-bold text-[#3f3f3f]';
   foot.innerHTML = `
-    <span>${isEn ? 'Recipe:' : 'Рецепт:'} ${L((card.craftTarget && card.craftTarget.name) || { ru: 'Кибер-Щит', en: 'Cyber Shield', kca: 'Щит' })}</span>
-    <span class="text-[11px] opacity-80">${isEn ? 'Tap slot to remove' : 'Клик по слоту убирает блок'}</span>
+    <span>${isEn ? 'Recipe:' : (isKca ? 'Рецепт:' : 'Рецепт:')} ${L((card.craftTarget && card.craftTarget.name) || { ru: 'Кибер-Щит', en: 'Cyber Shield', kca: 'Щит' })}</span>
+    <span class="text-[11px] opacity-80">${isEn ? 'Tap slot to remove' : (isKca ? 'Слот пириэ — вўӆты' : 'Клик по слоту убирает блок')}</span>
   `;
   bench.appendChild(foot);
   wrap.appendChild(bench);
@@ -3871,7 +3964,9 @@ function renderCraftTask(card, container, isEvaluated) {
   pickHdr.className = 'text-xs sm:text-sm font-bold text-cgy-accent';
   pickHdr.textContent = isEn
     ? `Pick ${need} right defense blocks (tap to place/remove):`
-    : `Выбери ${need} правильных блока защиты (нажми, чтобы положить или убрать):`;
+    : (isKca
+      ? `${need} тәса ӆавӑӆты блок пириэ:`
+      : `Выбери ${need} правильных блока защиты (нажми, чтобы положить или убрать):`);
   picker.appendChild(pickHdr);
 
   const list = document.createElement('div');
@@ -3892,7 +3987,7 @@ function renderCraftTask(card, container, isEvaluated) {
     btn.innerHTML = `
       ${getLootPixelSvg(ing.icon || 'shield', 'w-7 h-7')}
       <span class="flex-1 min-w-0 leading-snug break-words">${L(ing.label)}</span>
-      ${isLocked ? `<span class="px-1.5 py-0.5 rounded-[2px] bg-[#eff6ff] border border-[#93c5fd] text-[10px] font-bold text-cgy-accent shrink-0">${isEn ? 'Hint' : 'Пример'}</span>` : ''}
+      ${isLocked ? `<span class="px-1.5 py-0.5 rounded-[2px] bg-[#eff6ff] border border-[#93c5fd] text-[10px] font-bold text-cgy-accent shrink-0">${isEn ? 'Hint' : (isKca ? 'Нётты' : 'Пример')}</span>` : ''}
       ${isPicked && !isLocked && !isEvaluated ? '<i data-lucide="check" class="w-4 h-4 text-cgy-accent shrink-0"></i>' : ''}
     `;
     if (!isEvaluated && !isLocked) {
@@ -4022,11 +4117,14 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
 
   // сообщаем о срабатывании динамической сложности и открытии новых биомов
   const isEn = state.lang === 'en';
+  const isKca = state.lang === 'kca';
   if (isCorrect && state.adaptiveLevel > prevLevel) {
     showToast(
       isEn
         ? `Adaptive difficulty ↑ Level ${state.adaptiveLevel}/3!`
-        : `Сложность повышена ↑ Уровень ${state.adaptiveLevel}/3!`,
+        : (isKca
+          ? `Уровень ↑ ${state.adaptiveLevel}/3!`
+          : `Сложность повышена ↑ Уровень ${state.adaptiveLevel}/3!`),
       'success',
       2800
     );
@@ -4034,15 +4132,17 @@ function evaluateCardResult(card, isCorrect, extra = {}) {
     showToast(
       isEn
         ? `Difficulty lowered ↓ Level ${state.adaptiveLevel}/3 + Adaptive Help enabled!`
-        : `Сложность снижена ↓ Уровень ${state.adaptiveLevel}/3 — включена адаптивная помощь!`,
+        : (isKca
+          ? `Уровень ↓ ${state.adaptiveLevel}/3 — нётты вєр пуншсы!`
+          : `Сложность снижена ↓ Уровень ${state.adaptiveLevel}/3 — включена адаптивная помощь!`),
       'warn',
       3200
     );
   }
   if (!wasCh2Open && isChapterUnlocked(2)) {
-    setTimeout(() => showToast(isEn ? 'Biome Unlocked: Phishing Cave!' : 'Открыта Глава 2: Пещера Фишинга!', 'success', 3200), 600);
+    setTimeout(() => showToast(isEn ? 'Biome Unlocked: Phishing Cave!' : (isKca ? 'Глава 2 пуншсы: Фишинг кєв!' : 'Открыта Глава 2: Пещера Фишинга!'), 'success', 3200), 600);
   } else if (!wasCh3Open && isChapterUnlocked(3)) {
-    setTimeout(() => showToast(isEn ? 'Biome Unlocked: Pro Citadel!' : 'Открыта Глава 3: Цитадель Профи!', 'success', 3200), 600);
+    setTimeout(() => showToast(isEn ? 'Biome Unlocked: Pro Citadel!' : (isKca ? 'Глава 3 пуншсы: Профи вош!' : 'Открыта Глава 3: Цитадель Профи!'), 'success', 3200), 600);
   }
 
   // сохраняем точку в историю когда пройдены все карточки
@@ -4216,6 +4316,7 @@ function getLocalizedScenario(baseSc) {
 
   const sc = {
     ...baseSc,
+    avatarText: pack.avatarText || baseSc.avatarText,
     title: pack.title || baseSc.title,
     shortTitle: pack.shortTitle || baseSc.shortTitle,
     preview: pack.preview || baseSc.preview,
@@ -4853,7 +4954,7 @@ function handleChatChoice(sc, choice, choiceIdx) {
   renderChatList();
 
   if (choice.fail) {
-    setChatChoicesDisabled('Обработка...');
+    setChatChoicesDisabled(state.lang === 'en' ? 'Processing...' : (state.lang === 'kca' ? 'Вєрӆ...' : 'Обработка...'));
     const t = setTimeout(() => triggerFailScreen(choice.fail, sc.id), 300);
     state.typingTimers.push(t);
     return;
@@ -6090,7 +6191,7 @@ async function downloadCertificatePNG() {
 
   SoundFX.playAchievement();
   showMcAdvancement(
-    isEn ? 'Diploma Saved!' : 'Сертификат сохранён!',
+    isEn ? 'Diploma Saved!' : (isKca ? 'Диплом пунсы!' : 'Сертификат сохранён!'),
     userName,
     'star'
   );

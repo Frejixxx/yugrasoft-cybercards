@@ -154,6 +154,7 @@ const SCENARIO_I18N = {
     },
 
     blogger: {
+      avatarText: 'VL',
       title: 'Vika Lime',
       shortTitle: 'Blogger with fake checkmark',
       preview: 'Hiii!! I’m texting giveaway winners myself — you won an iPhone 16 Pro...',
@@ -316,6 +317,7 @@ const SCENARIO_I18N = {
     },
 
     friend: {
+      avatarText: 'MK',
       title: 'Max (Classmate)',
       shortTitle: 'Hacked friend + AI voice',
       preview: 'Bro, hey! Help me out urgently, lend me 1500 ₽ till tonight...',
@@ -447,6 +449,7 @@ const SCENARIO_I18N = {
     },
 
     mom: {
+      avatarText: 'MO',
       title: 'Mom',
       shortTitle: 'Normal chat (stay calm check)',
       preview: 'Hi! How was school? Can you grab bread on your way home?',
@@ -496,6 +499,7 @@ const SCENARIO_I18N = {
     },
 
     dropper: {
+      avatarText: 'AR',
       title: 'Artem | Jobs 86',
       shortTitle: 'Easy cash trap (money mule)',
       preview: 'Hey! Want an easy after-school job? 4000 ₽ a day...',
@@ -585,6 +589,7 @@ const SCENARIO_I18N = {
     },
 
     gosuslugi: {
+      avatarText: 'GS',
       title: 'Gosuslugi | Security',
       shortTitle: 'Fake support / Gosuslugi',
       preview: 'URGENT! Unauthorized login detected on your Gosuslugi account...',
@@ -695,6 +700,7 @@ const SCENARIO_I18N = {
     },
 
     director: {
+      avatarText: 'EV',
       title: 'Elena Viktorovna (Vice Principal)',
       shortTitle: 'Fake teacher / "secret check"',
       preview: 'Hello! Our school is having an urgent inspection from the Department...',
@@ -796,7 +802,7 @@ const SCENARIO_I18N = {
     skins: {
       title: 'CS2 & Standoff Дроп',
       shortTitle: 'Вух ӆыпи скинӑт / донат',
-      preview: 'Вўща! Нӑӊэн скин-нож выпал. 15 минутайн вўэ...',
+      preview: 'Вўща! Нӑӊэн скин-нож мӑсы. 15 минутайн вўэ...',
       callBehavior: {
         statusText: 'Бота телефонӑн вохты ӑн рӑхӆ',
         note: 'Щит автомат бот — телефонӑн вәньщты ӑн рӑхӆ.'
@@ -1086,7 +1092,7 @@ const SCENARIO_I18N = {
     },
 
     friend: {
-      title: 'Макс (одноклассник)',
+      title: 'Макс (класс юр)',
       shortTitle: 'Взлом юр + дипфейк',
       preview: 'Бро, вўща! 1500 ₽ щимӑщ китэ...',
       callBehavior: {
