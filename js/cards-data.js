@@ -396,9 +396,9 @@ const DEFAULT_CARDS = [
       kind: 'alert_banner',
       title: { ru: 'Уведомление безопасности', en: 'Security Alert', kca: 'Ӆавӑӆты нєпек' },
       text: {
-        ru: 'Обнаружен вход в ваш аккаунт с неизвестного устройства (другой город).',
-        en: 'New login detected from an unknown device (another city).',
-        kca: 'Йиӆуп телефон эвӑӆт нӑӊ аккаунтэна ӆәӊсы.'
+        ru: 'Обнаружен вход в ваш аккаунт с неизвестного устройства (другой город)',
+        en: 'New login detected from an unknown device (another city)',
+        kca: 'Йиӆуп телефон эвӑӆт нӑӊ аккаунтэна ӆәӊсы'
       }
     },
     type: 'order',
@@ -607,9 +607,9 @@ const DEFAULT_CARDS = [
     type: 'craft',
     level: 2,
     topic: 'password',
-    topicLabel: { ru: 'Кибер-верстак', en: 'Cyber Crafting', kca: 'Кибер-верстак' },
+    topicLabel: { ru: 'Защита аккаунта', en: 'Account Defense', kca: 'Аккаунт ӆавӑӆты' },
     loot: {
-      icon: 'shield',
+      icon: 'helmet',
       name: { ru: 'Щит Аккаунта', en: 'Account Shield', kca: 'Аккаунт щит' },
       desc: { ru: 'Скрафтил надёжную защиту для профиля!', en: 'Crafted strong protection for your profile!', kca: 'Аккаунт пӑта тӑк щит вєрӑн!' }
     },
@@ -656,7 +656,7 @@ const DEFAULT_CARDS = [
     topic: 'phishing',
     topicLabel: { ru: 'QR-фишинг', en: 'QR Phishing', kca: 'QR-фишинг' },
     loot: {
-      icon: 'spyglass',
+      icon: 'compass',
       name: { ru: 'Сканер QR', en: 'QR Scanner', kca: 'QR сканер' },
       desc: { ru: 'Умеет отличать поддельные QR-наклейки!', en: 'Spots fake QR code stickers!', kca: 'Ӑн тәса QR-кодӑт вәӆ!' }
     },
@@ -717,7 +717,7 @@ const DEFAULT_CARDS = [
     topic: 'phishing',
     topicLabel: { ru: 'Открытый Wi-Fi', en: 'Public Wi-Fi', kca: 'Публичной Wi-Fi' },
     loot: {
-      icon: 'armor',
+      icon: 'beacon',
       name: { ru: 'Щит Трафика', en: 'Traffic Armor', kca: 'Трафик щит' },
       desc: { ru: 'Не вводит пароли и карты в чужом открытом Wi-Fi!', en: 'Never types passwords or cards on open public Wi-Fi!', kca: 'Йиӆуп Wi-Fi-ӑн пароль ӑн хӑншӆ!' }
     },
@@ -773,7 +773,7 @@ const DEFAULT_CARDS = [
     topic: 'game',
     topicLabel: { ru: 'Вирусы и моды', en: 'Malware & Mods', kca: 'Вирусӑт' },
     loot: {
-      icon: 'emerald',
+      icon: 'potion',
       name: { ru: 'Антивирус-Изумруд', en: 'Antivirus Emerald', kca: 'Антивирус' },
       desc: { ru: 'Не качает подозрительные .apk читы из чатов!', en: 'Never installs shady .apk cheats from chats!', kca: 'Ӑтӑм .apk файлӑт ӑн вўӆ!' }
     },
@@ -834,7 +834,7 @@ const DEFAULT_CARDS = [
     topic: 'phishing',
     topicLabel: { ru: 'Угон мессенджера', en: 'Account Hijack', kca: 'Чат ӆӑӆьмӑты' },
     loot: {
-      icon: 'book',
+      icon: 'scroll',
       name: { ru: 'Кодекс Чатов', en: 'Chat Codex', kca: 'Потӑр книга' },
       desc: { ru: 'Знает ловушку «Проголосуй за племянницу»!', en: 'Knows the "Vote for my niece" hijack trap!', kca: '«Голосование» мошенник вєр вәӆ!' }
     },
@@ -895,7 +895,7 @@ const DEFAULT_CARDS = [
     topic: 'hacked',
     topicLabel: { ru: 'ИИ-дипфейк', en: 'AI Deepfake', kca: 'ИИ-дипфейк' },
     loot: {
-      icon: 'heart',
+      icon: 'bell',
       name: { ru: 'Детектор Голоса', en: 'Voice Detector', kca: 'Голос вәтты' },
       desc: { ru: 'Не ведётся на поддельные голосовые нейросети!', en: 'Spots AI-cloned voice scams!', kca: 'ИИ-голос мошенникӑт вәӆ!' }
     },
@@ -955,7 +955,7 @@ const DEFAULT_CARDS = [
     topic: 'privacy',
     topicLabel: { ru: 'Безопасные фото', en: 'Safe Photos', kca: 'Фото ӆавӑӆты' },
     loot: {
-      icon: 'chest',
+      icon: 'map',
       name: { ru: 'Сейф Фото', en: 'Photo Vault', kca: 'Фото сундук' },
       desc: { ru: 'Не палит свой адрес и школу на фотографиях!', en: 'Never leaks home address or school in photos!', kca: 'Фото эвӑӆт хот адрес ӑн китӆ!' }
     },
@@ -1001,7 +1001,7 @@ const DEFAULT_CARDS = [
     topic: 'password',
     topicLabel: { ru: 'Защита 2FA', en: '2FA Setup', kca: '2FA ӆавӑӆты' },
     loot: {
-      icon: 'key',
+      icon: 'padlock',
       name: { ru: 'Ключ 2FA', en: '2FA Master Key', kca: '2FA ключ' },
       desc: { ru: 'Умеет настраивать двухфакторную защиту!', en: 'Knows how to set up two-factor security!', kca: '2FA тәса вєрты вәӆ!' }
     },
@@ -1039,9 +1039,9 @@ const DEFAULT_CARDS = [
     type: 'craft',
     level: 3,
     topic: 'privacy',
-    topicLabel: { ru: 'Кибер-верстак', en: 'Cyber Crafting', kca: 'Кибер-верстак' },
+    topicLabel: { ru: 'Защита смартфона', en: 'Phone Security', kca: 'Телефон ӆавӑӆты' },
     loot: {
-      icon: 'armor',
+      icon: 'phone',
       name: { ru: 'Броня Смартфона', en: 'Phone Armor', kca: 'Телефон броня' },
       desc: { ru: 'Скрафтил идеальную настройку смартфона!', en: 'Crafted the ultimate phone security setup!', kca: 'Телефон пӑта тӑк броня вєрӑн!' }
     },

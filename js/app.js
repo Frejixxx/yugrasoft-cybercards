@@ -167,6 +167,7 @@ const I18N = {
     match_drag_hint: 'Соедини ситуацию с правильным ответом:',
     drop_here: 'Перетащи сюда',
     streak_label: 'Серия',
+    open_incoming_sms: 'Открыть пришедшее SMS',
     call_calling: 'Вызов...',
     call_end: 'Завершить',
     sms_title: 'Сообщения (SMS)',
@@ -360,6 +361,7 @@ const I18N = {
     match_drag_hint: 'Match each situation with the right answer:',
     drop_here: 'Drop here',
     streak_label: 'Streak',
+    open_incoming_sms: 'Open incoming SMS',
     call_calling: 'Calling...',
     call_end: 'End Call',
     sms_title: 'Messages (SMS)',
@@ -547,6 +549,7 @@ const I18N = {
     match_drag_hint: 'Хӑӆ пєӆӑк вєр ем пєӆӑк ястӑпсыйн вўсэ (аӆпа пириэ):',
     drop_here: 'Тӑта пунэ',
     streak_label: 'Серия',
+    open_incoming_sms: 'Открыть пришедшее SMS',
     call_calling: 'Телефон вохӆ...',
     call_end: 'Пӑнтты',
     sms_title: 'Нєпекӑт (SMS)',
@@ -1018,6 +1021,10 @@ function applyLanguageUI() {
     const key = el.getAttribute('data-i18n');
     el.textContent = t(key);
   });
+  const stEl = document.getElementById('streak-text');
+  if (stEl) stEl.textContent = `${t('streak_label')}: ${state.streak || 0}`;
+  const mstEl = document.getElementById('map-streak-text');
+  if (mstEl) mstEl.textContent = `${t('streak_label')}: ${state.streak || 0}`;
   updateHeaderProfileUI();
 }
 
@@ -1308,21 +1315,21 @@ function renderBiomeTabs() {
     const unlocked = isChapterUnlocked(ch.id);
     return `
       <button type="button" onclick="selectBiomeChapter(${ch.id})"
-        class="biome-tab ${isAct ? 'active' : ''} ${!unlocked ? 'is-locked' : ''} px-3 py-2.5 text-left flex items-center justify-between gap-2.5">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <div class="w-8 h-8 rounded-[3px] flex items-center justify-center shrink-0 border-2 ${
+        class="biome-tab ${isAct ? 'active' : ''} ${!unlocked ? 'is-locked' : ''} px-2.5 lg:px-3 py-2 lg:py-2.5 text-left flex items-center justify-between gap-1.5 lg:gap-2.5">
+        <div class="flex items-center gap-2 lg:gap-2.5 min-w-0">
+          <div class="w-7 h-7 lg:w-8 lg:h-8 rounded-[3px] flex items-center justify-center shrink-0 border-2 ${
             !unlocked
               ? 'bg-slate-200 border-slate-400 text-slate-500'
               : (isAct ? 'bg-white/20 border-white/40 text-white' : (allOk ? 'bg-[#e9f6ec] border-[#1e7e34] text-[#1e7e34]' : 'bg-[#eef5ff] border-[#93c5fd] text-cgy-accent'))
           }">
-            <i data-lucide="${!unlocked ? 'lock' : (allOk ? 'check-circle-2' : ch.icon)}" class="w-4 h-4"></i>
+            <i data-lucide="${!unlocked ? 'lock' : (allOk ? 'check-circle-2' : ch.icon)}" class="w-3.5 h-3.5 lg:w-4 lg:h-4"></i>
           </div>
           <div class="min-w-0">
-            <div class="font-pixel text-xs sm:text-sm font-bold leading-tight truncate">${ch.id}. ${L(ch.title)}</div>
-            <div class="biome-sub text-[11px] font-semibold text-cgy-muted truncate mt-0.5">${L(ch.sub)}</div>
+            <div class="font-pixel text-xs lg:text-sm font-bold leading-tight truncate">${ch.id}. ${L(ch.title)}</div>
+            <div class="biome-sub text-[10.5px] lg:text-[11px] font-semibold text-cgy-muted truncate mt-0.5">${L(ch.sub)}</div>
           </div>
         </div>
-        <span class="biome-pill px-2 py-0.5 rounded-[3px] text-xs font-pixel font-bold border tabular-nums shrink-0 ${
+        <span class="biome-pill px-1.5 lg:px-2 py-0.5 rounded-[3px] text-[11px] lg:text-xs font-pixel font-bold border tabular-nums shrink-0 ${
           !unlocked
             ? 'bg-slate-200 text-slate-500 border-slate-300'
             : (allOk ? 'bg-[#e9f6ec] text-[#1e7e34] border-[#86efac]' : 'bg-[#f1f5f9] text-cgy-accent border-[#cbd5e1]')
@@ -1580,6 +1587,17 @@ function renderBiomePathMap() {
         rowEl.appendChild(connWrap);
       }
     });
+    // добиваем неполный ряд (например 7-я карточка из конструктора) пустыми колонками на ПК, чтобы карточка не растягивалась на 100%
+    for (let pad = slice.length; pad < rowSize; pad++) {
+      const spConn = document.createElement('div');
+      spConn.className = 'hidden lg:block w-11 shrink-0';
+      spConn.setAttribute('aria-hidden', 'true');
+      rowEl.appendChild(spConn);
+      const spCell = document.createElement('div');
+      spCell.className = 'hidden lg:flex flex-1 min-w-0';
+      spCell.setAttribute('aria-hidden', 'true');
+      rowEl.appendChild(spCell);
+    }
 
     nodesBox.appendChild(rowEl);
   }
@@ -1611,6 +1629,31 @@ function openMissionFromMap(cardId) {
 function openNextMissionFromMap() {
   const activeCh = getActiveChapterId();
   const chCards = getChapterCards(activeCh);
+  const allChDone = chCards.length > 0 && chCards.every(c => state.cardResults[c.id] && state.cardResults[c.id].correct);
+
+  // если текущая глава уже полностью пройдена («Повторить главу») — сбрасываем ответы этой главы и запускаем заново с 1-й карточки
+  if (allChDone) {
+    chCards.forEach(c => {
+      delete state.cardResults[c.id];
+    });
+    state.cardDraft = {};
+    saveState();
+    updateAllProgressBadges();
+    const isEn = state.lang === 'en';
+    const isKca = state.lang === 'kca';
+    showToast(
+      isEn
+        ? `Chapter ${activeCh} restarted — let's go again!`
+        : (isKca
+          ? `Глава ${activeCh} иӆпийн пуншсы!`
+          : `Глава ${activeCh} сброшена — проходим заново!`),
+      'info',
+      2400
+    );
+    openMissionFromMap(chCards[0].id);
+    return;
+  }
+
   let target = chCards.find(c => isCardUnlocked(c) && !(state.cardResults[c.id] && state.cardResults[c.id].correct));
   if (!target) {
     // подбираем открытую непройденную миссию, ближайшую к текущему адаптивному уровню
@@ -1894,7 +1937,14 @@ function renderCurrentCard(animateEntrance = false) {
     <i data-lucide="${typeIcons[card.type] || 'check-square'}" class="w-3.5 h-3.5"></i>
     <span>${t('types')[card.type]}</span>
   `;
-  document.getElementById('card-topic-pill').textContent = L(card.topicLabel);
+  const topicPillEl = document.getElementById('card-topic-pill');
+  const topicTxt = L(card.topicLabel);
+  const typeTxt = t('types')[card.type] || '';
+  if (topicPillEl) {
+    const isDup = topicTxt.trim().toLowerCase() === typeTxt.trim().toLowerCase();
+    topicPillEl.classList.toggle('hidden', isDup);
+    topicPillEl.textContent = topicTxt;
+  }
   const lvl = card.level || 1;
   document.getElementById('card-diff-pill').textContent = `${'★'.repeat(lvl)}${'☆'.repeat(Math.max(0, 3 - lvl))}`;
 
@@ -2378,14 +2428,14 @@ function initDraggableSteve() {
   const bubble = document.getElementById('yugorka-bubble');
   if (!host || !handle) return;
 
-  // на телефоне сначала сворачиваем облачко чтобы не закрывало экран
-  if (bubble && window.innerWidth < 640) {
+  // на экранах < 1440px (ноутбуки, планшеты, мобилки) и в режиме embed сначала сворачиваем облачко, чтобы оно не перекрывало карточки на карте
+  if (bubble && (window.innerWidth < 1440 || document.body.classList.contains('embed-mode'))) {
     bubble.classList.add('hidden');
   }
 
-  // при сужении окна сворачиваем облачко на мобилке и удерживаем героя внутри экрана
+  // при сужении окна сворачиваем облачко и удерживаем героя внутри экрана
   window.addEventListener('resize', () => {
-    if (bubble && window.innerWidth < 640) {
+    if (bubble && window.innerWidth < 1024) {
       bubble.classList.add('hidden');
     }
     clampHeroToViewport();
@@ -2539,6 +2589,15 @@ function getLootPixelSvg(icon, sizeCls = 'w-8 h-8') {
     book: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="3" y="2" width="10" height="12" fill="#7c3aed"/><rect x="5" y="3" width="7" height="10" fill="#a78bfa"/><rect x="4" y="4" width="1" height="8" fill="#fde047"/><rect x="7" y="5" width="4" height="2" fill="#fef08a"/></svg>`,
     poppy: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="#ef4444"/><rect x="5" y="4" width="6" height="3" fill="#dc2626"/><rect x="7" y="4" width="2" height="2" fill="#450a0a"/><rect x="7" y="7" width="2" height="7" fill="#22c55e"/><rect x="5" y="9" width="2" height="2" fill="#16a34a"/><rect x="9" y="10" width="2" height="2" fill="#16a34a"/><rect x="6" y="13" width="4" height="2" fill="#15803d"/></svg>`,
     star: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="7" y="1" width="2" height="4" fill="#fde047"/><rect x="6" y="5" width="4" height="6" fill="#facc15"/><rect x="2" y="6" width="12" height="3" fill="#fbbf24"/><rect x="4" y="9" width="8" height="2" fill="#f59e0b"/><rect x="3" y="11" width="3" height="3" fill="#d97706"/><rect x="10" y="11" width="3" height="3" fill="#d97706"/><rect x="7" y="6" width="2" height="2" fill="#ffffff"/></svg>`,
+    helmet: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="3" y="3" width="10" height="4" fill="#22d3ee"/><rect x="2" y="5" width="12" height="6" fill="#06b6d4"/><rect x="4" y="7" width="8" height="4" fill="#0e7490"/><rect x="6" y="8" width="4" height="3" fill="#1e293b"/><rect x="5" y="4" width="6" height="2" fill="#a5f3fc"/></svg>`,
+    compass: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="4" y="2" width="8" height="12" fill="#64748b"/><rect x="2" y="4" width="12" height="8" fill="#64748b"/><rect x="4" y="4" width="8" height="8" fill="#e2e8f0"/><rect x="7" y="4" width="2" height="4" fill="#ef4444"/><rect x="7" y="8" width="2" height="4" fill="#1e5aa8"/><rect x="7" y="7" width="2" height="2" fill="#facc15"/></svg>`,
+    beacon: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="2" y="11" width="12" height="3" fill="#334155"/><rect x="3" y="3" width="10" height="8" fill="#bae6fd"/><rect x="5" y="5" width="6" height="6" fill="#0284c7"/><rect x="6" y="6" width="4" height="4" fill="#38bdf8"/><rect x="7" y="2" width="2" height="1" fill="#38bdf8"/></svg>`,
+    potion: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="#92400e"/><rect x="5" y="4" width="6" height="2" fill="#cbd5e1"/><rect x="3" y="6" width="10" height="8" fill="#86efac"/><rect x="4" y="7" width="8" height="6" fill="#22c55e"/><rect x="5" y="8" width="2" height="3" fill="#dcfce7"/></svg>`,
+    scroll: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="2" y="2" width="12" height="3" fill="#d97706"/><rect x="3" y="5" width="10" height="6" fill="#fef3c7"/><rect x="2" y="11" width="12" height="3" fill="#d97706"/><rect x="5" y="6" width="6" height="1" fill="#92400e"/><rect x="5" y="8" width="5" height="1" fill="#92400e"/></svg>`,
+    bell: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="2" fill="#b45309"/><rect x="4" y="4" width="8" height="6" fill="#facc15"/><rect x="3" y="10" width="10" height="2" fill="#eab308"/><rect x="7" y="12" width="2" height="2" fill="#92400e"/><rect x="5" y="5" width="2" height="4" fill="#fef9c3"/></svg>`,
+    map: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="2" y="2" width="12" height="12" fill="#d6b98c"/><rect x="3" y="3" width="10" height="10" fill="#fef3c7"/><rect x="4" y="4" width="4" height="4" fill="#4ade80"/><rect x="9" y="5" width="3" height="5" fill="#38bdf8"/><rect x="6" y="9" width="3" height="3" fill="#ef4444"/></svg>`,
+    padlock: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="5" y="2" width="6" height="2" fill="#f59e0b"/><rect x="4" y="4" width="2" height="3" fill="#f59e0b"/><rect x="10" y="4" width="2" height="3" fill="#f59e0b"/><rect x="3" y="7" width="10" height="7" fill="#d97706"/><rect x="4" y="8" width="8" height="5" fill="#fbbf24"/><rect x="7" y="9" width="2" height="3" fill="#78350f"/></svg>`,
+    phone: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="4" y="1" width="8" height="14" fill="#1e3a5f"/><rect x="5" y="3" width="6" height="9" fill="#38bdf8"/><rect x="6" y="4" width="4" height="3" fill="#e0f2fe"/><rect x="7" y="13" width="2" height="1" fill="#94a3b8"/></svg>`,
     workbench: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="1" y="1" width="14" height="14" fill="#6b4226"/><rect x="2" y="2" width="12" height="12" fill="#b07c4f"/><rect x="2" y="5" width="12" height="1" fill="#4e2e18"/><rect x="2" y="9" width="12" height="1" fill="#4e2e18"/><rect x="5" y="2" width="1" height="12" fill="#4e2e18"/><rect x="9" y="2" width="1" height="12" fill="#4e2e18"/><rect x="3" y="3" width="2" height="2" fill="#c99563"/><rect x="6" y="6" width="3" height="3" fill="#c99563"/><rect x="10" y="10" width="3" height="3" fill="#9a683f"/></svg>`,
     lock: `<svg viewBox="0 0 16 16" class="${sizeCls} shrink-0" shape-rendering="crispEdges"><rect x="5" y="2" width="6" height="2" fill="#9ca3af"/><rect x="4" y="4" width="2" height="4" fill="#9ca3af"/><rect x="10" y="4" width="2" height="4" fill="#9ca3af"/><rect x="3" y="7" width="10" height="7" fill="#6b7280"/><rect x="4" y="8" width="8" height="5" fill="#4b5563"/><rect x="7" y="9" width="2" height="3" fill="#1f2937"/></svg>`
   };
@@ -3464,14 +3523,14 @@ function createSortChipEl(item, currentBucket, isEvaluated, isSelected, cardRef 
     ${showMobileQuickBtns ? `
       <div class="grid grid-cols-2 gap-1.5 md:hidden pt-1 border-t border-slate-100">
         <button type="button" onclick="event.stopPropagation(); assignSortItem('${item.id}', 'safe')"
-          class="px-2.5 py-1.5 rounded-lg bg-[#ecfdf5] active:bg-[#bbf7d0] border border-[#86efac] text-[#14532d] text-xs font-extrabold flex items-center justify-center gap-1">
+          class="px-2 py-1.5 rounded-lg bg-[#ecfdf5] active:bg-[#bbf7d0] border border-[#86efac] text-[#14532d] text-[11px] leading-tight font-extrabold flex items-center justify-center gap-1 text-center">
           <i data-lucide="check" class="w-3.5 h-3.5 shrink-0"></i>
-          <span class="truncate">${safeLbl}</span>
+          <span>${safeLbl}</span>
         </button>
         <button type="button" onclick="event.stopPropagation(); assignSortItem('${item.id}', 'private')"
-          class="px-2.5 py-1.5 rounded-lg bg-[#fef2f2] active:bg-[#fecaca] border border-[#fca5a5] text-[#991b1b] text-xs font-extrabold flex items-center justify-center gap-1">
+          class="px-2 py-1.5 rounded-lg bg-[#fef2f2] active:bg-[#fecaca] border border-[#fca5a5] text-[#991b1b] text-[11px] leading-tight font-extrabold flex items-center justify-center gap-1 text-center">
           <i data-lucide="shield-off" class="w-3.5 h-3.5 shrink-0"></i>
-          <span class="truncate">${privLbl}</span>
+          <span>${privLbl}</span>
         </button>
       </div>
     ` : ''}
@@ -4481,7 +4540,12 @@ function renderBadgeHTML(badgeType, clickable = true) {
 }
 
 function inspectFakeBadge() {
-  showToast('Это эмодзи-статус Telegram Premium, а НЕ официальная верификация!', 'warn', 4200);
+  const msg = state.lang === 'en'
+    ? 'This is a Telegram Premium emoji status, NOT official verification!'
+    : (state.lang === 'kca'
+      ? 'Тӑм Telegram Premium эмодзи-статус, ӑн официальной верификация!'
+      : 'Это эмодзи-статус Telegram Premium, а НЕ официальная верификация!');
+  showToast(msg, 'warn', 4200);
   if (state.activeScenarioId === 'blogger') openProfileModal();
 }
 
@@ -5418,16 +5482,17 @@ function renderResultsDashboard() {
   const chatDone = activeSc.filter(s => state.chatCompleted.includes(s.id)).length;
   const chatAcc = chatDone > 0
     ? Math.max(0, Math.round(((chatDone - activeSc.filter(s => state.chatStats.failedScenarioIds.includes(s.id)).length) / chatDone) * 100))
-    : 100;
+    : null;
 
   document.getElementById('res-cards-score').textContent = `${cSum.correct} / ${cSum.total}`;
   document.getElementById('res-cards-pct').textContent = state.lang === 'en'
     ? `${cSum.pct}% correct`
     : (state.lang === 'kca' ? `${cSum.pct}% тәса` : `${cSum.pct}% верно`);
   document.getElementById('res-chats-score').textContent = `${chatDone} / ${activeSc.length}`;
+  const chatAccVal = chatAcc === null ? '—' : `${chatAcc}%`;
   document.getElementById('res-chats-acc').textContent = state.lang === 'en'
-    ? `First try: ${chatAcc}%`
-    : (state.lang === 'kca' ? `Оӆӑӊ эвӑӆт: ${chatAcc}%` : `С 1-й попытки: ${chatAcc}%`);
+    ? `First try: ${chatAccVal}`
+    : (state.lang === 'kca' ? `Оӆӑӊ эвӑӆт: ${chatAccVal}` : `С 1-й попытки: ${chatAccVal}`);
 
   const lootEl = document.getElementById('res-loot-count');
   if (lootEl) lootEl.textContent = `${cSum.correct} / ${cSum.total}`;
@@ -6075,27 +6140,32 @@ async function downloadCertificatePNG() {
     ctx.fillText(sc.val, sx + 132, sy + 72);
   });
 
-  // 8. полоска с иконками собранного лута (как инвентарь в майнкрафте)
+  // 8. полоска с иконками всех собранных трофеев (2 ряда по 9 слотов — все 18 карточек без обрезки и повторов)
   ctx.fillStyle = '#dbe7f5';
   ctx.strokeStyle = '#355070';
   ctx.lineWidth = 3;
-  roundRect(ctx, 134, 616, 860, 114, 6);
+  roundRect(ctx, 134, 598, 860, 168, 6);
   ctx.fill();
   ctx.stroke();
 
+  const totalTrophies = CARDS.length;
   ctx.textAlign = 'left';
   ctx.fillStyle = '#1e5aa8';
-  ctx.font = '700 19px "Tektur", Nunito, Arial, sans-serif';
+  ctx.font = '700 18px "Tektur", Nunito, Arial, sans-serif';
   ctx.fillText(
-    isEn ? 'COLLECTED TROPHIES:' : (isKca ? 'ӐКӐТӐМ ТРОФЕЙӐТ:' : 'СОБРАННЫЕ ТРОФЕИ:'),
-    160, 648
+    isEn
+      ? `COLLECTED TROPHIES (${cSum.correct} / ${totalTrophies}):`
+      : (isKca
+        ? `ӐКӐТӐМ ТРОФЕЙӐТ (${cSum.correct} / ${totalTrophies}):`
+        : `СОБРАННЫЕ ТРОФЕИ (${cSum.correct} / ${totalTrophies}):`),
+    156, 626
   );
 
-  // отрисовка пиксельной иконки предмета в слоте
-  const drawMiniLoot = (icon, ox, oy) => {
+  // отрисовка пиксельной иконки предмета в слоте (все 18 уникальных трофеев)
+  const drawMiniLoot = (icon, ox, oy, sc = 2.15) => {
     const p = (x, y, w, h, c) => {
       ctx.fillStyle = c;
-      ctx.fillRect(ox + x * 2.4, oy + y * 2.4, w * 2.4, h * 2.4);
+      ctx.fillRect(ox + x * sc, oy + y * sc, w * sc, h * sc);
     };
     if (icon === 'shield') {
       p(3, 2, 10, 10, '#22d3ee'); p(4, 12, 8, 2, '#06b6d4'); p(6, 14, 4, 1, '#0891b2'); p(5, 4, 6, 6, '#1e5aa8'); p(7, 6, 2, 2, '#ffffff');
@@ -6111,30 +6181,64 @@ async function downloadCertificatePNG() {
       p(2, 3, 4, 5, '#22d3ee'); p(10, 3, 4, 5, '#22d3ee'); p(4, 4, 8, 9, '#06b6d4'); p(6, 3, 4, 2, '#ffffff'); p(6, 7, 4, 4, '#1e5aa8');
     } else if (icon === 'book') {
       p(3, 2, 10, 12, '#7c3aed'); p(5, 3, 7, 10, '#a78bfa'); p(4, 4, 1, 8, '#fde047'); p(7, 5, 4, 2, '#fef08a');
+    } else if (icon === 'helmet') {
+      p(3, 3, 10, 4, '#22d3ee'); p(2, 5, 12, 6, '#06b6d4'); p(4, 7, 8, 4, '#0e7490'); p(6, 8, 4, 3, '#1e293b'); p(5, 4, 6, 2, '#a5f3fc');
+    } else if (icon === 'compass') {
+      p(4, 2, 8, 12, '#64748b'); p(2, 4, 12, 8, '#64748b'); p(4, 4, 8, 8, '#e2e8f0'); p(7, 4, 2, 4, '#ef4444'); p(7, 8, 2, 4, '#1e5aa8'); p(7, 7, 2, 2, '#facc15');
+    } else if (icon === 'beacon') {
+      p(2, 11, 12, 3, '#334155'); p(3, 3, 10, 8, '#bae6fd'); p(5, 5, 6, 6, '#0284c7'); p(6, 6, 4, 4, '#38bdf8'); p(7, 2, 2, 1, '#38bdf8');
+    } else if (icon === 'potion') {
+      p(6, 2, 4, 2, '#92400e'); p(5, 4, 6, 2, '#cbd5e1'); p(3, 6, 10, 8, '#86efac'); p(4, 7, 8, 6, '#22c55e'); p(5, 8, 2, 3, '#dcfce7');
+    } else if (icon === 'scroll') {
+      p(2, 2, 12, 3, '#d97706'); p(3, 5, 10, 6, '#fef3c7'); p(2, 11, 12, 3, '#d97706'); p(5, 6, 6, 1, '#92400e'); p(5, 8, 5, 1, '#92400e');
+    } else if (icon === 'bell') {
+      p(6, 2, 4, 2, '#b45309'); p(4, 4, 8, 6, '#facc15'); p(3, 10, 10, 2, '#eab308'); p(7, 12, 2, 2, '#92400e'); p(5, 5, 2, 4, '#fef9c3');
+    } else if (icon === 'map') {
+      p(2, 2, 12, 12, '#d6b98c'); p(3, 3, 10, 10, '#fef3c7'); p(4, 4, 4, 4, '#4ade80'); p(9, 5, 3, 5, '#38bdf8'); p(6, 9, 3, 3, '#ef4444');
+    } else if (icon === 'padlock') {
+      p(5, 2, 6, 2, '#f59e0b'); p(4, 4, 2, 3, '#f59e0b'); p(10, 4, 2, 3, '#f59e0b'); p(3, 7, 10, 7, '#d97706'); p(4, 8, 8, 5, '#fbbf24'); p(7, 9, 2, 3, '#78350f');
+    } else if (icon === 'phone') {
+      p(4, 1, 8, 14, '#1e3a5f'); p(5, 3, 6, 9, '#38bdf8'); p(6, 4, 4, 3, '#e0f2fe'); p(7, 13, 2, 1, '#94a3b8');
+    } else if (icon === 'star') {
+      p(7, 1, 2, 4, '#fde047'); p(6, 5, 4, 6, '#facc15'); p(2, 6, 12, 3, '#fbbf24'); p(4, 9, 8, 2, '#f59e0b'); p(3, 11, 3, 3, '#d97706'); p(10, 11, 3, 3, '#d97706'); p(7, 6, 2, 2, '#ffffff');
     } else {
       p(6, 2, 4, 2, '#4ade80'); p(4, 4, 8, 8, '#16a34a'); p(6, 12, 4, 2, '#15803d'); p(6, 5, 3, 4, '#86efac');
     }
   };
 
-  CARDS.slice(0, 8).forEach((card, idx) => {
+  const cols = Math.max(9, Math.ceil(totalTrophies / 2));
+  const innerW = 816;
+  const gapX = 10;
+  const slotW = Math.floor((innerW - gapX * (cols - 1)) / cols);
+  const slotH = 50;
+  const gapY = 10;
+  const startX = 134 + Math.floor((860 - (cols * slotW + (cols - 1) * gapX)) / 2);
+  const startY = 640;
+  const iconSc = Math.min(2.2, (slotW - 18) / 16);
+
+  CARDS.forEach((card, idx) => {
     const unlocked = Boolean(state.cardResults[card.id] && state.cardResults[card.id].correct);
-    const lx = 160 + idx * 102;
-    const ly = 662;
+    const col = idx % cols;
+    const row = Math.floor(idx / cols);
+    const lx = startX + col * (slotW + gapX);
+    const ly = startY + row * (slotH + gapY);
+
     ctx.fillStyle = unlocked ? '#fffdf0' : '#b7c8de';
     ctx.strokeStyle = unlocked ? '#b45309' : '#59708e';
-    ctx.lineWidth = 3;
-    roundRect(ctx, lx, ly, 86, 52, 4);
+    ctx.lineWidth = 2.5;
+    roundRect(ctx, lx, ly, slotW, slotH, 4);
     ctx.fill();
     ctx.stroke();
 
     if (unlocked) {
       const iconKey = (card.loot && card.loot.icon) || 'emerald';
-      drawMiniLoot(iconKey, lx + 24, ly + 7);
+      const iconPx = 16 * iconSc;
+      drawMiniLoot(iconKey, lx + (slotW - iconPx) / 2, ly + (slotH - iconPx) / 2, iconSc);
     } else {
       ctx.textAlign = 'center';
       ctx.fillStyle = '#59708e';
-      ctx.font = '700 24px "Tektur", Arial, sans-serif';
-      ctx.fillText('?', lx + 43, ly + 35);
+      ctx.font = '700 21px "Tektur", Arial, sans-serif';
+      ctx.fillText('?', lx + slotW / 2, ly + 33);
       ctx.textAlign = 'left';
     }
   });

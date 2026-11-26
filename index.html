@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Кибер-карточки Югры — Цифровой гражданин Югры</title>
   <link rel="icon" type="image/svg+xml" href="svg/logo.svg" />
   <link rel="stylesheet" href="css/fonts.css" />
@@ -274,7 +274,7 @@
                 <i data-lucide="volume-2" class="w-4 h-4"></i>
                 <span id="btn-card-read-aloud-label" data-i18n="btn_read_aloud">Озвучить</span>
               </button>
-              <button onclick="resetCardsSession()" class="text-xs font-bold text-cgy-muted hover:text-cgy-err flex items-center gap-1 px-2 py-1 rounded-[3px] hover:bg-white/80 transition" title="Начать заново">
+              <button onclick="resetCardsSession()" class="inline-flex items-center gap-1 px-2.5 py-1 sm:py-1.5 rounded-[3px] bg-white/85 hover:bg-[#fdecec] border-2 border-[#cbd5e1] hover:border-[#fca5a5] text-xs font-bold text-cgy-muted hover:text-cgy-err transition" title="Начать заново">
                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                 <span class="hidden sm:inline" data-i18n="btn_restart_cards">Начать заново</span>
               </button>
@@ -465,7 +465,7 @@
                   <span>Выбери свой ответ:</span>
                   <button id="btn-check-sms-inline" onclick="openSmsModal()" class="hidden items-center gap-1 text-cgy-ok hover:underline font-bold">
                     <i data-lucide="message-square-text" class="w-3.5 h-3.5"></i>
-                    <span>Открыть пришедшее SMS</span>
+                    <span data-i18n="open_incoming_sms">Открыть пришедшее SMS</span>
                   </button>
                 </div>
                 <div id="choices-container" class="flex flex-col gap-1.5"></div>
@@ -987,10 +987,10 @@
     <!-- сам персонаж, можно перетаскивать (привязан к bottom/right) -->
     <div id="steve-drag-handle" title="Потяни меня по экрану или кликни!"
       class="steve-body-btn pointer-events-auto cursor-grab active:cursor-grabbing flex flex-col items-center transition-transform">
-      <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-[4px] bg-white border-[3px] border-[#1e3a5f] border-b-[5px] sm:border-b-[6px] shadow-[4px_4px_0_rgba(24,42,68,0.22)] overflow-hidden flex items-center justify-center">
+      <div class="w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-[4px] bg-white border-[3px] border-[#1e3a5f] border-b-[4px] sm:border-b-[6px] shadow-[4px_4px_0_rgba(24,42,68,0.22)] overflow-hidden flex items-center justify-center">
         <div id="yugorka-avatar" class="w-full h-full flex items-center justify-center yugorka-float"></div>
       </div>
-      <span id="yugorka-name-badge" class="relative z-10 mt-1.5 px-2.5 py-1 rounded-[3px] bg-[#1e5aa8] border-2 border-[#153e75] text-white font-pixel text-[10px] sm:text-xs font-bold leading-none whitespace-nowrap shadow-[2px_2px_0_rgba(0,0,0,0.28)]">
+      <span id="yugorka-name-badge" class="relative z-10 mt-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-[3px] bg-[#1e5aa8] border-2 border-[#153e75] text-white font-pixel text-[9px] sm:text-xs font-bold leading-none whitespace-nowrap shadow-[2px_2px_0_rgba(0,0,0,0.28)]">
         Кибер-Стёпа
       </span>
     </div>
